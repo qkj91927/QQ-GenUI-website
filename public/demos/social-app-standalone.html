@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="qq-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>趣遇 - 陌生人兴趣社交</title>
+<style>
+/* ===== QQ Color Tokens (qq-light) ===== */
+:root {
+  --brand_standard: #0099FF;
+  --brand_standard_light: rgba(0, 153, 255, 0.08);
+  --text_primary: rgba(0, 0, 0, 0.90);
+  --text_primary_light: rgba(60, 60, 67, 0.76);
+  --text_secondary: rgba(60, 60, 67, 0.56);
+  --text_tertiary: rgba(60, 60, 67, 0.26);
+  --text_allwhite_primary: #FFFFFF;
+  --text_link: #214CA5;
+  --bg_bottom_light: #FFFFFF;
+  --bg_bottom_standard: #F0F0F2;
+  --bg_item: #FFFFFF;
+  --fill_standard_primary: rgba(13, 16, 49, 0.04);
+  --fill_standard_secondary: rgba(0, 0, 0, 0.10);
+  --separator: rgba(0, 0, 0, 0.08);
+  --border_standard: rgba(60, 60, 67, 0.25);
+  --border_light: rgba(0, 0, 0, 0.05);
+  --overlay: rgba(0, 0, 0, 0.40);
+}
+
+/* ===== Global Reset ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, 'PingFang SC', 'SF Pro Display', sans-serif;
+  background: #E8E8ED;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  min-height: 100vh;
+  gap: 24px;
+  overflow-x: auto;
+}
+
+/* ===== Phone Frame ===== */
+.phone-frame {
+  width: 428px;
+  min-width: 428px;
+  height: 926px;
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+  position: relative;
+  flex-shrink: 0;
+}
+.phone-label {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text_primary_light);
+  margin-top: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Status Bar ===== */
+.status-bar {
+  width: 428px;
+  height: 54px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 32px 8px;
+  background: var(--bg_item);
+}
+.status-bar-time {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text_primary);
+  line-height: 1;
+}
+.status-bar-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-bar-icons img { height: 13px; }
+
+/* ===== NavBar ===== */
+.navbar {
+  width: 428px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--bg_item);
+}
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+.navbar-right { justify-content: flex-end; }
+.navbar-center {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text_primary);
+}
+.navbar-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.navbar-icon img { width: 24px; height: 24px; }
+
+/* ===== Search Bar ===== */
+.search-bar {
+  width: 428px;
+  height: 60px;
+  background: var(--bg_bottom_light);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+.search-box {
+  flex: 1;
+  height: 36px;
+  background: var(--fill_standard_primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+}
+.search-box img { width: 18px; height: 18px; opacity: 0.4; }
+.search-box span {
+  font-size: 17px;
+  color: var(--text_secondary);
+}
+
+/* ===== Page Content ===== */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.page-content::-webkit-scrollbar { display: none; }
+
+/* ===== Plain List ===== */
+.plain-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  background: var(--bg_item);
+  position: relative;
+}
+.plain-list-item:active {
+  background: var(--fill_standard_primary);
+}
+.list-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.list-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.list-avatar-40 {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.list-avatar-40 img { width: 100%; height: 100%; object-fit: cover; }
+.list-content {
+  flex: 1;
+  min-width: 0;
+}
+.list-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.list-title {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text_primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-time {
+  font-size: 12px;
+  color: var(--text_secondary);
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+.list-subtitle {
+  font-size: 14px;
+  color: var(--text_primary_light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.list-separator {
+  position: absolute;
+  bottom: 0;
+  left: 80px;
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+.list-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.list-right img { width: 16px; height: 16px; }
+.badge {
+  background: #FF3B30;
+  color: #FFF;
+  font-size: 11px;
+  font-weight: 500;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+.dot-badge {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FF3B30;
+}
+
+/* ===== Message Bubble ===== */
+.message-area {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg_bottom_standard);
+}
+.message-row {
+  display: flex;
+  gap: 8px;
+  max-width: 100%;
+}
+.message-row.host {
+  flex-direction: row-reverse;
+}
+.message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+.message-avatar img { width: 100%; height: 100%; }
+.message-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: calc(100% - 48px - 48px);
+  padding-top: 8px;
+}
+.message-name {
+  font-size: 12px;
+  color: var(--text_secondary);
+}
+.message-row.host .message-name {
+  text-align: right;
+}
+.message-bubble {
+  padding: 10px 16px;
+  border-radius: 20px;
+  font-size: 17px;
+  line-height: 24px;
+  color: var(--text_primary);
+  background: var(--bg_item);
+  word-break: break-word;
+}
+.message-row.host .message-bubble {
+  background: var(--brand_standard);
+  color: var(--text_allwhite_primary);
+}
+.message-time-divider {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text_secondary);
+  padding: 8px 0;
+}
+
+/* ===== AIO Input ===== */
+.aio-input {
+  width: 100%;
+  padding: 10px 16px;
+  padding-bottom: 34px;
+  background: var(--bg_item);
+  border-top: 0.5px solid var(--separator);
+}
+.aio-input-bar {
+  width: 396px;
+  height: 52px;
+  border-radius: 24px;
+  border: 0.5px solid rgba(0,0,0,0.10);
+  background: var(--bg_item);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+}
+.aio-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fill_standard_primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.aio-btn img { width: 20px; height: 20px; }
+.aio-placeholder {
+  flex: 1;
+  font-size: 17px;
+  color: var(--text_tertiary);
+}
+
+/* ===== Grid ===== */
+.interest-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 8px 0;
+  background: var(--bg_item);
+}
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  gap: 8px;
+  cursor: pointer;
+}
+.grid-item:active { background: var(--fill_standard_primary); }
+.grid-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.grid-label {
+  font-size: 12px;
+  color: var(--text_primary);
+  font-weight: 400;
+}
+
+/* ===== Card ===== */
+.card-container {
+  margin: 12px 16px;
+  background: var(--bg_item);
+  border-radius: 24px;
+  overflow: hidden;
+}
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.card-body {
+  padding: 16px;
+}
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text_primary);
+  margin-bottom: 8px;
+}
+.card-desc {
+  font-size: 14px;
+  color: var(--text_primary_light);
+  line-height: 20px;
+}
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 0.5px solid var(--separator);
+}
+.card-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-footer-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+.card-footer-name {
+  font-size: 14px;
+  color: var(--text_primary_light);
+}
+.card-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.card-action {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text_secondary);
+}
+.card-action img { width: 20px; height: 20px; }
+
+/* ===== Grouped List ===== */
+.grouped-list {
+  margin: 12px 16px;
+  background: var(--bg_item);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.grouped-list-title {
+  padding: 8px 16px 4px;
+  font-size: 14px;
+  color: var(--text_secondary);
+}
+.group-item {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 16px;
+  gap: 12px;
+  position: relative;
+}
+.group-item:active { background: var(--fill_standard_primary); }
+.group-item-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.group-item-icon img { width: 24px; height: 24px; }
+.group-item-label {
+  flex: 1;
+  font-size: 17px;
+  color: var(--text_primary);
+}
+.group-item-value {
+  font-size: 14px;
+  color: var(--text_secondary);
+  margin-right: 4px;
+}
+.group-item-arrow {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.group-item-arrow img { width: 16px; height: 16px; }
+.group-separator {
+  height: 0.5px;
+  background: var(--border_light);
+  margin-left: 16px;
+  margin-right: 16px;
+}
+.group-separator:last-child { display: none; }
+
+/* ===== Profile Header ===== */
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+  background: var(--bg_item);
+  margin: 12px 16px;
+  border-radius: 12px;
+}
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 28px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.profile-info { flex: 1; }
+.profile-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text_primary);
+  margin-bottom: 4px;
+}
+.profile-id {
+  font-size: 14px;
+  color: var(--text_secondary);
+}
+
+/* ===== Tab Bar ===== */
+.tab-bar {
+  width: 428px;
+  height: 83px;
+  background: var(--bg_item);
+  border-top: 0.5px solid var(--separator);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-top: 8px;
+}
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  width: 56px;
+}
+.tab-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.tab-label {
+  font-size: 10px;
+  color: var(--text_secondary);
+}
+.tab-item.active .tab-label {
+  color: var(--brand_standard);
+  font-weight: 500;
+}
+.tab-item.active .tab-icon {
+  color: var(--brand_standard);
+}
+
+/* ===== Interest Tags ===== */
+.interest-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.interest-tag {
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 14px;
+  color: var(--brand_standard);
+  background: var(--brand_standard_light);
+  cursor: pointer;
+}
+.interest-tag:active { opacity: 0.7; }
+.interest-tag.active-tag {
+  background: var(--brand_standard);
+  color: var(--text_allwhite_primary);
+}
+
+/* ===== Section Title ===== */
+.section-title {
+  padding: 16px 16px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text_primary);
+}
+
+/* ===== Friend Online Status ===== */
+.online-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34C759;
+  flex-shrink: 0;
+}
+.offline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text_tertiary);
+  flex-shrink: 0;
+}
+
+/* ===== DataFilter Tabs ===== */
+.data-filter {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  gap: 0;
+  background: var(--bg_item);
+}
+.filter-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 15px;
+  color: var(--text_primary_light);
+  position: relative;
+  cursor: pointer;
+}
+.filter-tab.active {
+  color: var(--brand_standard);
+  font-weight: 600;
+}
+.filter-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  background: var(--brand_standard);
+  border-radius: 1px;
+}
+
+/* ===== Discover Color Blocks ===== */
+.color-block { display: flex; align-items: center; justify-content: center; }
+.cb-music { background: linear-gradient(135deg, #FF6B6B, #FF8E53); }
+.cb-game { background: linear-gradient(135deg, #4ECDC4, #44CF6C); }
+.cb-art { background: linear-gradient(135deg, #A18CD1, #FBC2EB); }
+.cb-sport { background: linear-gradient(135deg, #667eea, #764ba2); }
+.cb-food { background: linear-gradient(135deg, #FDBB2D, #F7971E); }
+.cb-travel { background: linear-gradient(135deg, #89F7FE, #66A6FF); }
+.cb-read { background: linear-gradient(135deg, #C471F5, #FA71CD); }
+.cb-photo { background: linear-gradient(135deg, #43E97B, #38F9D7); }
+
+/* ===== Wrapper ===== */
+.screen-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== PAGE 1: 聊天列表 ========== -->
+<div class="screen-wrapper">
+<div class="phone-frame" style="display:flex;flex-direction:column;background:var(--bg_bottom_light);">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery">
+    </div>
+  </div>
+  <!-- NavBar: L6(头像) + C0(Empty) + R2(双图标) -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">趣</div>
+    </div>
+    <div class="navbar-center"></div>
+    <div class="navbar-right">
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="搜索"></div>
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjg0OTkgMTIuMDAwNEMzLjg0OTkgNy40OTkyNyA3LjQ5ODc4IDMuODUwMzkgMTEuOTk5OSAzLjg1MDM5QzE2LjUwMSAzLjg1MDM5IDIwLjE0OTkgNy40OTkyNyAyMC4xNDk5IDEyLjAwMDRDMjAuMTQ5OSAxNi41MDE1IDE2LjUwMSAyMC4xNTA0IDExLjk5OTkgMjAuMTUwNEM3LjQ5ODc4IDIwLjE1MDQgMy44NDk5IDE2LjUwMTUgMy44NDk5IDEyLjAwMDRaTTExLjk5OTkgMi4xNTAzOUM2LjU1OTkgMi4xNTAzOSAyLjE0OTkgNi41NjAzOSAyLjE0OTkgMTIuMDAwNEMyLjE0OTkgMTcuNDQwNCA2LjU1OTkgMjEuODUwNCAxMS45OTk5IDIxLjg1MDRDMTcuNDM5OSAyMS44NTA0IDIxLjg0OTkgMTcuNDQwNCAyMS44NDk5IDEyLjAwMDRDMjEuODQ5OSA2LjU2MDM5IDE3LjQzOTkgMi4xNTAzOSAxMS45OTk5IDIuMTUwMzlaTTExLjk5OTkgNi42NTAzOUMxMi40NjkzIDYuNjUwMzkgMTIuODQ5OSA3LjAzMDk1IDEyLjg0OTkgNy41MDAzOVYxMS4xNTA0SDE2LjQ5OTlDMTYuOTY5MyAxMS4xNTA0IDE3LjM0OTkgMTEuNTMwOSAxNy4zNDk5IDEyLjAwMDRDMTcuMzQ5OSAxMi40Njk4IDE2Ljk2OTMgMTIuODUwNCAxNi40OTk5IDEyLjg1MDRIMTIuODQ5OVYxNi41MDA0QzEyLjg0OTkgMTYuOTY5OCAxMi40NjkzIDE3LjM1MDQgMTEuOTk5OSAxNy4zNTA0QzExLjUzMDUgMTcuMzUwNCAxMS4xNDk5IDE2Ljk2OTggMTEuMTQ5OSAxNi41MDA0VjEyLjg1MDRINy40OTk5QzcuMDMwNDYgMTIuODUwNCA2LjY0OTkgMTIuNDY5OCA2LjY0OTkgMTIuMDAwNEM2LjY0OTkgMTEuNTMwOSA3LjAzMDQ2IDExLjE1MDQgNy40OTk5IDExLjE1MDRIMTEuMTQ5OVY3LjUwMDM5QzExLjE0OTkgNy4wMzA5NSAxMS41MzA1IDYuNjUwMzkgMTEuOTk5OSA2LjY1MDM5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="添加"></div>
+    </div>
+  </div>
+  <!-- Chat List -->
+  <div class="page-content" style="flex:1;">
+    <!-- Chat Item 1 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FF6B6B,#FF8E53);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🎸</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">音乐爱好者群</span>
+          <span class="list-time">14:23</span>
+        </div>
+        <div class="list-subtitle">小星: 有人一起去音乐节吗？超想去！</div>
+      </div>
+      <div class="list-right"><div class="badge">3</div></div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 2 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4ECDC4,#44CF6C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🎮</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">Kira_游戏搭子</span>
+          <span class="list-time">13:45</span>
+        </div>
+        <div class="list-subtitle">今晚开黑不？我练了个新英雄</div>
+      </div>
+      <div class="list-right"><div class="badge">1</div></div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 3 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#A18CD1,#FBC2EB);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🎨</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">画画交流圈</span>
+          <span class="list-time">12:08</span>
+        </div>
+        <div class="list-subtitle">Luna: 分享一张今天画的水彩～</div>
+      </div>
+      <div class="list-right"><div class="dot-badge"></div></div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 4 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">📷</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">Momo</span>
+          <span class="list-time">昨天</span>
+        </div>
+        <div class="list-subtitle">那个摄影展我也想去看！</div>
+      </div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 5 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FDBB2D,#F7971E);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🏃</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">跑步打卡群</span>
+          <span class="list-time">昨天</span>
+        </div>
+        <div class="list-subtitle">阿杰: 今天5公里达成✅</div>
+      </div>
+      <div class="list-right"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTcuMjYwMDkgMi4yNzIxMkM3LjI2MDA5IDEuODY0MDMgNy41OTA5MiAxLjUzMzIgNy45OTkwMSAxLjUzMzJDOC40MDcxIDEuNTMzMiA4LjczNzkyIDEuODY0MDMgOC43Mzc5MiAyLjI3MjEyVjIuNTUxNTFDOC43Mzc5MiAyLjU2Njg0IDguNzM3NDYgMi41ODIwNiA4LjczNjU0IDIuNTk3MTVDMTAuOTA3OSAyLjk1MzkgMTIuMzI0MyA0Ljg3NDIgMTIuMzI0MyA3LjEwMzM5TDEyLjMyNDkgOS4zMTI2TDEzLjY2NjUgMTEuMDU5M0MxMy42OTMxIDExLjA5MzggMTMuNzE1NSAxMS4xMzEzIDEzLjczMzUgMTEuMTcxQzEzLjg0MDkgMTEuNDA4NyAxMy44NTc0IDExLjY1NTIgMTMuODAzOCAxMS44ODA0QzEzLjc5NTIgMTEuODcxNCAxMy43ODY1IDExLjg2MjUgMTMuNzc3NiAxMS44NTM3TDExLjE5MTYgOS4yODYxNEwxMS4xOTEgNy4xMDMzOUMxMS4xOTEgNS4xNTkxOCA5Ljg2MjM3IDMuNjcxMTggNy45OTg0MSAzLjY3MTE4QzcuMjg0NjUgMy42NzExOCA2LjY0OTM5IDMuODg5MzcgNi4xMzcxNyA0LjI2NzgxTDUuMzI0NTcgMy40NjEwM0M1Ljg2NDI2IDMuMDIzNTQgNi41MTg3MiAyLjcxODc4IDcuMjYxNDcgMi41OTY5NkM3LjI2MDU1IDIuNTgxOTMgNy4yNjAwOSAyLjU2Njc3IDcuMjYwMDkgMi41NTE1MVYyLjI3MjEyWiIgZmlsbD0iIzkyOTI5NiIvPgo8cGF0aCBkPSJNMy45MzM2NyAzLjEzMjUxQzMuNzEyMzcgMi45MTEyMSAzLjM1MzU4IDIuOTExMjEgMy4xMzIyOCAzLjEzMjUxQzIuOTEwOTggMy4zNTM4IDIuOTEwOTggMy43MTI2IDMuMTMyMjggMy45MzM4OUwxMi40NjU2IDEzLjI2NzJDMTIuNjg2OSAxMy40ODg1IDEzLjA0NTcgMTMuNDg4NSAxMy4yNjcgMTMuMjY3MkMxMy40ODgzIDEzLjA0NTkgMTMuNDg4MyAxMi42ODcxIDEzLjI2NyAxMi40NjU4TDMuOTMzNjcgMy4xMzI1MVoiIGZpbGw9IiM5MjkyOTYiLz4KPHBhdGggZD0iTTUuOTIxMTQgMTMuNDE4NEM1Ljg3OTczIDEzLjMyNTQgNS45NTIwMiAxMy4yMjY2IDYuMDUzNzUgMTMuMjI2Nkg5Ljk0NzYyQzEwLjA0OTQgMTMuMjI2NiAxMC4xMjE2IDEzLjMyNTQgMTAuMDgwMiAxMy40MTg0QzkuNzU1OTMgMTQuMTQ2MSA4Ljk0NzEyIDE0LjY2MTcgOC4wMDA2OSAxNC42NjE3QzcuMDU0MjUgMTQuNjYxNyA2LjI0NTQ1IDE0LjE0NjEgNS45MjExNCAxMy40MTg0WiIgZmlsbD0iIzkyOTI5NiIvPgo8cGF0aCBkPSJNMy42NzI0OSA3LjEwMzM5QzMuNjcyNDkgNi42MzcyNiAzLjczNDQyIDYuMTg0NjQgMy44NTIyNCA1Ljc1N0w0LjgyMzI5IDYuNzIxMTFDNC44MTE3MiA2Ljg0NjMxIDQuODA1ODIgNi45NzM4NCA0LjgwNTgyIDcuMTAzMzlWOS41MDY4N0M0LjgwNTgyIDkuNjMxNzMgNC43NjQ1OCA5Ljc1MzEgNC42ODg1IDkuODUyMTJMMy4zNDIwOCAxMS42MDQ1SDkuNzQxODJMMTAuODgzMyAxMi43Mzc4SDMuMjgwNjZDMi40Nzc5MSAxMi43Mzc4IDEuOTMwMDIgMTEuOTExNSAyLjI2NDgyIDExLjE3MUMyLjI4Mjc4IDExLjEzMTMgMi4zMDUyNiAxMS4wOTM4IDIuMzMxODEgMTEuMDU5MkwzLjY3MjQ5IDkuMzE0MzFWNy4xMDMzOVoiIGZpbGw9IiM5MjkyOTYiLz4KPC9zdmc+" alt="免打扰" style="width:16px;height:16px;"></div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 6 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#89F7FE,#66A6FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">📚</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">书虫集合</span>
+          <span class="list-time">前天</span>
+        </div>
+        <div class="list-subtitle">最近在看《三体》超好看推荐！</div>
+      </div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 7 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#C471F5,#FA71CD);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🐱</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">小鱼_猫咪控</span>
+          <span class="list-time">周一</span>
+        </div>
+        <div class="list-subtitle">看我家新来的小猫咪！</div>
+      </div>
+      <div class="list-separator"></div>
+    </div>
+    <!-- Chat Item 8 -->
+    <div class="plain-list-item">
+      <div class="list-avatar"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#43E97B,#38F9D7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">🍜</div></div>
+      <div class="list-content">
+        <div class="list-title-row">
+          <span class="list-title">干饭人联盟</span>
+          <span class="list-time">周一</span>
+        </div>
+        <div class="list-subtitle">发现一家超赞的日料店！</div>
+      </div>
+    </div>
+  </div>
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item active"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="聊天" style="width:24px;height:24px;filter:invert(45%) sepia(98%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(101%);"></div><span class="tab-label">聊天</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="发现" style="width:24px;height:24px;"></div><span class="tab-label">发现</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS4wMzQ5IDIuMTUwMzlIOC45NjQ5SDguOTY0ODlDOC4yOTQ1OSAyLjE1MDM4IDcuNzQwMzcgMi4xNTAzNyA3LjI4ODY5IDIuMTg3MjhDNi44MTkyNSAyLjIyNTYzIDYuMzg2MjIgMi4zMDgwNSA1Ljk3OTAzIDIuNTE1NTJDNS4zNDg2OSAyLjgzNjcgNC44MzYyMSAzLjM0OTE4IDQuNTE1MDMgMy45Nzk1MkM0LjMwNzU2IDQuMzg2NzEgNC4yMjUxNCA0LjgxOTczIDQuMTg2NzkgNS4yODkxOEM0LjE2NjA0IDUuNTQzMDYgNC4xNTY5NiA1LjgyOTMyIDQuMTUyOTkgNi4xNTAzOUgyLjk5OTlDMi41MzA0NiA2LjE1MDM5IDIuMTQ5OSA2LjUzMDk1IDIuMTQ5OSA3LjAwMDM5QzIuMTQ5OSA3LjQ2OTgzIDIuNTMwNDYgNy44NTAzOSAyLjk5OTkgNy44NTAzOUg0LjE0OTlWMTYuMTVIMi45OTk5QzIuNTMwNDYgMTYuMTUgMi4xNDk5IDE2LjUzMDYgMi4xNDk5IDE3QzIuMTQ5OSAxNy40Njk0IDIuNTMwNDYgMTcuODUgMi45OTk5IDE3Ljg1SDQuMTUyOThDNC4xNTY5NiAxOC4xNzEyIDQuMTY2MDQgMTguNDU3NiA0LjE4Njc5IDE4LjcxMTZDNC4yMjUxNCAxOS4xODEgNC4zMDc1NiAxOS42MTQxIDQuNTE1MDMgMjAuMDIxM0M0LjgzNjIxIDIwLjY1MTYgNS4zNDg2OSAyMS4xNjQxIDUuOTc5MDMgMjEuNDg1M0M2LjM4NjIyIDIxLjY5MjcgNi44MTkyNSAyMS43NzUyIDcuMjg4NjkgMjEuODEzNUM3Ljc0MDM5IDIxLjg1MDQgOC4yOTQ2MyAyMS44NTA0IDguOTY0OTUgMjEuODUwNEgxNS4wMzQ5QzE1LjcwNTIgMjEuODUwNCAxNi4yNTk0IDIxLjg1MDQgMTYuNzExMSAyMS44MTM1QzE3LjE4MDYgMjEuNzc1MiAxNy42MTM2IDIxLjY5MjcgMTguMDIwOCAyMS40ODUzQzE4LjY1MTEgMjEuMTY0MSAxOS4xNjM2IDIwLjY1MTYgMTkuNDg0OCAyMC4wMjEzQzE5LjY5MjIgMTkuNjE0MSAxOS43NzQ3IDE5LjE4MSAxOS44MTMgMTguNzExNkMxOS44NDk5IDE4LjI1OTkgMTkuODQ5OSAxNy43MDU3IDE5Ljg0OTkgMTcuMDM1NFY2Ljk2NTRDMTkuODQ5OSA2LjI5NTA5IDE5Ljg0OTkgNS43NDA4NiAxOS44MTMgNS4yODkxOEMxOS43NzQ3IDQuODE5NzMgMTkuNjkyMiA0LjM4NjcxIDE5LjQ4NDggMy45Nzk1MkMxOS4xNjM2IDMuMzQ5MTggMTguNjUxMSAyLjgzNjcgMTguMDIwOCAyLjUxNTUyQzE3LjYxMzYgMi4zMDgwNSAxNy4xODA2IDIuMjI1NjMgMTYuNzExMSAyLjE4NzI4QzE2LjI1OTQgMi4xNTAzNyAxNS43MDUyIDIuMTUwMzggMTUuMDM0OSAyLjE1MDM5Wk01Ljg1MzE1IDE3Ljg1QzUuODU2ODEgMTguMTM1OSA1Ljg2NDYgMTguMzcwNyA1Ljg4MTE0IDE4LjU3MzJDNS45MTA5MSAxOC45Mzc1IDUuOTY0NzMgMTkuMTIxOSA2LjAyOTc0IDE5LjI0OTVDNi4xODc5MyAxOS41NTk5IDYuNDQwMzUgMTkuODEyNCA2Ljc1MDgyIDE5Ljk3MDZDNi44Nzg0MSAyMC4wMzU2IDcuMDYyODEgMjAuMDg5NCA3LjQyNzEyIDIwLjExOTJDNy44MDEzNiAyMC4xNDk3IDguMjg1ODEgMjAuMTUwNCA4Ljk5OTkgMjAuMTUwNEgxNC45OTk5QzE1LjcxNCAyMC4xNTA0IDE2LjE5ODQgMjAuMTQ5NyAxNi41NzI3IDIwLjExOTJDMTYuOTM3IDIwLjA4OTQgMTcuMTIxNCAyMC4wMzU2IDE3LjI0OSAxOS45NzA2QzE3LjU1OTUgMTkuODEyNCAxNy44MTE5IDE5LjU1OTkgMTcuOTcwMSAxOS4yNDk1QzE4LjAzNTEgMTkuMTIxOSAxOC4wODg5IDE4LjkzNzUgMTguMTE4NyAxOC41NzMyQzE4LjE0OTIgMTguMTk4OSAxOC4xNDk5IDE3LjcxNDUgMTguMTQ5OSAxNy4wMDA0VjcuMDAwMzlDMTguMTQ5OSA2LjI4NjMgMTguMTQ5MiA1LjgwMTg1IDE4LjExODcgNS40Mjc2MUMxOC4wODg5IDUuMDYzMyAxOC4wMzUxIDQuODc4OSAxNy45NzAxIDQuNzUxMzFDMTcuODExOSA0LjQ0MDg0IDE3LjU1OTUgNC4xODg0MiAxNy4yNDkgNC4wMzAyM0MxNy4xMjE0IDMuOTY1MjIgMTYuOTM3IDMuOTExNCAxNi41NzI3IDMuODgxNjNDMTYuMTk4NCAzLjg1MTA1IDE1LjcxNCAzLjg1MDM5IDE0Ljk5OTkgMy44NTAzOUg4Ljk5OTlDOC4yODU4MSAzLjg1MDM5IDcuODAxMzYgMy44NTEwNSA3LjQyNzEyIDMuODgxNjNDNy4wNjI4MSAzLjkxMTQgNi44Nzg0MSAzLjk2NTIyIDYuNzUwODIgNC4wMzAyM0M2LjQ0MDM1IDQuMTg4NDIgNi4xODc5MyA0LjQ0MDg0IDYuMDI5NzQgNC43NTEzMUM1Ljk2NDczIDQuODc4OSA1LjkxMDkxIDUuMDYzMyA1Ljg4MTE0IDUuNDI3NjFDNS44NjQ2IDUuNjMwMDEgNS44NTY4MiA1Ljg2NDY0IDUuODUzMTUgNi4xNTAzOUg2Ljk5OTlDNy40NjkzNCA2LjE1MDM5IDcuODQ5OSA2LjUzMDk1IDcuODQ5OSA3LjAwMDM5QzcuODQ5OSA3LjQ2OTgzIDcuNDY5MzQgNy44NTAzOSA2Ljk5OTkgNy44NTAzOUg1Ljg0OTlWMTYuMTVINi45OTk5QzcuNDY5MzQgMTYuMTUgNy44NDk5IDE2LjUzMDYgNy44NDk5IDE3QzcuODQ5OSAxNy40Njk0IDcuNDY5MzQgMTcuODUgNi45OTk5IDE3Ljg1SDUuODUzMTVaTTE1Ljg0OTkgNy4wMDAzOUMxNS44NDk5IDYuNTMwOTUgMTUuNDY5MyA2LjE1MDM5IDE0Ljk5OTkgNi4xNTAzOUMxNC41MzA1IDYuMTUwMzkgMTQuMTQ5OSA2LjUzMDk1IDE0LjE0OTkgNy4wMDAzOVYxNy4wMDA0QzE0LjE0OTkgMTcuNDY5OCAxNC41MzA1IDE3Ljg1MDQgMTQuOTk5OSAxNy44NTA0QzE1LjQ2OTMgMTcuODUwNCAxNS44NDk5IDE3LjQ2OTggMTUuODQ5OSAxNy4wMDA0VjcuMDAwMzlaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="好友" style="width:24px;height:24px;"></div><span class="tab-label">好友</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03Ljg5OTkgMTAuMTA3MUM3Ljg5OTkgNy44NDI3MSA5LjczNTUzIDYuMDA3MDggMTEuOTk5OSA2LjAwNzA4QzE0LjI2NDMgNi4wMDcwOCAxNi4wOTk5IDcuODQyNzEgMTYuMDk5OSAxMC4xMDcxQzE2LjA5OTkgMTIuMzcxNCAxNC4yNjQzIDE0LjIwNzEgMTEuOTk5OSAxNC4yMDcxQzkuNzM1NTMgMTQuMjA3MSA3Ljg5OTkgMTIuMzcxNCA3Ljg5OTkgMTAuMTA3MVpNMTEuOTk5OSA3LjcwNzA4QzEwLjY3NDQgNy43MDcwOCA5LjU5OTkgOC43ODE2IDkuNTk5OSAxMC4xMDcxQzkuNTk5OSAxMS40MzI2IDEwLjY3NDQgMTIuNTA3MSAxMS45OTk5IDEyLjUwNzFDMTMuMzI1NCAxMi41MDcxIDE0LjM5OTkgMTEuNDMyNiAxNC4zOTk5IDEwLjEwNzFDMTQuMzk5OSA4Ljc4MTYgMTMuMzI1NCA3LjcwNzA4IDExLjk5OTkgNy43MDcwOFoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS45OTk5IDIuMTQ5OUM2LjU1OTkgMi4xNDk5IDIuMTQ5OSA2LjU1OTkgMi4xNDk5IDExLjk5OTlDMi4xNDk5IDE3LjQzOTkgNi41NTk5IDIxLjg0OTkgMTEuOTk5OSAyMS44NDk5QzE3LjQzOTkgMjEuODQ5OSAyMS44NDk5IDE3LjQzOTkgMjEuODQ5OSAxMS45OTk5QzIxLjg0OTkgNi41NTk5IDE3LjQzOTkgMi4xNDk5IDExLjk5OTkgMi4xNDk5Wk0zLjg0OTkgMTEuOTk5OUMzLjg0OTkgNy40OTg3OCA3LjQ5ODc4IDMuODQ5OSAxMS45OTk5IDMuODQ5OUMxNi41MDEgMy44NDk5IDIwLjE0OTkgNy40OTg3OCAyMC4xNDk5IDExLjk5OTlDMjAuMTQ5OSAxMy44NDUgMTkuNTM2OCAxNS41NDY5IDE4LjUwMzIgMTYuOTEyOUMxNy4zNDE3IDE1LjczNjMgMTUuNzI4MiAxNS4wMDcxIDEzLjk0NDMgMTUuMDA3MUgxMC4wNTU0QzguMjcxNTQgMTUuMDA3MSA2LjY1OCAxNS43MzYzIDUuNDk2NTggMTYuOTEyOEM0LjQ2MyAxNS41NDY4IDMuODQ5OSAxMy44NDQ5IDMuODQ5OSAxMS45OTk5Wk02LjY1ODgzIDE4LjE1NkM4LjA4OTIyIDE5LjM5ODEgOS45NTY3NiAyMC4xNDk5IDExLjk5OTkgMjAuMTQ5OUMxNC4wNDMgMjAuMTQ5OSAxNS45MTA1IDE5LjM5ODEgMTcuMzQwOSAxOC4xNTYxQzE2LjQ4NDUgMTcuMjYzIDE1LjI3OTMgMTYuNzA3MSAxMy45NDQzIDE2LjcwNzFIMTAuMDU1NEM4LjcyMDQgMTYuNzA3MSA3LjUxNTI2IDE3LjI2MyA2LjY1ODgzIDE4LjE1NloiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="我的" style="width:24px;height:24px;"></div><span class="tab-label">我的</span></div>
+  </div>
+</div>
+<div class="phone-label">聊天列表</div>
+</div>
+
+<!-- ========== PAGE 2: 聊天界面 ========== -->
+<div class="screen-wrapper">
+<div class="phone-frame" style="display:flex;flex-direction:column;background:var(--bg_bottom_standard);">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery">
+    </div>
+  </div>
+  <!-- NavBar: L1(返回) + C1(标题) + R1(图标) -->
+  <div class="navbar">
+    <div class="navbar-left">
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS42MDEzIDIuMzk4ODZDMTUuOTMzMiAyLjczMDgxIDE1LjkzMzIgMy4yNjkgMTUuNjAxMyAzLjYwMDk0TDcuNzMyNjUgMTEuNDY5NkM3LjUyNDcyIDExLjY3NzUgNy40MDUzOSAxMS43OTc4IDcuMzI0ODEgMTEuODkyN0M3LjI5MTg2IDExLjkzMTUgNy4yNzU0NyAxMS45NTQ4IDcuMjY4NDQgMTEuOTY1NkM3LjI2MzEyIDExLjk4ODEgNy4yNjMxMiAxMi4wMTE3IDcuMjY4NDQgMTIuMDM0M0M3LjI3NTQ3IDEyLjA0NSA3LjI5MTg2IDEyLjA2ODMgNy4zMjQ4MSAxMi4xMDcxQzcuNDA1NCAxMi4yMDIgNy41MjQ3MyAxMi4zMjIzIDcuNzMyNjUgMTIuNTMwMkwxNS42MDEzIDIwLjM5ODlDMTUuOTMzMiAyMC43MzA4IDE1LjkzMzIgMjEuMjY5IDE1LjYwMTMgMjEuNjAwOUMxNS4yNjkzIDIxLjkzMjkgMTQuNzMxMSAyMS45MzI5IDE0LjM5OTIgMjEuNjAwOUw2LjUxMDMyIDEzLjcxMjFDNi4zMjk3NSAxMy41MzE1IDYuMTU5OTEgMTMuMzYxNyA2LjAyODgzIDEzLjIwNzNDNS44ODY0MiAxMy4wMzk2IDUuNzQwNTggMTIuODM1IDUuNjU1IDEyLjU3MTZDNS41MzQyNyAxMi4yIDUuNTM0MjcgMTEuNzk5OCA1LjY1NSAxMS40MjgyQzUuNzQwNTggMTEuMTY0OCA1Ljg4NjQyIDEwLjk2MDIgNi4wMjg4MyAxMC43OTI1QzYuMTU5OTEgMTAuNjM4MSA2LjMyOTc2IDEwLjQ2ODMgNi41MTAzMyAxMC4yODc3TDE0LjM5OTIgMi4zOTg4NkMxNC43MzExIDIuMDY2OTIgMTUuMjY5MyAyLjA2NjkyIDE1LjYwMTMgMi4zOTg4NloiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgo8L3N2Zz4=" alt="返回"></div>
+    </div>
+    <div class="navbar-center">Kira_游戏搭子</div>
+    <div class="navbar-right">
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDYuNUMxMS4xNzE2IDYuNSAxMC41IDUuODI4NDMgMTAuNSA1QzEwLjUgNC4xNzE1NyAxMS4xNzE2IDMuNSAxMiAzLjVDMTIuODI4NCAzLjUgMTMuNSA0LjE3MTU3IDEzLjUgNUMxMy41IDUuODI4NDMgMTIuODI4NCA2LjUgMTIgNi41WiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBkPSJNMTIgMTMuNUMxMS4xNzE2IDEzLjUgMTAuNSAxMi44Mjg0IDEwLjUgMTJDMTAuNSAxMS4xNzE2IDExLjE3MTYgMTAuNSAxMiAxMC41QzEyLjgyODQgMTAuNSAxMy41IDExLjE3MTYgMTMuNSAxMkMxMy41IDEyLjgyODQgMTIuODI4NCAxMy41IDEyIDEzLjVaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik0xMiAyMC41QzExLjE3MTYgMjAuNSAxMC41IDE5LjgyODQgMTAuNSAxOUMxMC41IDE4LjE3MTYgMTEuMTcxNiAxNy41IDEyIDE3LjVDMTIuODI4NCAxNy41IDEzLjUgMTguMTcxNiAxMy41IDE5QzEzLjUgMTkuODI4NCAxMi44Mjg0IDIwLjUgMTIgMjAuNVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="更多"></div>
+    </div>
+  </div>
+  <!-- Messages -->
+  <div class="page-content" style="flex:1;display:flex;flex-direction:column;">
+    <div class="message-area" style="flex:1;">
+      <div class="message-time-divider">今天 13:30</div>
+      <!-- Guest Message -->
+      <div class="message-row">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4ECDC4,#44CF6C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎮</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">Kira</span>
+          <div class="message-bubble">今晚开黑不？我练了个新英雄</div>
+        </div>
+      </div>
+      <!-- Host Message -->
+      <div class="message-row host">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">我</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">我</span>
+          <div class="message-bubble">好呀！什么英雄？</div>
+        </div>
+      </div>
+      <!-- Guest Message -->
+      <div class="message-row">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4ECDC4,#44CF6C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎮</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">Kira</span>
+          <div class="message-bubble">新出的那个法师，技能超炫酷的！而且伤害也很高 💥</div>
+        </div>
+      </div>
+      <!-- Host Message -->
+      <div class="message-row host">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">我</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">我</span>
+          <div class="message-bubble">听起来不错！那我选辅助配合你</div>
+        </div>
+      </div>
+      <!-- Guest Message -->
+      <div class="message-row">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4ECDC4,#44CF6C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎮</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">Kira</span>
+          <div class="message-bubble">冲！8点半老地方见 🎯</div>
+        </div>
+      </div>
+      <!-- Host Message -->
+      <div class="message-row host">
+        <div class="message-avatar"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:600;">我</div></div>
+        <div class="message-bubble-wrap">
+          <span class="message-name">我</span>
+          <div class="message-bubble">收到！准时上线 ✨</div>
+        </div>
+      </div>
+    </div>
+    <!-- AIO Input -->
+    <div class="aio-input">
+      <div class="aio-input-bar">
+        <div class="aio-btn"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyLjg0OTkgMi45OTk5OUMxMi44NDk5IDIuNTMwNTUgMTIuNDY5MyAyLjE0OTk5IDExLjk5OTkgMi4xNDk5OUMxMS41MzA1IDIuMTQ5OTkgMTEuMTQ5OSAyLjUzMDU1IDExLjE0OTkgMi45OTk5OVYxMS4xNUgyLjk5OTlDMi41MzA0NiAxMS4xNSAyLjE0OTkgMTEuNTMwNiAyLjE0OTkgMTJDMi4xNDk5IDEyLjQ2OTQgMi41MzA0NiAxMi44NSAyLjk5OTkgMTIuODVIMTEuMTQ5OVYyMUMxMS4xNDk5IDIxLjQ2OTQgMTEuNTMwNSAyMS44NSAxMS45OTk5IDIxLjg1QzEyLjQ2OTMgMjEuODUgMTIuODQ5OSAyMS40Njk0IDEyLjg0OTkgMjFWMTIuODVIMjAuOTk5OUMyMS40NjkzIDEyLjg1IDIxLjg0OTkgMTIuNDY5NCAyMS44NDk5IDEyQzIxLjg0OTkgMTEuNTMwNiAyMS40NjkzIDExLjE1IDIwLjk5OTkgMTEuMTVIMTIuODQ5OVYyLjk5OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="更多" style="width:16px;height:16px;"></div>
+        <span class="aio-placeholder">发消息</span>
+        <div class="aio-btn"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjE0OTkgNy40OTk5QzcuMTQ5OSA0LjgyMTMyIDkuMzIxMzIgMi42NDk5IDExLjk5OTkgMi42NDk5QzE0LjY3ODUgMi42NDk5IDE2Ljg0OTkgNC44MjEzMiAxNi44NDk5IDcuNDk5OUMxNi44NDk5IDEwLjE3ODUgMTQuNjc4NSAxMi4zNDk5IDExLjk5OTkgMTIuMzQ5OUM5LjMyMTMyIDEyLjM0OTkgNy4xNDk5IDEwLjE3ODUgNy4xNDk5IDcuNDk5OVpNMTEuOTk5OSA0LjM0OTlDMTAuMjYwMiA0LjM0OTkgOC44NDk5IDUuNzYwMjEgOC44NDk5IDcuNDk5OUM4Ljg0OTkgOS4yMzk2IDEwLjI2MDIgMTAuNjQ5OSAxMS45OTk5IDEwLjY0OTlDMTMuNzM5NiAxMC42NDk5IDE1LjE0OTkgOS4yMzk2IDE1LjE0OTkgNy40OTk5QzE1LjE0OTkgNS43NjAyMSAxMy43Mzk2IDQuMzQ5OSAxMS45OTk5IDQuMzQ5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE0LjAzNiAxMy42NDk5SDguOTk5OUM1Ljc2OTA0IDEzLjY0OTkgMy4xNDk5IDE2LjI2OSAzLjE0OTkgMTkuNDk5OUMzLjE0OTkgMjAuNTIxNiAzLjk3ODE4IDIxLjM0OTkgNC45OTk5IDIxLjM0OTlIMTQuMDM2QzEzLjQ4IDIwLjg4ODYgMTMuMDI1NSAyMC4zMDkxIDEyLjcxMSAxOS42NDk5SDQuOTk5OUM0LjkxNzA2IDE5LjY0OTkgNC44NDk5IDE5LjU4MjcgNC44NDk5IDE5LjQ5OTlDNC44NDk5IDE3LjIwNzkgNi43MDc5MiAxNS4zNDk5IDguOTk5OSAxNS4zNDk5SDEyLjcxMUMxMy4wMjU1IDE0LjY5MDcgMTMuNDggMTQuMTExMiAxNC4wMzYgMTMuNjQ5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNy4yMjY1IDEzLjY0OTlDMTUuMTAwMiAxMy42NDk5IDEzLjM3NjUgMTUuMzczNiAxMy4zNzY1IDE3LjQ5OTlDMTMuMzc2NSAxOS42MjYyIDE1LjEwMDIgMjEuMzQ5OSAxNy4yMjY1IDIxLjM0OTlDMTkuMzUyOCAyMS4zNDk5IDIxLjA3NjUgMTkuNjI2MiAyMS4wNzY1IDE3LjQ5OTlDMjEuMDc2NSAxNS4zNzM2IDE5LjM1MjggMTMuNjQ5OSAxNy4yMjY1IDEzLjY0OTlaTTE1LjA3NjUgMTcuNDk5OUMxNS4wNzY1IDE2LjMxMjUgMTYuMDM5MSAxNS4zNDk5IDE3LjIyNjUgMTUuMzQ5OUMxOC40MTM5IDE1LjM0OTkgMTkuMzc2NSAxNi4zMTI1IDE5LjM3NjUgMTcuNDk5OUMxOS4zNzY1IDE4LjY4NzMgMTguNDEzOSAxOS42NDk5IDE3LjIyNjUgMTkuNjQ5OUMxNi4wMzkxIDE5LjY0OTkgMTUuMDc2NSAxOC42ODczIDE1LjA3NjUgMTcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="表情" style="width:16px;height:16px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="phone-label">聊天界面</div>
+</div>
+
+<!-- ========== PAGE 3: 发现 ========== -->
+<div class="screen-wrapper">
+<div class="phone-frame" style="display:flex;flex-direction:column;background:var(--bg_bottom_standard);">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery">
+    </div>
+  </div>
+  <!-- NavBar: L0 + C1(发现) + R1 -->
+  <div class="navbar">
+    <div class="navbar-left"></div>
+    <div class="navbar-center">发现</div>
+    <div class="navbar-right">
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="搜索"></div>
+    </div>
+  </div>
+  <!-- Content -->
+  <div class="page-content" style="flex:1;">
+    <!-- Interest Tags -->
+    <div style="background:var(--bg_item);">
+      <div class="section-title">兴趣频道</div>
+      <div class="interest-tags">
+        <span class="interest-tag active-tag">推荐</span>
+        <span class="interest-tag">音乐</span>
+        <span class="interest-tag">游戏</span>
+        <span class="interest-tag">绘画</span>
+        <span class="interest-tag">运动</span>
+        <span class="interest-tag">摄影</span>
+        <span class="interest-tag">美食</span>
+        <span class="interest-tag">阅读</span>
+      </div>
+    </div>
+    <div style="height:8px;"></div>
+    <!-- Card 1 -->
+    <div class="card-container">
+      <div class="card-image" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;">🎸</div>
+      <div class="card-body">
+        <div class="card-title">周末音乐快闪活动</div>
+        <div class="card-desc">本周六下午3点，公园草坪，带上你的乐器或者热情，一起来场即兴jam！</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-footer-left">
+          <div class="card-footer-avatar"></div>
+          <span class="card-footer-name">音乐爱好者群</span>
+        </div>
+        <div class="card-footer-right">
+          <div class="card-action"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04Ljk5MjU1IDUuMzQ5NDFDNy42ODk3MiAzLjg4MzczIDUuNDM2NTQgMy43NzU3NSAzLjk5OTUzIDUuMTEwMTJDMi43MjAxOCA2LjI5ODA5IDIuNTEzMDUgOC4yNDc2NSAzLjUxNDIzIDkuNjc3OTFMMy41OTgzOSA5Ljc5ODEzQzQuMDYxODEgMTAuNDYwMiA0LjU4MjIgMTEuMDgwNCA1LjE1MzYyIDExLjY1MThMOS45MTE3NCAxNi40MUM5Ljk2MDU1IDE2LjQ1ODggMTAuMDM5NyAxNi40NTg4IDEwLjA4ODUgMTYuNDFMMTQuODQ2NiAxMS42NTE4QzE1LjQxODEgMTEuMDgwNCAxNS45Mzg0IDEwLjQ2MDIgMTYuNDAxOSA5Ljc5ODEyTDE2LjQ4NiA5LjY3NzkxQzE3LjQ4NzIgOC4yNDc2NSAxNy4yODAxIDYuMjk4MDkgMTYuMDAwNyA1LjExMDEyQzE0LjU2MzcgMy43NzU3NSAxMi4zMTA1IDMuODgzNzMgMTEuMDA3NyA1LjM0OTQxTDEwLjAwMDEgNi40ODI5M0w4Ljk5MjU1IDUuMzQ5NDFaTTEwLjAwMDEgNC4zNTE0NUM4LjE2MjE1IDIuMzQ2MTMgNS4wMzYwMyAyLjIxNDQyIDMuMDM1NTUgNC4wNzJDMS4yMzc5MSA1Ljc0MTI0IDAuOTQ2ODcgOC40ODA2MiAyLjM1MzY1IDEwLjQ5MDNMMi40Mzc4MSAxMC42MTA1QzIuOTQ4NTYgMTEuMzQwMiAzLjUyMjEgMTIuMDIzOCA0LjE1MTg5IDEyLjY1MzZMOC45MSAxNy40MTE3QzkuNTEyMDYgMTguMDEzOCAxMC40ODgyIDE4LjAxMzggMTEuMDkwMyAxNy40MTE3TDE1Ljg0ODQgMTIuNjUzNkMxNi40NzgyIDEyLjAyMzggMTcuMDUxNyAxMS4zNDAyIDE3LjU2MjQgMTAuNjEwNUwxNy42NDY2IDEwLjQ5MDNDMTkuMDUzNCA4LjQ4MDYyIDE4Ljc2MjMgNS43NDEyNCAxNi45NjQ3IDQuMDcyQzE0Ljk2NDIgMi4yMTQ0MiAxMS44MzgxIDIuMzQ2MTMgMTAuMDAwMSA0LjM1MTQ1WiIgZmlsbD0iIzNDM0M0MyIgZmlsbC1vcGFjaXR5PSIwLjc2Ii8+Cjwvc3ZnPg==" alt="喜欢"><span>128</span></div>
+          <div class="card-action"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjgxMjY1IDIuNDMzNzVDOS4zMDc2OSAxLjQ2NDggMTAuNjkyMyAxLjQ2NDc5IDExLjE4NzMgMi40MzM3NUwxMy4wOTM1IDYuMTY0NzhMMTcuMjMzOSA2LjgyMjU0QzE4LjMwOTUgNi45OTM0MSAxOC43Mzc2IDguMzExOTIgMTcuOTY3NiA5LjA4MjA4TDE1LjAwNTkgMTIuMDQ0MkwxNS42NTkgMTYuMTgwMkMxNS44Mjg4IDE3LjI1NTMgMTQuNzA4MyAxOC4wNjk5IDEzLjczOCAxNy41NzY4TDEwIDE1LjY3NzRMNi4yNjIwNCAxNy41NzY4QzUuMjkxNjcgMTguMDY5OSA0LjE3MTIzIDE3LjI1NTMgNC4zNDEgMTYuMTgwMkw0Ljk5NDA4IDEyLjA0NDJMMi4wMzI0NSA5LjA4MjA5QzEuMjYyNDEgOC4zMTE5MiAxLjY5MDU0IDYuOTkzNDEgMi43NjYxNCA2LjgyMjU0TDYuOTA2NDYgNi4xNjQ3OEw4LjgxMjY1IDIuNDMzNzVaTTEwIDMuMjIzNTNMOC4wMDQxMyA3LjEzMDA5QzcuOTAxMTUgNy4zMzE2NiA3LjcwODA0IDcuNDcxODcgNy40ODQ0OSA3LjUwNzM5TDMuMTQ5ODMgOC4xOTYwMUw2LjI1MDkxIDExLjI5NzZDNi40MTExMyAxMS40NTc5IDYuNDg1MDEgMTEuNjg1MSA2LjQ0OTY2IDExLjkwODlMNS43NjU3OSAxNi4yMzk5TDkuNjc5MTEgMTQuMjUxM0M5Ljg4MDc3IDE0LjE0ODkgMTAuMTE5MiAxNC4xNDg5IDEwLjMyMDkgMTQuMjUxM0wxNC4yMzQyIDE2LjIzOTlMMTMuNTUwMyAxMS45MDg5QzEzLjUxNSAxMS42ODUxIDEzLjU4ODkgMTEuNDU3OSAxMy43NDkxIDExLjI5NzZMMTYuODUwMiA4LjE5NjAxTDEyLjUxNTUgNy41MDczOUMxMi4yOTIgNy40NzE4NyAxMi4wOTg4IDcuMzMxNjYgMTEuOTk1OSA3LjEzMDA5TDEwIDMuMjIzNTNaIiBmaWxsPSIjM0MzQzQzIiBmaWxsLW9wYWNpdHk9IjAuNzYiLz4KPC9zdmc+" alt="收藏"><span>42</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 2 -->
+    <div class="card-container">
+      <div class="card-image" style="background:linear-gradient(135deg,#43E97B 0%,#38F9D7 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-size:48px;">🎮</div>
+      <div class="card-body">
+        <div class="card-title">新赛季开黑组队</div>
+        <div class="card-desc">新赛季刚开始，找几个靠谱的队友一起冲分！段位不限，态度端正就行～</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-footer-left">
+          <div class="card-footer-avatar" style="background:linear-gradient(135deg,#4ECDC4,#44CF6C);"></div>
+          <span class="card-footer-name">Kira</span>
+        </div>
+        <div class="card-footer-right">
+          <div class="card-action"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04Ljk5MjU1IDUuMzQ5NDFDNy42ODk3MiAzLjg4MzczIDUuNDM2NTQgMy43NzU3NSAzLjk5OTUzIDUuMTEwMTJDMi43MjAxOCA2LjI5ODA5IDIuNTEzMDUgOC4yNDc2NSAzLjUxNDIzIDkuNjc3OTFMMy41OTgzOSA5Ljc5ODEzQzQuMDYxODEgMTAuNDYwMiA0LjU4MjIgMTEuMDgwNCA1LjE1MzYyIDExLjY1MThMOS45MTE3NCAxNi40MUM5Ljk2MDU1IDE2LjQ1ODggMTAuMDM5NyAxNi40NTg4IDEwLjA4ODUgMTYuNDFMMTQuODQ2NiAxMS42NTE4QzE1LjQxODEgMTEuMDgwNCAxNS45Mzg0IDEwLjQ2MDIgMTYuNDAxOSA5Ljc5ODEyTDE2LjQ4NiA5LjY3NzkxQzE3LjQ4NzIgOC4yNDc2NSAxNy4yODAxIDYuMjk4MDkgMTYuMDAwNyA1LjExMDEyQzE0LjU2MzcgMy43NzU3NSAxMi4zMTA1IDMuODgzNzMgMTEuMDA3NyA1LjM0OTQxTDEwLjAwMDEgNi40ODI5M0w4Ljk5MjU1IDUuMzQ5NDFaTTEwLjAwMDEgNC4zNTE0NUM4LjE2MjE1IDIuMzQ2MTMgNS4wMzYwMyAyLjIxNDQyIDMuMDM1NTUgNC4wNzJDMS4yMzc5MSA1Ljc0MTI0IDAuOTQ2ODcgOC40ODA2MiAyLjM1MzY1IDEwLjQ5MDNMMi40Mzc4MSAxMC42MTA1QzIuOTQ4NTYgMTEuMzQwMiAzLjUyMjEgMTIuMDIzOCA0LjE1MTg5IDEyLjY1MzZMOC45MSAxNy40MTE3QzkuNTEyMDYgMTguMDEzOCAxMC40ODgyIDE4LjAxMzggMTEuMDkwMyAxNy40MTE3TDE1Ljg0ODQgMTIuNjUzNkMxNi40NzgyIDEyLjAyMzggMTcuMDUxNyAxMS4zNDAyIDE3LjU2MjQgMTAuNjEwNUwxNy42NDY2IDEwLjQ5MDNDMTkuMDUzNCA4LjQ4MDYyIDE4Ljc2MjMgNS43NDEyNCAxNi45NjQ3IDQuMDcyQzE0Ljk2NDIgMi4yMTQ0MiAxMS44MzgxIDIuMzQ2MTMgMTAuMDAwMSA0LjM1MTQ1WiIgZmlsbD0iIzNDM0M0MyIgZmlsbC1vcGFjaXR5PSIwLjc2Ii8+Cjwvc3ZnPg==" alt="喜欢"><span>86</span></div>
+          <div class="card-action"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjgxMjY1IDIuNDMzNzVDOS4zMDc2OSAxLjQ2NDggMTAuNjkyMyAxLjQ2NDc5IDExLjE4NzMgMi40MzM3NUwxMy4wOTM1IDYuMTY0NzhMMTcuMjMzOSA2LjgyMjU0QzE4LjMwOTUgNi45OTM0MSAxOC43Mzc2IDguMzExOTIgMTcuOTY3NiA5LjA4MjA4TDE1LjAwNTkgMTIuMDQ0MkwxNS42NTkgMTYuMTgwMkMxNS44Mjg4IDE3LjI1NTMgMTQuNzA4MyAxOC4wNjk5IDEzLjczOCAxNy41NzY4TDEwIDE1LjY3NzRMNi4yNjIwNCAxNy41NzY4QzUuMjkxNjcgMTguMDY5OSA0LjE3MTIzIDE3LjI1NTMgNC4zNDEgMTYuMTgwMkw0Ljk5NDA4IDEyLjA0NDJMMi4wMzI0NSA5LjA4MjA5QzEuMjYyNDEgOC4zMTE5MiAxLjY5MDU0IDYuOTkzNDEgMi43NjYxNCA2LjgyMjU0TDYuOTA2NDYgNi4xNjQ3OEw4LjgxMjY1IDIuNDMzNzVaTTEwIDMuMjIzNTNMOC4wMDQxMyA3LjEzMDA5QzcuOTAxMTUgNy4zMzE2NiA3LjcwODA0IDcuNDcxODcgNy40ODQ0OSA3LjUwNzM5TDMuMTQ5ODMgOC4xOTYwMUw2LjI1MDkxIDExLjI5NzZDNi40MTExMyAxMS40NTc5IDYuNDg1MDEgMTEuNjg1MSA2LjQ0OTY2IDExLjkwODlMNS43NjU3OSAxNi4yMzk5TDkuNjc5MTEgMTQuMjUxM0M5Ljg4MDc3IDE0LjE0ODkgMTAuMTE5MiAxNC4xNDg5IDEwLjMyMDkgMTQuMjUxM0wxNC4yMzQyIDE2LjIzOTlMMTMuNTUwMyAxMS45MDg5QzEzLjUxNSAxMS42ODUxIDEzLjU4ODkgMTEuNDU3OSAxMy43NDkxIDExLjI5NzZMMTYuODUwMiA4LjE5NjAxTDEyLjUxNTUgNy41MDczOUMxMi4yOTIgNy40NzE4NyAxMi4wOTg4IDcuMzMxNjYgMTEuOTk1OSA3LjEzMDA5TDEwIDMuMjIzNTNaIiBmaWxsPSIjM0MzQzQzIiBmaWxsLW9wYWNpdHk9IjAuNzYiLz4KPC9zdmc+" alt="收藏"><span>23</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="聊天" style="width:24px;height:24px;"></div><span class="tab-label">聊天</span></div>
+    <div class="tab-item active"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="发现" style="width:24px;height:24px;filter:invert(45%) sepia(98%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(101%);"></div><span class="tab-label">发现</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS4wMzQ5IDIuMTUwMzlIOC45NjQ5SDguOTY0ODlDOC4yOTQ1OSAyLjE1MDM4IDcuNzQwMzcgMi4xNTAzNyA3LjI4ODY5IDIuMTg3MjhDNi44MTkyNSAyLjIyNTYzIDYuMzg2MjIgMi4zMDgwNSA1Ljk3OTAzIDIuNTE1NTJDNS4zNDg2OSAyLjgzNjcgNC44MzYyMSAzLjM0OTE4IDQuNTE1MDMgMy45Nzk1MkM0LjMwNzU2IDQuMzg2NzEgNC4yMjUxNCA0LjgxOTczIDQuMTg2NzkgNS4yODkxOEM0LjE2NjA0IDUuNTQzMDYgNC4xNTY5NiA1LjgyOTMyIDQuMTUyOTkgNi4xNTAzOUgyLjk5OTlDMi41MzA0NiA2LjE1MDM5IDIuMTQ5OSA2LjUzMDk1IDIuMTQ5OSA3LjAwMDM5QzIuMTQ5OSA3LjQ2OTgzIDIuNTMwNDYgNy44NTAzOSAyLjk5OTkgNy44NTAzOUg0LjE0OTlWMTYuMTVIMi45OTk5QzIuNTMwNDYgMTYuMTUgMi4xNDk5IDE2LjUzMDYgMi4xNDk5IDE3QzIuMTQ5OSAxNy40Njk0IDIuNTMwNDYgMTcuODUgMi45OTk5IDE3Ljg1SDQuMTUyOThDNC4xNTY5NiAxOC4xNzEyIDQuMTY2MDQgMTguNDU3NiA0LjE4Njc5IDE4LjcxMTZDNC4yMjUxNCAxOS4xODEgNC4zMDc1NiAxOS42MTQxIDQuNTE1MDMgMjAuMDIxM0M0LjgzNjIxIDIwLjY1MTYgNS4zNDg2OSAyMS4xNjQxIDUuOTc5MDMgMjEuNDg1M0M2LjM4NjIyIDIxLjY5MjcgNi44MTkyNSAyMS43NzUyIDcuMjg4NjkgMjEuODEzNUM3Ljc0MDM5IDIxLjg1MDQgOC4yOTQ2MyAyMS44NTA0IDguOTY0OTUgMjEuODUwNEgxNS4wMzQ5QzE1LjcwNTIgMjEuODUwNCAxNi4yNTk0IDIxLjg1MDQgMTYuNzExMSAyMS44MTM1QzE3LjE4MDYgMjEuNzc1MiAxNy42MTM2IDIxLjY5MjcgMTguMDIwOCAyMS40ODUzQzE4LjY1MTEgMjEuMTY0MSAxOS4xNjM2IDIwLjY1MTYgMTkuNDg0OCAyMC4wMjEzQzE5LjY5MjIgMTkuNjE0MSAxOS43NzQ3IDE5LjE4MSAxOS44MTMgMTguNzExNkMxOS44NDk5IDE4LjI1OTkgMTkuODQ5OSAxNy43MDU3IDE5Ljg0OTkgMTcuMDM1NFY2Ljk2NTRDMTkuODQ5OSA2LjI5NTA5IDE5Ljg0OTkgNS43NDA4NiAxOS44MTMgNS4yODkxOEMxOS43NzQ3IDQuODE5NzMgMTkuNjkyMiA0LjM4NjcxIDE5LjQ4NDggMy45Nzk1MkMxOS4xNjM2IDMuMzQ5MTggMTguNjUxMSAyLjgzNjcgMTguMDIwOCAyLjUxNTUyQzE3LjYxMzYgMi4zMDgwNSAxNy4xODA2IDIuMjI1NjMgMTYuNzExMSAyLjE4NzI4QzE2LjI1OTQgMi4xNTAzNyAxNS43MDUyIDIuMTUwMzggMTUuMDM0OSAyLjE1MDM5Wk01Ljg1MzE1IDE3Ljg1QzUuODU2ODEgMTguMTM1OSA1Ljg2NDYgMTguMzcwNyA1Ljg4MTE0IDE4LjU3MzJDNS45MTA5MSAxOC45Mzc1IDUuOTY0NzMgMTkuMTIxOSA2LjAyOTc0IDE5LjI0OTVDNi4xODc5MyAxOS41NTk5IDYuNDQwMzUgMTkuODEyNCA2Ljc1MDgyIDE5Ljk3MDZDNi44Nzg0MSAyMC4wMzU2IDcuMDYyODEgMjAuMDg5NCA3LjQyNzEyIDIwLjExOTJDNy44MDEzNiAyMC4xNDk3IDguMjg1ODEgMjAuMTUwNCA4Ljk5OTkgMjAuMTUwNEgxNC45OTk5QzE1LjcxNCAyMC4xNTA0IDE2LjE5ODQgMjAuMTQ5NyAxNi41NzI3IDIwLjExOTJDMTYuOTM3IDIwLjA4OTQgMTcuMTIxNCAyMC4wMzU2IDE3LjI0OSAxOS45NzA2QzE3LjU1OTUgMTkuODEyNCAxNy44MTE5IDE5LjU1OTkgMTcuOTcwMSAxOS4yNDk1QzE4LjAzNTEgMTkuMTIxOSAxOC4wODg5IDE4LjkzNzUgMTguMTE4NyAxOC41NzMyQzE4LjE0OTIgMTguMTk4OSAxOC4xNDk5IDE3LjcxNDUgMTguMTQ5OSAxNy4wMDA0VjcuMDAwMzlDMTguMTQ5OSA2LjI4NjMgMTguMTQ5MiA1LjgwMTg1IDE4LjExODcgNS40Mjc2MUMxOC4wODg5IDUuMDYzMyAxOC4wMzUxIDQuODc4OSAxNy45NzAxIDQuNzUxMzFDMTcuODExOSA0LjQ0MDg0IDE3LjU1OTUgNC4xODg0MiAxNy4yNDkgNC4wMzAyM0MxNy4xMjE0IDMuOTY1MjIgMTYuOTM3IDMuOTExNCAxNi41NzI3IDMuODgxNjNDMTYuMTk4NCAzLjg1MTA1IDE1LjcxNCAzLjg1MDM5IDE0Ljk5OTkgMy44NTAzOUg4Ljk5OTlDOC4yODU4MSAzLjg1MDM5IDcuODAxMzYgMy44NTEwNSA3LjQyNzEyIDMuODgxNjNDNy4wNjI4MSAzLjkxMTQgNi44Nzg0MSAzLjk2NTIyIDYuNzUwODIgNC4wMzAyM0M2LjQ0MDM1IDQuMTg4NDIgNi4xODc5MyA0LjQ0MDg0IDYuMDI5NzQgNC43NTEzMUM1Ljk2NDczIDQuODc4OSA1LjkxMDkxIDUuMDYzMyA1Ljg4MTE0IDUuNDI3NjFDNS44NjQ2IDUuNjMwMDEgNS44NTY4MiA1Ljg2NDY0IDUuODUzMTUgNi4xNTAzOUg2Ljk5OTlDNy40NjkzNCA2LjE1MDM5IDcuODQ5OSA2LjUzMDk1IDcuODQ5OSA3LjAwMDM5QzcuODQ5OSA3LjQ2OTgzIDcuNDY5MzQgNy44NTAzOSA2Ljk5OTkgNy44NTAzOUg1Ljg0OTlWMTYuMTVINi45OTk5QzcuNDY5MzQgMTYuMTUgNy44NDk5IDE2LjUzMDYgNy44NDk5IDE3QzcuODQ5OSAxNy40Njk0IDcuNDY5MzQgMTcuODUgNi45OTk5IDE3Ljg1SDUuODUzMTVaTTE1Ljg0OTkgNy4wMDAzOUMxNS44NDk5IDYuNTMwOTUgMTUuNDY5MyA2LjE1MDM5IDE0Ljk5OTkgNi4xNTAzOUMxNC41MzA1IDYuMTUwMzkgMTQuMTQ5OSA2LjUzMDk1IDE0LjE0OTkgNy4wMDAzOVYxNy4wMDA0QzE0LjE0OTkgMTcuNDY5OCAxNC41MzA1IDE3Ljg1MDQgMTQuOTk5OSAxNy44NTA0QzE1LjQ2OTMgMTcuODUwNCAxNS44NDk5IDE3LjQ2OTggMTUuODQ5OSAxNy4wMDA0VjcuMDAwMzlaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="好友" style="width:24px;height:24px;"></div><span class="tab-label">好友</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03Ljg5OTkgMTAuMTA3MUM3Ljg5OTkgNy44NDI3MSA5LjczNTUzIDYuMDA3MDggMTEuOTk5OSA2LjAwNzA4QzE0LjI2NDMgNi4wMDcwOCAxNi4wOTk5IDcuODQyNzEgMTYuMDk5OSAxMC4xMDcxQzE2LjA5OTkgMTIuMzcxNCAxNC4yNjQzIDE0LjIwNzEgMTEuOTk5OSAxNC4yMDcxQzkuNzM1NTMgMTQuMjA3MSA3Ljg5OTkgMTIuMzcxNCA3Ljg5OTkgMTAuMTA3MVpNMTEuOTk5OSA3LjcwNzA4QzEwLjY3NDQgNy43MDcwOCA5LjU5OTkgOC43ODE2IDkuNTk5OSAxMC4xMDcxQzkuNTk5OSAxMS40MzI2IDEwLjY3NDQgMTIuNTA3MSAxMS45OTk5IDEyLjUwNzFDMTMuMzI1NCAxMi41MDcxIDE0LjM5OTkgMTEuNDMyNiAxNC4zOTk5IDEwLjEwNzFDMTQuMzk5OSA4Ljc4MTYgMTMuMzI1NCA3LjcwNzA4IDExLjk5OTkgNy43MDcwOFoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS45OTk5IDIuMTQ5OUM2LjU1OTkgMi4xNDk5IDIuMTQ5OSA2LjU1OTkgMi4xNDk5IDExLjk5OTlDMi4xNDk5IDE3LjQzOTkgNi41NTk5IDIxLjg0OTkgMTEuOTk5OSAyMS44NDk5QzE3LjQzOTkgMjEuODQ5OSAyMS44NDk5IDE3LjQzOTkgMjEuODQ5OSAxMS45OTk5QzIxLjg0OTkgNi41NTk5IDE3LjQzOTkgMi4xNDk5IDExLjk5OTkgMi4xNDk5Wk0zLjg0OTkgMTEuOTk5OUMzLjg0OTkgNy40OTg3OCA3LjQ5ODc4IDMuODQ5OSAxMS45OTk5IDMuODQ5OUMxNi41MDEgMy44NDk5IDIwLjE0OTkgNy40OTg3OCAyMC4xNDk5IDExLjk5OTlDMjAuMTQ5OSAxMy44NDUgMTkuNTM2OCAxNS41NDY5IDE4LjUwMzIgMTYuOTEyOUMxNy4zNDE3IDE1LjczNjMgMTUuNzI4MiAxNS4wMDcxIDEzLjk0NDMgMTUuMDA3MUgxMC4wNTU0QzguMjcxNTQgMTUuMDA3MSA2LjY1OCAxNS43MzYzIDUuNDk2NTggMTYuOTEyOEM0LjQ2MyAxNS41NDY4IDMuODQ5OSAxMy44NDQ5IDMuODQ5OSAxMS45OTk5Wk02LjY1ODgzIDE4LjE1NkM4LjA4OTIyIDE5LjM5ODEgOS45NTY3NiAyMC4xNDk5IDExLjk5OTkgMjAuMTQ5OUMxNC4wNDMgMjAuMTQ5OSAxNS45MTA1IDE5LjM5ODEgMTcuMzQwOSAxOC4xNTYxQzE2LjQ4NDUgMTcuMjYzIDE1LjI3OTMgMTYuNzA3MSAxMy45NDQzIDE2LjcwNzFIMTAuMDU1NEM4LjcyMDQgMTYuNzA3MSA3LjUxNTI2IDE3LjI2MyA2LjY1ODgzIDE4LjE1NloiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="我的" style="width:24px;height:24px;"></div><span class="tab-label">我的</span></div>
+  </div>
+</div>
+<div class="phone-label">发现</div>
+</div>
+
+<!-- ========== PAGE 4: 好友列表 ========== -->
+<div class="screen-wrapper">
+<div class="phone-frame" style="display:flex;flex-direction:column;background:var(--bg_bottom_light);">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery">
+    </div>
+  </div>
+  <!-- NavBar -->
+  <div class="navbar">
+    <div class="navbar-left"></div>
+    <div class="navbar-center">好友</div>
+    <div class="navbar-right">
+      <div class="navbar-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjE0OTkgNy40OTk5QzcuMTQ5OSA0LjgyMTMyIDkuMzIxMzIgMi42NDk5IDExLjk5OTkgMi42NDk5QzE0LjY3ODUgMi42NDk5IDE2Ljg0OTkgNC44MjEzMiAxNi44NDk5IDcuNDk5OUMxNi44NDk5IDEwLjE3ODUgMTQuNjc4NSAxMi4zNDk5IDExLjk5OTkgMTIuMzQ5OUM5LjMyMTMyIDEyLjM0OTkgNy4xNDk5IDEwLjE3ODUgNy4xNDk5IDcuNDk5OVpNMTEuOTk5OSA0LjM0OTlDMTAuMjYwMiA0LjM0OTkgOC44NDk5IDUuNzYwMjEgOC44NDk5IDcuNDk5OUM4Ljg0OTkgOS4yMzk2IDEwLjI2MDIgMTAuNjQ5OSAxMS45OTk5IDEwLjY0OTlDMTMuNzM5NiAxMC42NDk5IDE1LjE0OTkgOS4yMzk2IDE1LjE0OTkgNy40OTk5QzE1LjE0OTkgNS43NjAyMSAxMy43Mzk2IDQuMzQ5OSAxMS45OTk5IDQuMzQ5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljg1MDEgMjAuNTAwMUMxNy44NTAxIDIwLjk2OTUgMTcuNDY5NSAyMS4zNTAxIDE3LjAwMDEgMjEuMzUwMUMxNi41MzA3IDIxLjM1MDEgMTYuMTUwMSAyMC45Njk1IDE2LjE1MDEgMjAuNTAwMVYxOC4zNDk5SDEzLjk5OTlDMTMuNTMwNSAxOC4zNDk5IDEzLjE0OTkgMTcuOTY5MyAxMy4xNDk5IDE3LjQ5OTlDMTMuMTQ5OSAxNy4wMzA1IDEzLjUzMDUgMTYuNjQ5OSAxMy45OTk5IDE2LjY0OTlIMTYuMTUwMVYxNC41MDAxQzE2LjE1MDEgMTQuMDMwNyAxNi41MzA3IDEzLjY1MDEgMTcuMDAwMSAxMy42NTAxQzE3LjQ2OTUgMTMuNjUwMSAxNy44NTAxIDE0LjAzMDcgMTcuODUwMSAxNC41MDAxVjE2LjY0OTlIMTkuOTk5OUMyMC40NjkzIDE2LjY0OTkgMjAuODQ5OSAxNy4wMzA1IDIwLjg0OTkgMTcuNDk5OUMyMC44NDk5IDE3Ljk2OTMgMjAuNDY5MyAxOC4zNDk5IDE5Ljk5OTkgMTguMzQ5OUgxNy44NTAxVjIwLjUwMDFaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik05LjAwMDM5IDE1LjM0OTlDNi43MDg0MSAxNS4zNDk5IDQuODUwMzkgMTcuMjA3OSA0Ljg1MDM5IDE5LjQ5OTlDNC44NTAzOSAxOS41ODI3IDQuOTE3NTUgMTkuNjQ5OSA1LjAwMDM5IDE5LjY0OTlIMTIuMDAwNEMxMi40Njk4IDE5LjY0OTkgMTIuODUwNCAyMC4wMzA1IDEyLjg1MDQgMjAuNDk5OUMxMi44NTA0IDIwLjk2OTMgMTIuNDY5OCAyMS4zNDk5IDEyLjAwMDQgMjEuMzQ5OUg1LjAwMDM5QzMuOTc4NjYgMjEuMzQ5OSAzLjE1MDM5IDIwLjUyMTYgMy4xNTAzOSAxOS40OTk5QzMuMTUwMzkgMTYuMjY5IDUuNzY5NTIgMTMuNjQ5OSA5LjAwMDM5IDEzLjY0OTlIMTIuMDAwNEMxMi40Njk4IDEzLjY0OTkgMTIuODUwNCAxNC4wMzA1IDEyLjg1MDQgMTQuNDk5OUMxMi44NTA0IDE0Ljk2OTMgMTIuNDY5OCAxNS4zNDk5IDEyLjAwMDQgMTUuMzQ5OUg5LjAwMDM5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="添加好友"></div>
+    </div>
+  </div>
+  <!-- Search -->
+  <div class="search-bar">
+    <div class="search-box">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="搜索">
+      <span>搜索好友</span>
+    </div>
+  </div>
+  <!-- DataFilter Tabs -->
+  <div class="data-filter">
+    <div class="filter-tab active">全部</div>
+    <div class="filter-tab">在线</div>
+    <div class="filter-tab">最近互动</div>
+  </div>
+  <!-- Friend List -->
+  <div class="page-content" style="flex:1;">
+    <div style="padding:8px 16px 4px;font-size:13px;color:var(--text_secondary);">兴趣好友 · 12人</div>
+    <!-- Friend 1 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#4ECDC4,#44CF6C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎮</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">Kira</div>
+        <div class="list-subtitle" style="font-size:13px;">游戏 · 二次元</div>
+      </div>
+      <div class="list-right"><div class="online-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 2 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FF6B6B,#FF8E53);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎸</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">小星</div>
+        <div class="list-subtitle" style="font-size:13px;">音乐 · 吉他</div>
+      </div>
+      <div class="list-right"><div class="online-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 3 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#A18CD1,#FBC2EB);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎨</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">Luna</div>
+        <div class="list-subtitle" style="font-size:13px;">绘画 · 水彩</div>
+      </div>
+      <div class="list-right"><div class="online-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 4 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">📷</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">Momo</div>
+        <div class="list-subtitle" style="font-size:13px;">摄影 · 旅行</div>
+      </div>
+      <div class="list-right"><div class="offline-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 5 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FDBB2D,#F7971E);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🏃</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">阿杰</div>
+        <div class="list-subtitle" style="font-size:13px;">跑步 · 健身</div>
+      </div>
+      <div class="list-right"><div class="offline-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 6 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#89F7FE,#66A6FF);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">📚</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">知知</div>
+        <div class="list-subtitle" style="font-size:13px;">阅读 · 科幻</div>
+      </div>
+      <div class="list-right"><div class="offline-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 7 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#C471F5,#FA71CD);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🐱</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">小鱼</div>
+        <div class="list-subtitle" style="font-size:13px;">宠物 · 猫咪</div>
+      </div>
+      <div class="list-right"><div class="offline-dot"></div></div>
+      <div class="list-separator" style="left:68px;"></div>
+    </div>
+    <!-- Friend 8 -->
+    <div class="plain-list-item">
+      <div class="list-avatar-40"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#43E97B,#38F9D7);display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🍜</div></div>
+      <div class="list-content">
+        <div class="list-title" style="margin-bottom:2px;">吃货小胖</div>
+        <div class="list-subtitle" style="font-size:13px;">美食 · 探店</div>
+      </div>
+      <div class="list-right"><div class="offline-dot"></div></div>
+    </div>
+  </div>
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="聊天" style="width:24px;height:24px;"></div><span class="tab-label">聊天</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="发现" style="width:24px;height:24px;"></div><span class="tab-label">发现</span></div>
+    <div class="tab-item active"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS4wMzQ5IDIuMTUwMzlIOC45NjQ5SDguOTY0ODlDOC4yOTQ1OSAyLjE1MDM4IDcuNzQwMzcgMi4xNTAzNyA3LjI4ODY5IDIuMTg3MjhDNi44MTkyNSAyLjIyNTYzIDYuMzg2MjIgMi4zMDgwNSA1Ljk3OTAzIDIuNTE1NTJDNS4zNDg2OSAyLjgzNjcgNC44MzYyMSAzLjM0OTE4IDQuNTE1MDMgMy45Nzk1MkM0LjMwNzU2IDQuMzg2NzEgNC4yMjUxNCA0LjgxOTczIDQuMTg2NzkgNS4yODkxOEM0LjE2NjA0IDUuNTQzMDYgNC4xNTY5NiA1LjgyOTMyIDQuMTUyOTkgNi4xNTAzOUgyLjk5OTlDMi41MzA0NiA2LjE1MDM5IDIuMTQ5OSA2LjUzMDk1IDIuMTQ5OSA3LjAwMDM5QzIuMTQ5OSA3LjQ2OTgzIDIuNTMwNDYgNy44NTAzOSAyLjk5OTkgNy44NTAzOUg0LjE0OTlWMTYuMTVIMi45OTk5QzIuNTMwNDYgMTYuMTUgMi4xNDk5IDE2LjUzMDYgMi4xNDk5IDE3QzIuMTQ5OSAxNy40Njk0IDIuNTMwNDYgMTcuODUgMi45OTk5IDE3Ljg1SDQuMTUyOThDNC4xNTY5NiAxOC4xNzEyIDQuMTY2MDQgMTguNDU3NiA0LjE4Njc5IDE4LjcxMTZDNC4yMjUxNCAxOS4xODEgNC4zMDc1NiAxOS42MTQxIDQuNTE1MDMgMjAuMDIxM0M0LjgzNjIxIDIwLjY1MTYgNS4zNDg2OSAyMS4xNjQxIDUuOTc5MDMgMjEuNDg1M0M2LjM4NjIyIDIxLjY5MjcgNi44MTkyNSAyMS43NzUyIDcuMjg4NjkgMjEuODEzNUM3Ljc0MDM5IDIxLjg1MDQgOC4yOTQ2MyAyMS44NTA0IDguOTY0OTUgMjEuODUwNEgxNS4wMzQ5QzE1LjcwNTIgMjEuODUwNCAxNi4yNTk0IDIxLjg1MDQgMTYuNzExMSAyMS44MTM1QzE3LjE4MDYgMjEuNzc1MiAxNy42MTM2IDIxLjY5MjcgMTguMDIwOCAyMS40ODUzQzE4LjY1MTEgMjEuMTY0MSAxOS4xNjM2IDIwLjY1MTYgMTkuNDg0OCAyMC4wMjEzQzE5LjY5MjIgMTkuNjE0MSAxOS43NzQ3IDE5LjE4MSAxOS44MTMgMTguNzExNkMxOS44NDk5IDE4LjI1OTkgMTkuODQ5OSAxNy43MDU3IDE5Ljg0OTkgMTcuMDM1NFY2Ljk2NTRDMTkuODQ5OSA2LjI5NTA5IDE5Ljg0OTkgNS43NDA4NiAxOS44MTMgNS4yODkxOEMxOS43NzQ3IDQuODE5NzMgMTkuNjkyMiA0LjM4NjcxIDE5LjQ4NDggMy45Nzk1MkMxOS4xNjM2IDMuMzQ5MTggMTguNjUxMSAyLjgzNjcgMTguMDIwOCAyLjUxNTUyQzE3LjYxMzYgMi4zMDgwNSAxNy4xODA2IDIuMjI1NjMgMTYuNzExMSAyLjE4NzI4QzE2LjI1OTQgMi4xNTAzNyAxNS43MDUyIDIuMTUwMzggMTUuMDM0OSAyLjE1MDM5Wk01Ljg1MzE1IDE3Ljg1QzUuODU2ODEgMTguMTM1OSA1Ljg2NDYgMTguMzcwNyA1Ljg4MTE0IDE4LjU3MzJDNS45MTA5MSAxOC45Mzc1IDUuOTY0NzMgMTkuMTIxOSA2LjAyOTc0IDE5LjI0OTVDNi4xODc5MyAxOS41NTk5IDYuNDQwMzUgMTkuODEyNCA2Ljc1MDgyIDE5Ljk3MDZDNi44Nzg0MSAyMC4wMzU2IDcuMDYyODEgMjAuMDg5NCA3LjQyNzEyIDIwLjExOTJDNy44MDEzNiAyMC4xNDk3IDguMjg1ODEgMjAuMTUwNCA4Ljk5OTkgMjAuMTUwNEgxNC45OTk5QzE1LjcxNCAyMC4xNTA0IDE2LjE5ODQgMjAuMTQ5NyAxNi41NzI3IDIwLjExOTJDMTYuOTM3IDIwLjA4OTQgMTcuMTIxNCAyMC4wMzU2IDE3LjI0OSAxOS45NzA2QzE3LjU1OTUgMTkuODEyNCAxNy44MTE5IDE5LjU1OTkgMTcuOTcwMSAxOS4yNDk1QzE4LjAzNTEgMTkuMTIxOSAxOC4wODg5IDE4LjkzNzUgMTguMTE4NyAxOC41NzMyQzE4LjE0OTIgMTguMTk4OSAxOC4xNDk5IDE3LjcxNDUgMTguMTQ5OSAxNy4wMDA0VjcuMDAwMzlDMTguMTQ5OSA2LjI4NjMgMTguMTQ5MiA1LjgwMTg1IDE4LjExODcgNS40Mjc2MUMxOC4wODg5IDUuMDYzMyAxOC4wMzUxIDQuODc4OSAxNy45NzAxIDQuNzUxMzFDMTcuODExOSA0LjQ0MDg0IDE3LjU1OTUgNC4xODg0MiAxNy4yNDkgNC4wMzAyM0MxNy4xMjE0IDMuOTY1MjIgMTYuOTM3IDMuOTExNCAxNi41NzI3IDMuODgxNjNDMTYuMTk4NCAzLjg1MTA1IDE1LjcxNCAzLjg1MDM5IDE0Ljk5OTkgMy44NTAzOUg4Ljk5OTlDOC4yODU4MSAzLjg1MDM5IDcuODAxMzYgMy44NTEwNSA3LjQyNzEyIDMuODgxNjNDNy4wNjI4MSAzLjkxMTQgNi44Nzg0MSAzLjk2NTIyIDYuNzUwODIgNC4wMzAyM0M2LjQ0MDM1IDQuMTg4NDIgNi4xODc5MyA0LjQ0MDg0IDYuMDI5NzQgNC43NTEzMUM1Ljk2NDczIDQuODc4OSA1LjkxMDkxIDUuMDYzMyA1Ljg4MTE0IDUuNDI3NjFDNS44NjQ2IDUuNjMwMDEgNS44NTY4MiA1Ljg2NDY0IDUuODUzMTUgNi4xNTAzOUg2Ljk5OTlDNy40NjkzNCA2LjE1MDM5IDcuODQ5OSA2LjUzMDk1IDcuODQ5OSA3LjAwMDM5QzcuODQ5OSA3LjQ2OTgzIDcuNDY5MzQgNy44NTAzOSA2Ljk5OTkgNy44NTAzOUg1Ljg0OTlWMTYuMTVINi45OTk5QzcuNDY5MzQgMTYuMTUgNy44NDk5IDE2LjUzMDYgNy44NDk5IDE3QzcuODQ5OSAxNy40Njk0IDcuNDY5MzQgMTcuODUgNi45OTk5IDE3Ljg1SDUuODUzMTVaTTE1Ljg0OTkgNy4wMDAzOUMxNS44NDk5IDYuNTMwOTUgMTUuNDY5MyA2LjE1MDM5IDE0Ljk5OTkgNi4xNTAzOUMxNC41MzA1IDYuMTUwMzkgMTQuMTQ5OSA2LjUzMDk1IDE0LjE0OTkgNy4wMDAzOVYxNy4wMDA0QzE0LjE0OTkgMTcuNDY5OCAxNC41MzA1IDE3Ljg1MDQgMTQuOTk5OSAxNy44NTA0QzE1LjQ2OTMgMTcuODUwNCAxNS44NDk5IDE3LjQ2OTggMTUuODQ5OSAxNy4wMDA0VjcuMDAwMzlaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="好友" style="width:24px;height:24px;filter:invert(45%) sepia(98%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(101%);"></div><span class="tab-label">好友</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03Ljg5OTkgMTAuMTA3MUM3Ljg5OTkgNy44NDI3MSA5LjczNTUzIDYuMDA3MDggMTEuOTk5OSA2LjAwNzA4QzE0LjI2NDMgNi4wMDcwOCAxNi4wOTk5IDcuODQyNzEgMTYuMDk5OSAxMC4xMDcxQzE2LjA5OTkgMTIuMzcxNCAxNC4yNjQzIDE0LjIwNzEgMTEuOTk5OSAxNC4yMDcxQzkuNzM1NTMgMTQuMjA3MSA3Ljg5OTkgMTIuMzcxNCA3Ljg5OTkgMTAuMTA3MVpNMTEuOTk5OSA3LjcwNzA4QzEwLjY3NDQgNy43MDcwOCA5LjU5OTkgOC43ODE2IDkuNTk5OSAxMC4xMDcxQzkuNTk5OSAxMS40MzI2IDEwLjY3NDQgMTIuNTA3MSAxMS45OTk5IDEyLjUwNzFDMTMuMzI1NCAxMi41MDcxIDE0LjM5OTkgMTEuNDMyNiAxNC4zOTk5IDEwLjEwNzFDMTQuMzk5OSA4Ljc4MTYgMTMuMzI1NCA3LjcwNzA4IDExLjk5OTkgNy43MDcwOFoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS45OTk5IDIuMTQ5OUM2LjU1OTkgMi4xNDk5IDIuMTQ5OSA2LjU1OTkgMi4xNDk5IDExLjk5OTlDMi4xNDk5IDE3LjQzOTkgNi41NTk5IDIxLjg0OTkgMTEuOTk5OSAyMS44NDk5QzE3LjQzOTkgMjEuODQ5OSAyMS44NDk5IDE3LjQzOTkgMjEuODQ5OSAxMS45OTk5QzIxLjg0OTkgNi41NTk5IDE3LjQzOTkgMi4xNDk5IDExLjk5OTkgMi4xNDk5Wk0zLjg0OTkgMTEuOTk5OUMzLjg0OTkgNy40OTg3OCA3LjQ5ODc4IDMuODQ5OSAxMS45OTk5IDMuODQ5OUMxNi41MDEgMy44NDk5IDIwLjE0OTkgNy40OTg3OCAyMC4xNDk5IDExLjk5OTlDMjAuMTQ5OSAxMy44NDUgMTkuNTM2OCAxNS41NDY5IDE4LjUwMzIgMTYuOTEyOUMxNy4zNDE3IDE1LjczNjMgMTUuNzI4MiAxNS4wMDcxIDEzLjk0NDMgMTUuMDA3MUgxMC4wNTU0QzguMjcxNTQgMTUuMDA3MSA2LjY1OCAxNS43MzYzIDUuNDk2NTggMTYuOTEyOEM0LjQ2MyAxNS41NDY4IDMuODQ5OSAxMy44NDQ5IDMuODQ5OSAxMS45OTk5Wk02LjY1ODgzIDE4LjE1NkM4LjA4OTIyIDE5LjM5ODEgOS45NTY3NiAyMC4xNDk5IDExLjk5OTkgMjAuMTQ5OUMxNC4wNDMgMjAuMTQ5OSAxNS45MTA1IDE5LjM5ODEgMTcuMzQwOSAxOC4xNTYxQzE2LjQ4NDUgMTcuMjYzIDE1LjI3OTMgMTYuNzA3MSAxMy45NDQzIDE2LjcwNzFIMTAuMDU1NEM4LjcyMDQgMTYuNzA3MSA3LjUxNTI2IDE3LjI2MyA2LjY1ODgzIDE4LjE1NloiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="我的" style="width:24px;height:24px;"></div><span class="tab-label">我的</span></div>
+  </div>
+</div>
+<div class="phone-label">好友列表</div>
+</div>
+
+<!-- ========== PAGE 5: 我的账户 ========== -->
+<div class="screen-wrapper">
+<div class="phone-frame" style="display:flex;flex-direction:column;background:var(--bg_bottom_standard);">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-bar-time">9:41</span>
+    <div class="status-bar-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery">
+    </div>
+  </div>
+  <!-- NavBar -->
+  <div class="navbar">
+    <div class="navbar-left"></div>
+    <div class="navbar-center">我的</div>
+    <div class="navbar-right"></div>
+  </div>
+  <!-- Content -->
+  <div class="page-content" style="flex:1;">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">趣</div>
+      <div class="profile-info">
+        <div class="profile-name">趣遇用户</div>
+        <div class="profile-id">ID: QY20240001</div>
+      </div>
+      <div style="width:16px;height:16px;"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头" style="width:16px;height:16px;"></div>
+    </div>
+
+    <!-- Interest Tags -->
+    <div class="grouped-list" style="padding:12px 16px;">
+      <div style="font-size:14px;color:var(--text_secondary);margin-bottom:8px;">我的兴趣标签</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <span class="interest-tag active-tag">游戏</span>
+        <span class="interest-tag active-tag">音乐</span>
+        <span class="interest-tag active-tag">摄影</span>
+        <span class="interest-tag">+ 添加</span>
+      </div>
+    </div>
+
+    <!-- Grouped List: 功能 -->
+    <div class="grouped-list">
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjkwNjYgMTIuNzg4NEw5Ljc1NzU2IDEzLjkwNjRDOS40OTg0MyAxNC4wNDEyIDkuMTk3MDYgMTMuODIwOCA5LjI0NjkyIDEzLjUzM0w5LjY1NjE2IDExLjE3MTFMNy45MjUzOCA5LjUwMDg5QzcuNzE0MTQgOS4yOTcwNCA3LjgyOTYxIDguOTM5NDEgOC4xMjAxOCA4Ljg5NzU4TDEwLjUxNjQgOC41NTI2NUwxMS41OTA5IDYuMzk3ODlDMTEuNzIwOCA2LjEzNzM1IDEyLjA5MjYgNi4xMzczIDEyLjIyMjUgNi4zOTc4MUwxMy4yOTc4IDguNTUyNjVMMTUuNjkzMSA4Ljg5NzU1QzE1Ljk4MzcgOC45MzkzOSAxNi4wOTkxIDkuMjk3MDEgMTUuODg3OSA5LjUwMDg2TDE0LjE1NzEgMTEuMTcxMUwxNC41NjU2IDEzLjUzMzFDMTQuNjE1NCAxMy44MjA5IDE0LjMxNCAxNC4wNDEyIDE0LjA1NDkgMTMuOTA2M0wxMS45MDY2IDEyLjc4ODRaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzc1NyAyMC45NTAyTDExLjkwNjggMTguMDg4OEw2LjQzNzkgMjAuOTUwMkM1LjI4NTkyIDIxLjU1MjkgNC4xNDc0NiAyMC41ODE3IDQuMTQ3NDYgMTkuNDY1NFY4LjQzNjdDNC4xNDc0NSA3LjQ0MzI5IDQuMTQ3NDUgNi42NTE0IDQuMTk5NjggNi4wMTIxMkM0LjI1MzIyIDUuMzU2ODggNC4zNjUzOCA0Ljc5NTM5IDQuNjI3ODEgNC4yODAzNUM1LjA1MDMzIDMuNDUxMSA1LjcyNDUzIDIuNzc2OSA2LjU1Mzc5IDIuMzU0MzdDNy4wNjg4MiAyLjA5MTk1IDcuNjMwMzIgMS45Nzk3OCA4LjI4NTU1IDEuOTI2MjRDOC45MjQ4MyAxLjg3NDAxIDkuNzE2NzIgMS44NzQwMiAxMC43MTAxIDEuODc0MDJIMTMuMTAzNUMxNC4wOTY5IDEuODc0MDIgMTQuODg4OCAxLjg3NDAxIDE1LjUyOCAxLjkyNjI0QzE2LjE4MzMgMS45Nzk3OCAxNi43NDQ4IDIuMDkxOTUgMTcuMjU5OCAyLjM1NDM3QzE4LjA4OTEgMi43NzY4OSAxOC43NjMzIDMuNDUxMSAxOS4xODU4IDQuMjgwMzVDMTkuNDQ4MiA0Ljc5NTM5IDE5LjU2MDQgNS4zNTY4OCAxOS42MTM5IDYuMDEyMTFDMTkuNjY2MSA2LjY1MTQgMTkuNjY2MSA3LjQ0MzI5IDE5LjY2NjEgOC40MzY3MVYxOS40NjU0QzE5LjY2NjEgMjAuNTgxNyAxOC41Mjc3IDIxLjU1MjkgMTcuMzc1NyAyMC45NTAyWk0xMy4wNzAzIDMuMzkyNjlDMTQuMTA0NCAzLjM5MjY5IDE0LjgzNDIgMy4zOTMyOCAxNS40MDQ0IDMuNDM5ODdDMTUuOTY1NyAzLjQ4NTczIDE2LjMwNTEgMy41NzIzNSAxNi41NzAzIDMuNzA3NTFDMTcuMTEzOCAzLjk4NDQ0IDE3LjU1NTcgNC40MjYzMSAxNy44MzI2IDQuOTY5ODFDMTcuOTY3OCA1LjIzNTA3IDE4LjA1NDQgNS41NzQ0NyAxOC4xMDAzIDYuMTM1NzhDMTguMTQ2OSA2LjcwNTk2IDE4LjE0NzUgNy40MzU4IDE4LjE0NzUgOC40Njk4VjE5LjQ2NTRDMTguMTQ3NSAxOS41NDg0IDE4LjExMDkgMTkuNTg4MyAxOC4wOTE2IDE5LjYwMTdDMTguMDg4MSAxOS42MDQgMTguMDg1NCAxOS42MDU1IDE4LjA4MzQgMTkuNjA2NEwxOC4wNzk3IDE5LjYwNDZMMTEuOTA2OCAxNi4zNzQ4TDUuNzMzODYgMTkuNjA0Nkw1LjczMDE1IDE5LjYwNjRDNS43MjgyMSAxOS42MDU1IDUuNzI1NDggMTkuNjA0IDUuNzIyMDIgMTkuNjAxNkM1LjcwMjY2IDE5LjU4ODMgNS42NjYxMyAxOS41NDg0IDUuNjY2MTMgMTkuNDY1NFY4LjQ2OTgxQzUuNjY2MTMgNy40MzU4IDUuNjY2NzIgNi43MDU5NyA1LjcxMzMgNi4xMzU3OEM1Ljc1OTE3IDUuNTc0NDcgNS44NDU3OSA1LjIzNTA3IDUuOTgwOTUgNC45Njk4MUM2LjI1Nzg3IDQuNDI2MzEgNi42OTk3NSAzLjk4NDQ0IDcuMjQzMjUgMy43MDc1MUM3LjUwODUxIDMuNTcyMzUgNy44NDc5IDMuNDg1NzMgOC40MDkyMiAzLjQzOTg3QzguOTc5NCAzLjM5MzI4IDkuNzA5MjQgMy4zOTI2OSAxMC43NDMyIDMuMzkyNjlMMTMuMDcwMyAzLjM5MjY5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="收藏"></div>
+        <span class="group-item-label">我的收藏</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+      <div class="group-separator"></div>
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjgxMjY1IDIuNDMzNzVDOS4zMDc2OSAxLjQ2NDggMTAuNjkyMyAxLjQ2NDc5IDExLjE4NzMgMi40MzM3NUwxMy4wOTM1IDYuMTY0NzhMMTcuMjMzOSA2LjgyMjU0QzE4LjMwOTUgNi45OTM0MSAxOC43Mzc2IDguMzExOTIgMTcuOTY3NiA5LjA4MjA4TDE1LjAwNTkgMTIuMDQ0MkwxNS42NTkgMTYuMTgwMkMxNS44Mjg4IDE3LjI1NTMgMTQuNzA4MyAxOC4wNjk5IDEzLjczOCAxNy41NzY4TDEwIDE1LjY3NzRMNi4yNjIwNCAxNy41NzY4QzUuMjkxNjcgMTguMDY5OSA0LjE3MTIzIDE3LjI1NTMgNC4zNDEgMTYuMTgwMkw0Ljk5NDA4IDEyLjA0NDJMMi4wMzI0NSA5LjA4MjA5QzEuMjYyNDEgOC4zMTE5MiAxLjY5MDU0IDYuOTkzNDEgMi43NjYxNCA2LjgyMjU0TDYuOTA2NDYgNi4xNjQ3OEw4LjgxMjY1IDIuNDMzNzVaTTEwIDMuMjIzNTNMOC4wMDQxMyA3LjEzMDA5QzcuOTAxMTUgNy4zMzE2NiA3LjcwODA0IDcuNDcxODcgNy40ODQ0OSA3LjUwNzM5TDMuMTQ5ODMgOC4xOTYwMUw2LjI1MDkxIDExLjI5NzZDNi40MTExMyAxMS40NTc5IDYuNDg1MDEgMTEuNjg1MSA2LjQ0OTY2IDExLjkwODlMNS43NjU3OSAxNi4yMzk5TDkuNjc5MTEgMTQuMjUxM0M5Ljg4MDc3IDE0LjE0ODkgMTAuMTE5MiAxNC4xNDg5IDEwLjMyMDkgMTQuMjUxM0wxNC4yMzQyIDE2LjIzOTlMMTMuNTUwMyAxMS45MDg5QzEzLjUxNSAxMS42ODUxIDEzLjU4ODkgMTEuNDU3OSAxMy43NDkxIDExLjI5NzZMMTYuODUwMiA4LjE5NjAxTDEyLjUxNTUgNy41MDczOUMxMi4yOTIgNy40NzE4NyAxMi4wOTg4IDcuMzMxNjYgMTEuOTk1OSA3LjEzMDA5TDEwIDMuMjIzNTNaIiBmaWxsPSIjM0MzQzQzIiBmaWxsLW9wYWNpdHk9IjAuNzYiLz4KPC9zdmc+" alt="关注" style="width:24px;height:24px;"></div>
+        <span class="group-item-label">我的关注</span>
+        <span class="group-item-value">18</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+      <div class="group-separator"></div>
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="动态"></div>
+        <span class="group-item-label">我的动态</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+    </div>
+
+    <!-- Grouped List: 设置 -->
+    <div class="grouped-list">
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTcuMDAwOSAxNS44NTQyTDExLjUwMDkgMTUuODUwMUMxMS45NzAzIDE1Ljg0OTcgMTIuMzUwNiAxNS40Njg4IDEyLjM1MDEgMTQuOTk5M0MxMi4zNDk3IDE0LjUyOTkgMTEuOTY4OCAxNC4xNDk3IDExLjQ5OTMgMTQuMTUwMUw2Ljk5OTM0IDE0LjE1NDJDNi41Mjk5IDE0LjE1NDcgNi4xNDk2OSAxNC41MzU2IDYuMTUwMTIgMTUuMDA1QzYuMTUwNTUgMTUuNDc0NSA2LjUzMTQ2IDE1Ljg1NDcgNy4wMDA5IDE1Ljg1NDJaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik02LjE1NDAyIDExLjAwNjNDNi4xNTM3MyAxMC41MzY5IDYuNTM0MDYgMTAuMTU2MSA3LjAwMzUgMTAuMTU1OEwxNC45OTkxIDEwLjE1MDlDMTUuNDY4NSAxMC4xNTA2IDE1Ljg0OTMgMTAuNTMwOSAxNS44NDk2IDExLjAwMDRDMTUuODQ5OSAxMS40Njk4IDE1LjQ2OTYgMTEuODUwNiAxNS4wMDAxIDExLjg1MDlMNy4wMDQ1NCAxMS44NTU4QzYuNTM1MSAxMS44NTYxIDYuMTU0MzEgMTEuNDc1NyA2LjE1NDAyIDExLjAwNjNaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzI2NiA2LjE1MDYzSDE3LjUzNDlDMTguMjA1MiA2LjE1MDYyIDE4Ljc1OTQgNi4xNTA2MSAxOS4yMTExIDYuMTg3NTJDMTkuNjgwNiA2LjIyNTg3IDIwLjExMzYgNi4zMDgyOSAyMC41MjA4IDYuNTE1NzZDMjEuMTUxMSA2LjgzNjk0IDIxLjY2MzYgNy4zNDk0MiAyMS45ODQ4IDcuOTc5NzdDMjIuMTkyMiA4LjM4Njk1IDIyLjI3NDcgOC44MTk5OCAyMi4zMTMgOS4yODk0MkMyMi4zNDk5IDkuNzQxMSAyMi4zNDk5IDEwLjI5NTMgMjIuMzQ5OSAxMC45NjU2VjE2LjAzNTdDMjIuMzQ5OSAxNi43MDYgMjIuMzQ5OSAxNy4yNjAyIDIyLjMxMyAxNy43MTE4QzIyLjI3NDcgMTguMTgxMyAyMi4xOTIyIDE4LjYxNDMgMjEuOTg0OCAxOS4wMjE1QzIxLjY2MzYgMTkuNjUxOCAyMS4xNTExIDIwLjE2NDMgMjAuNTIwOCAyMC40ODU1QzIwLjExMzYgMjAuNjkzIDE5LjY4MDYgMjAuNzc1NCAxOS4yMTExIDIwLjgxMzdDMTguNzU5NCAyMC44NTA3IDE4LjIwNTIgMjAuODUwNiAxNy41MzQ5IDIwLjg1MDZINi40NjQ5MUM1Ljc5NDYgMjAuODUwNiA1LjI0MDM4IDIwLjg1MDcgNC43ODg2OSAyMC44MTM3QzQuMzE5MjUgMjAuNzc1NCAzLjg4NjIyIDIwLjY5MyAzLjQ3OTA0IDIwLjQ4NTVDMi44NDg2OSAyMC4xNjQzIDIuMzM2MjEgMTkuNjUxOCAyLjAxNTAzIDE5LjAyMTVDMS44MDc1NiAxOC42MTQzIDEuNzI1MTQgMTguMTgxMyAxLjY4Njc5IDE3LjcxMThDMS42NDk4OCAxNy4yNjAyIDEuNjQ5ODkgMTYuNzA2IDEuNjQ5OSAxNi4wMzU3VjEwLjk2NTZDMS42NDk4OSAxMC4yOTUzIDEuNjQ5ODggOS43NDExIDEuNjg2NzkgOS4yODk0MkMxLjcyNTE0IDguODE5OTggMS44MDc1NiA4LjM4Njk1IDIuMDE1MDMgNy45Nzk3N0MyLjMzNjIxIDcuMzQ5NDIgMi44NDg2OSA2LjgzNjk0IDMuNDc5MDQgNi41MTU3NkMzLjg4NjIyIDYuMzA4MjkgNC4zMTkyNSA2LjIyNTg3IDQuNzg4NjkgNi4xODc1MkM1LjI0MDM3IDYuMTUwNjEgNS43OTQ1OCA2LjE1MDYyIDYuNDY0ODcgNi4xNTA2M0g2LjY3MzM1TDEwLjc2MjQgMi40NzA1MUMxMS40NjU5IDEuODM3MyAxMi41MzQgMS44MzczIDEzLjIzNzUgMi40NzA1MUwxNy4zMjY2IDYuMTUwNjNaTTkuMjE0NTkgNi4xNTA2M0gxNC43ODUzTDEyLjEwMDMgMy43MzQxMUMxMi4wNDMzIDMuNjgyNzcgMTEuOTU2NyAzLjY4Mjc3IDExLjg5OTYgMy43MzQxMUw5LjIxNDU5IDYuMTUwNjNaTTQuMjUwODIgOC4wMzA0N0M0LjM3ODQxIDcuOTY1NDYgNC41NjI4MSA3LjkxMTY0IDQuOTI3MTMgNy44ODE4N0M1LjMwMTM2IDcuODUxMyA1Ljc4NTgxIDcuODUwNjMgNi40OTk5IDcuODUwNjNIMTcuNDk5OUMxOC4yMTQgNy44NTA2MyAxOC42OTg0IDcuODUxMyAxOS4wNzI3IDcuODgxODdDMTkuNDM3IDcuOTExNjQgMTkuNjIxNCA3Ljk2NTQ2IDE5Ljc0OSA4LjAzMDQ3QzIwLjA1OTUgOC4xODg2NiAyMC4zMTE5IDguNDQxMDggMjAuNDcwMSA4Ljc1MTU1QzIwLjUzNTEgOC44NzkxNCAyMC41ODg5IDkuMDYzNTQgMjAuNjE4NyA5LjQyNzg2QzIwLjY0OTIgOS44MDIwOSAyMC42NDk5IDEwLjI4NjUgMjAuNjQ5OSAxMS4wMDA2VjE2LjAwMDZDMjAuNjQ5OSAxNi43MTQ3IDIwLjY0OTIgMTcuMTk5MiAyMC42MTg3IDE3LjU3MzRDMjAuNTg4OSAxNy45Mzc3IDIwLjUzNTEgMTguMTIyMSAyMC40NzAxIDE4LjI0OTdDMjAuMzExOSAxOC41NjAyIDIwLjA1OTUgMTguODEyNiAxOS43NDkgMTguOTcwOEMxOS42MjE0IDE5LjAzNTggMTkuNDM3IDE5LjA4OTYgMTkuMDcyNyAxOS4xMTk0QzE4LjY5ODQgMTkuMTUgMTguMjE0IDE5LjE1MDYgMTcuNDk5OSAxOS4xNTA2SDYuNDk5OUM1Ljc4NTgxIDE5LjE1MDYgNS4zMDEzNiAxOS4xNSA0LjkyNzEzIDE5LjExOTRDNC41NjI4MSAxOS4wODk2IDQuMzc4NDEgMTkuMDM1OCA0LjI1MDgyIDE4Ljk3MDhDMy45NDAzNSAxOC44MTI2IDMuNjg3OTMgMTguNTYwMiAzLjUyOTc0IDE4LjI0OTdDMy40NjQ3MyAxOC4xMjIxIDMuNDEwOTEgMTcuOTM3NyAzLjM4MTE0IDE3LjU3MzRDMy4zNTA1NiAxNy4xOTkyIDMuMzQ5OSAxNi43MTQ3IDMuMzQ5OSAxNi4wMDA2VjExLjAwMDZDMy4zNDk5IDEwLjI4NjUgMy4zNTA1NiA5LjgwMjA5IDMuMzgxMTQgOS40Mjc4NkMzLjQxMDkxIDkuMDYzNTQgMy40NjQ3MyA4Ljg3OTE0IDMuNTI5NzQgOC43NTE1NUMzLjY4NzkzIDguNDQxMDggMy45NDAzNSA4LjE4ODY2IDQuMjUwODIgOC4wMzA0N1oiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="通知"></div>
+        <span class="group-item-label">消息通知</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+      <div class="group-separator"></div>
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS45OTk4IDcuMTUwMzlDOS4zMjEyIDcuMTUwMzkgNy4xNDk3OCA5LjMyMTgxIDcuMTQ5NzggMTIuMDAwNEM3LjE0OTc4IDE0LjY3OSA5LjMyMTIgMTYuODUwNCAxMS45OTk4IDE2Ljg1MDRDMTQuNjc4NCAxNi44NTA0IDE2Ljg0OTggMTQuNjc5IDE2Ljg0OTggMTIuMDAwNEMxNi44NDk4IDkuMzIxODEgMTQuNjc4NCA3LjE1MDM5IDExLjk5OTggNy4xNTAzOVpNOC44NDk3OCAxMi4wMDA0QzguODQ5NzggMTAuMjYwNyAxMC4yNjAxIDguODUwMzkgMTEuOTk5OCA4Ljg1MDM5QzEzLjczOTUgOC44NTAzOSAxNS4xNDk4IDEwLjI2MDcgMTUuMTQ5OCAxMi4wMDA0QzE1LjE0OTggMTMuNzQwMSAxMy43Mzk1IDE1LjE1MDQgMTEuOTk5OCAxNS4xNTA0QzEwLjI2MDEgMTUuMTUwNCA4Ljg0OTc4IDEzLjc0MDEgOC44NDk3OCAxMi4wMDA0WiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTkuMjg2NTEgMi41NzgxMkM4LjI0MzkgMi41NzgxMiA3LjI3NjQzIDMuMTIwNzIgNi43MzI3NiA0LjAxMDM2TDYuMDM2NTkgNS4xNDk1NUg1LjIyNzU4QzMuMzM3OTggNS4xNDk1NSAxLjgwNjE1IDYuNjgxMzggMS44MDYxNSA4LjU3MDk4VjE3LjE0MjRDMS44MDYxNSAxOS4wMzIgMy4zMzc5OCAyMC41NjM4IDUuMjI3NTggMjAuNTYzOEgxOC45NDE5QzIwLjgzMTUgMjAuNTYzOCAyMi4zNjMzIDE5LjAzMiAyMi4zNjMzIDE3LjE0MjRWOC41NzA5OEMyMi4zNjMzIDYuNjgxMzggMjAuODMxNSA1LjE0OTU1IDE4Ljk0MTkgNS4xNDk1NUgxOC4xMzI5TDE3LjQzNjcgNC4wMTAzNkMxNi44OTMgMy4xMjA3MiAxNS45MjU1IDIuNTc4MTIgMTQuODgyOSAyLjU3ODEySDkuMjg2NTFaTTguMTgzMzQgNC44OTY4MkM4LjQxODIgNC41MTI1MSA4LjgzNjEyIDQuMjc4MTMgOS4yODY1MSA0LjI3ODEzSDE0Ljg4MjlDMTUuMzMzMyA0LjI3ODEzIDE1Ljc1MTMgNC41MTI1MSAxNS45ODYxIDQuODk2ODJMMTYuOTMwOSA2LjQ0Mjc5QzE3LjA4NTMgNi42OTU0NSAxNy4zNiA2Ljg0OTU1IDE3LjY1NjIgNi44NDk1NUgxOC45NDE5QzE5Ljg5MjYgNi44NDk1NSAyMC42NjMzIDcuNjIwMjYgMjAuNjYzMyA4LjU3MDk4VjE3LjE0MjRDMjAuNjYzMyAxOC4wOTMxIDE5Ljg5MjYgMTguODYzOCAxOC45NDE5IDE4Ljg2MzhINS4yMjc1OEM0LjI3Njg2IDE4Ljg2MzggMy41MDYxNSAxOC4wOTMxIDMuNTA2MTUgMTcuMTQyNFY4LjU3MDk4QzMuNTA2MTUgNy42MjAyNiA0LjI3Njg2IDYuODQ5NTUgNS4yMjc1OCA2Ljg0OTU1SDYuNTEzM0M2LjgwOTQxIDYuODQ5NTUgNy4wODQxOCA2LjY5NTQ1IDcuMjM4NTggNi40NDI3OUw4LjE4MzM0IDQuODk2ODJaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="隐私"></div>
+        <span class="group-item-label">隐私设置</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+      <div class="group-separator"></div>
+      <div class="group-item">
+        <div class="group-item-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjg0OTkgMTIuMDAwNEMzLjg0OTkgNy40OTkyNyA3LjQ5ODc4IDMuODUwMzkgMTEuOTk5OSAzLjg1MDM5QzE2LjUwMSAzLjg1MDM5IDIwLjE0OTkgNy40OTkyNyAyMC4xNDk5IDEyLjAwMDRDMjAuMTQ5OSAxNi41MDE1IDE2LjUwMSAyMC4xNTA0IDExLjk5OTkgMjAuMTUwNEM3LjQ5ODc4IDIwLjE1MDQgMy44NDk5IDE2LjUwMTUgMy44NDk5IDEyLjAwMDRaTTExLjk5OTkgMi4xNTAzOUM2LjU1OTkgMi4xNTAzOSAyLjE0OTkgNi41NjAzOSAyLjE0OTkgMTIuMDAwNEMyLjE0OTkgMTcuNDQwNCA2LjU1OTkgMjEuODUwNCAxMS45OTk5IDIxLjg1MDRDMTcuNDM5OSAyMS44NTA0IDIxLjg0OTkgMTcuNDQwNCAyMS44NDk5IDEyLjAwMDRDMjEuODQ5OSA2LjU2MDM5IDE3LjQzOTkgMi4xNTAzOSAxMS45OTk5IDIuMTUwMzlaTTExLjk5OTkgNi42NTAzOUMxMi40NjkzIDYuNjUwMzkgMTIuODQ5OSA3LjAzMDk1IDEyLjg0OTkgNy41MDAzOVYxMS4xNTA0SDE2LjQ5OTlDMTYuOTY5MyAxMS4xNTA0IDE3LjM0OTkgMTEuNTMwOSAxNy4zNDk5IDEyLjAwMDRDMTcuMzQ5OSAxMi40Njk4IDE2Ljk2OTMgMTIuODUwNCAxNi40OTk5IDEyLjg1MDRIMTIuODQ5OVYxNi41MDA0QzEyLjg0OTkgMTYuOTY5OCAxMi40NjkzIDE3LjM1MDQgMTEuOTk5OSAxNy4zNTA0QzExLjUzMDUgMTcuMzUwNCAxMS4xNDk5IDE2Ljk2OTggMTEuMTQ5OSAxNi41MDA0VjEyLjg1MDRINy40OTk5QzcuMDMwNDYgMTIuODUwNCA2LjY0OTkgMTIuNDY5OCA2LjY0OTkgMTIuMDAwNEM2LjY0OTkgMTEuNTMwOSA3LjAzMDQ2IDExLjE1MDQgNy40OTk5IDExLjE1MDRIMTEuMTQ5OVY3LjUwMDM5QzExLjE0OTkgNy4wMzA5NSAxMS41MzA1IDYuNjUwMzkgMTEuOTk5OSA2LjY1MDM5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="关于"></div>
+        <span class="group-item-label">关于趣遇</span>
+        <span class="group-item-value">v1.0.0</span>
+        <div class="group-item-arrow"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="箭头"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="聊天" style="width:24px;height:24px;"></div><span class="tab-label">聊天</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="发现" style="width:24px;height:24px;"></div><span class="tab-label">发现</span></div>
+    <div class="tab-item"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS4wMzQ5IDIuMTUwMzlIOC45NjQ5SDguOTY0ODlDOC4yOTQ1OSAyLjE1MDM4IDcuNzQwMzcgMi4xNTAzNyA3LjI4ODY5IDIuMTg3MjhDNi44MTkyNSAyLjIyNTYzIDYuMzg2MjIgMi4zMDgwNSA1Ljk3OTAzIDIuNTE1NTJDNS4zNDg2OSAyLjgzNjcgNC44MzYyMSAzLjM0OTE4IDQuNTE1MDMgMy45Nzk1MkM0LjMwNzU2IDQuMzg2NzEgNC4yMjUxNCA0LjgxOTczIDQuMTg2NzkgNS4yODkxOEM0LjE2NjA0IDUuNTQzMDYgNC4xNTY5NiA1LjgyOTMyIDQuMTUyOTkgNi4xNTAzOUgyLjk5OTlDMi41MzA0NiA2LjE1MDM5IDIuMTQ5OSA2LjUzMDk1IDIuMTQ5OSA3LjAwMDM5QzIuMTQ5OSA3LjQ2OTgzIDIuNTMwNDYgNy44NTAzOSAyLjk5OTkgNy44NTAzOUg0LjE0OTlWMTYuMTVIMi45OTk5QzIuNTMwNDYgMTYuMTUgMi4xNDk5IDE2LjUzMDYgMi4xNDk5IDE3QzIuMTQ5OSAxNy40Njk0IDIuNTMwNDYgMTcuODUgMi45OTk5IDE3Ljg1SDQuMTUyOThDNC4xNTY5NiAxOC4xNzEyIDQuMTY2MDQgMTguNDU3NiA0LjE4Njc5IDE4LjcxMTZDNC4yMjUxNCAxOS4xODEgNC4zMDc1NiAxOS42MTQxIDQuNTE1MDMgMjAuMDIxM0M0LjgzNjIxIDIwLjY1MTYgNS4zNDg2OSAyMS4xNjQxIDUuOTc5MDMgMjEuNDg1M0M2LjM4NjIyIDIxLjY5MjcgNi44MTkyNSAyMS43NzUyIDcuMjg4NjkgMjEuODEzNUM3Ljc0MDM5IDIxLjg1MDQgOC4yOTQ2MyAyMS44NTA0IDguOTY0OTUgMjEuODUwNEgxNS4wMzQ5QzE1LjcwNTIgMjEuODUwNCAxNi4yNTk0IDIxLjg1MDQgMTYuNzExMSAyMS44MTM1QzE3LjE4MDYgMjEuNzc1MiAxNy42MTM2IDIxLjY5MjcgMTguMDIwOCAyMS40ODUzQzE4LjY1MTEgMjEuMTY0MSAxOS4xNjM2IDIwLjY1MTYgMTkuNDg0OCAyMC4wMjEzQzE5LjY5MjIgMTkuNjE0MSAxOS43NzQ3IDE5LjE4MSAxOS44MTMgMTguNzExNkMxOS44NDk5IDE4LjI1OTkgMTkuODQ5OSAxNy43MDU3IDE5Ljg0OTkgMTcuMDM1NFY2Ljk2NTRDMTkuODQ5OSA2LjI5NTA5IDE5Ljg0OTkgNS43NDA4NiAxOS44MTMgNS4yODkxOEMxOS43NzQ3IDQuODE5NzMgMTkuNjkyMiA0LjM4NjcxIDE5LjQ4NDggMy45Nzk1MkMxOS4xNjM2IDMuMzQ5MTggMTguNjUxMSAyLjgzNjcgMTguMDIwOCAyLjUxNTUyQzE3LjYxMzYgMi4zMDgwNSAxNy4xODA2IDIuMjI1NjMgMTYuNzExMSAyLjE4NzI4QzE2LjI1OTQgMi4xNTAzNyAxNS43MDUyIDIuMTUwMzggMTUuMDM0OSAyLjE1MDM5Wk01Ljg1MzE1IDE3Ljg1QzUuODU2ODEgMTguMTM1OSA1Ljg2NDYgMTguMzcwNyA1Ljg4MTE0IDE4LjU3MzJDNS45MTA5MSAxOC45Mzc1IDUuOTY0NzMgMTkuMTIxOSA2LjAyOTc0IDE5LjI0OTVDNi4xODc5MyAxOS41NTk5IDYuNDQwMzUgMTkuODEyNCA2Ljc1MDgyIDE5Ljk3MDZDNi44Nzg0MSAyMC4wMzU2IDcuMDYyODEgMjAuMDg5NCA3LjQyNzEyIDIwLjExOTJDNy44MDEzNiAyMC4xNDk3IDguMjg1ODEgMjAuMTUwNCA4Ljk5OTkgMjAuMTUwNEgxNC45OTk5QzE1LjcxNCAyMC4xNTA0IDE2LjE5ODQgMjAuMTQ5NyAxNi41NzI3IDIwLjExOTJDMTYuOTM3IDIwLjA4OTQgMTcuMTIxNCAyMC4wMzU2IDE3LjI0OSAxOS45NzA2QzE3LjU1OTUgMTkuODEyNCAxNy44MTE5IDE5LjU1OTkgMTcuOTcwMSAxOS4yNDk1QzE4LjAzNTEgMTkuMTIxOSAxOC4wODg5IDE4LjkzNzUgMTguMTE4NyAxOC41NzMyQzE4LjE0OTIgMTguMTk4OSAxOC4xNDk5IDE3LjcxNDUgMTguMTQ5OSAxNy4wMDA0VjcuMDAwMzlDMTguMTQ5OSA2LjI4NjMgMTguMTQ5MiA1LjgwMTg1IDE4LjExODcgNS40Mjc2MUMxOC4wODg5IDUuMDYzMyAxOC4wMzUxIDQuODc4OSAxNy45NzAxIDQuNzUxMzFDMTcuODExOSA0LjQ0MDg0IDE3LjU1OTUgNC4xODg0MiAxNy4yNDkgNC4wMzAyM0MxNy4xMjE0IDMuOTY1MjIgMTYuOTM3IDMuOTExNCAxNi41NzI3IDMuODgxNjNDMTYuMTk4NCAzLjg1MTA1IDE1LjcxNCAzLjg1MDM5IDE0Ljk5OTkgMy44NTAzOUg4Ljk5OTlDOC4yODU4MSAzLjg1MDM5IDcuODAxMzYgMy44NTEwNSA3LjQyNzEyIDMuODgxNjNDNy4wNjI4MSAzLjkxMTQgNi44Nzg0MSAzLjk2NTIyIDYuNzUwODIgNC4wMzAyM0M2LjQ0MDM1IDQuMTg4NDIgNi4xODc5MyA0LjQ0MDg0IDYuMDI5NzQgNC43NTEzMUM1Ljk2NDczIDQuODc4OSA1LjkxMDkxIDUuMDYzMyA1Ljg4MTE0IDUuNDI3NjFDNS44NjQ2IDUuNjMwMDEgNS44NTY4MiA1Ljg2NDY0IDUuODUzMTUgNi4xNTAzOUg2Ljk5OTlDNy40NjkzNCA2LjE1MDM5IDcuODQ5OSA2LjUzMDk1IDcuODQ5OSA3LjAwMDM5QzcuODQ5OSA3LjQ2OTgzIDcuNDY5MzQgNy44NTAzOSA2Ljk5OTkgNy44NTAzOUg1Ljg0OTlWMTYuMTVINi45OTk5QzcuNDY5MzQgMTYuMTUgNy44NDk5IDE2LjUzMDYgNy44NDk5IDE3QzcuODQ5OSAxNy40Njk0IDcuNDY5MzQgMTcuODUgNi45OTk5IDE3Ljg1SDUuODUzMTVaTTE1Ljg0OTkgNy4wMDAzOUMxNS44NDk5IDYuNTMwOTUgMTUuNDY5MyA2LjE1MDM5IDE0Ljk5OTkgNi4xNTAzOUMxNC41MzA1IDYuMTUwMzkgMTQuMTQ5OSA2LjUzMDk1IDE0LjE0OTkgNy4wMDAzOVYxNy4wMDA0QzE0LjE0OTkgMTcuNDY5OCAxNC41MzA1IDE3Ljg1MDQgMTQuOTk5OSAxNy44NTA0QzE1LjQ2OTMgMTcuODUwNCAxNS44NDk5IDE3LjQ2OTggMTUuODQ5OSAxNy4wMDA0VjcuMDAwMzlaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt="好友" style="width:24px;height:24px;"></div><span class="tab-label">好友</span></div>
+    <div class="tab-item active"><div class="tab-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03Ljg5OTkgMTAuMTA3MUM3Ljg5OTkgNy44NDI3MSA5LjczNTUzIDYuMDA3MDggMTEuOTk5OSA2LjAwNzA4QzE0LjI2NDMgNi4wMDcwOCAxNi4wOTk5IDcuODQyNzEgMTYuMDk5OSAxMC4xMDcxQzE2LjA5OTkgMTIuMzcxNCAxNC4yNjQzIDE0LjIwNzEgMTEuOTk5OSAxNC4yMDcxQzkuNzM1NTMgMTQuMjA3MSA3Ljg5OTkgMTIuMzcxNCA3Ljg5OTkgMTAuMTA3MVpNMTEuOTk5OSA3LjcwNzA4QzEwLjY3NDQgNy43MDcwOCA5LjU5OTkgOC43ODE2IDkuNTk5OSAxMC4xMDcxQzkuNTk5OSAxMS40MzI2IDEwLjY3NDQgMTIuNTA3MSAxMS45OTk5IDEyLjUwNzFDMTMuMzI1NCAxMi41MDcxIDE0LjM5OTkgMTEuNDMyNiAxNC4zOTk5IDEwLjEwNzFDMTQuMzk5OSA4Ljc4MTYgMTMuMzI1NCA3LjcwNzA4IDExLjk5OTkgNy43MDcwOFoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMS45OTk5IDIuMTQ5OUM2LjU1OTkgMi4xNDk5IDIuMTQ5OSA2LjU1OTkgMi4xNDk5IDExLjk5OTlDMi4xNDk5IDE3LjQzOTkgNi41NTk5IDIxLjg0OTkgMTEuOTk5OSAyMS44NDk5QzE3LjQzOTkgMjEuODQ5OSAyMS44NDk5IDE3LjQzOTkgMjEuODQ5OSAxMS45OTk5QzIxLjg0OTkgNi41NTk5IDE3LjQzOTkgMi4xNDk5IDExLjk5OTkgMi4xNDk5Wk0zLjg0OTkgMTEuOTk5OUMzLjg0OTkgNy40OTg3OCA3LjQ5ODc4IDMuODQ5OSAxMS45OTk5IDMuODQ5OUMxNi41MDEgMy44NDk5IDIwLjE0OTkgNy40OTg3OCAyMC4xNDk5IDExLjk5OTlDMjAuMTQ5OSAxMy44NDUgMTkuNTM2OCAxNS41NDY5IDE4LjUwMzIgMTYuOTEyOUMxNy4zNDE3IDE1LjczNjMgMTUuNzI4MiAxNS4wMDcxIDEzLjk0NDMgMTUuMDA3MUgxMC4wNTU0QzguMjcxNTQgMTUuMDA3MSA2LjY1OCAxNS43MzYzIDUuNDk2NTggMTYuOTEyOEM0LjQ2MyAxNS41NDY4IDMuODQ5OSAxMy44NDQ5IDMuODQ5OSAxMS45OTk5Wk02LjY1ODgzIDE4LjE1NkM4LjA4OTIyIDE5LjM5ODEgOS45NTY3NiAyMC4xNDk5IDExLjk5OTkgMjAuMTQ5OUMxNC4wNDMgMjAuMTQ5OSAxNS45MTA1IDE5LjM5ODEgMTcuMzQwOSAxOC4xNTYxQzE2LjQ4NDUgMTcuMjYzIDE1LjI3OTMgMTYuNzA3MSAxMy45NDQzIDE2LjcwNzFIMTAuMDU1NEM4LjcyMDQgMTYuNzA3MSA3LjUxNTI2IDE3LjI2MyA2LjY1ODgzIDE4LjE1NloiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="我的" style="width:24px;height:24px;filter:invert(45%) sepia(98%) saturate(2000%) hue-rotate(190deg) brightness(100%) contrast(101%);"></div><span class="tab-label">我的</span></div>
+  </div>
+</div>
+<div class="phone-label">我的账户</div>
+</div>
+
+</body>
+</html>

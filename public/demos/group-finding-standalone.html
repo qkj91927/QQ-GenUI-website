@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="qq-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找群</title>
+<style>
+/* ========== QQ Color Tokens (qq-light) ========== */
+[data-theme="qq-light"] {
+  --color-brand-standard: #0099ff;
+  --color-text-primary: rgba(0, 0, 0, 0.90);
+  --color-text-secondary: rgba(60, 60, 67, 0.76);
+  --color-text-tertiary: rgba(60, 60, 67, 0.56);
+  --color-text-link: #214CA5;
+  --color-icon-primary: rgba(0, 0, 0, 0.90);
+  --color-icon-secondary: rgba(60, 60, 67, 0.56);
+  --color-bg-page: #F0F0F2;
+  --color-bg-item: #FFFFFF;
+  --color-fill-standard-primary: rgba(13, 16, 49, 0.04);
+  --color-border-standard: rgba(0, 0, 0, 0.10);
+  --color-separator: rgba(0, 0, 0, 0.08);
+  --color-overlay-dialog: rgba(0, 0, 0, 0.40);
+  --color-feedback-error: #FA5151;
+  --qq-bg-nav-primary: #FFFFFF;
+  --qq-button-bg-primary-default: #0099FF;
+  --qq-button-text-primary-default: #FFFFFF;
+  --qq-button-bg-secondary-default: rgba(116, 116, 128, 0.08);
+  --qq-button-text-secondary-default: rgba(0, 0, 0, 0.90);
+}
+
+/* ========== Global Tokens ========== */
+:root {
+  --device-width: 428px;
+  --device-height: 926px;
+  --statusbar-height: 54px;
+  --navbar-height: 44px;
+  --homebar-height: 34px;
+  --font-family: 'PingFang SC', -apple-system, 'Helvetica Neue', sans-serif;
+  --spacing-grid-unit: 4px;
+  --spacing-page-padding: 16px;
+  --spacing-b1: 4px;
+  --spacing-b2: 8px;
+  --spacing-b3: 12px;
+  --spacing-b4: 16px;
+  --spacing-b5: 24px;
+  --spacing-b6: 32px;
+  --radius-button: 14px;
+  --radius-button-pill: 9999px;
+  --radius-dialog: 14px;
+  --radius-input: 12px;
+  --radius-segment: 6px;
+  --radius-thumb-s: 4px;
+  --radius-thumb-m: 8px;
+  --radius-thumb-l: 16px;
+  --shadow-dialog: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* ========== Reset ========== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ========== Device Frame ========== */
+.device-frame {
+  width: var(--device-width);
+  height: var(--device-height);
+  background: var(--color-bg-page);
+  font-family: var(--font-family);
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+/* ========== Status Bar ========== */
+.status-bar {
+  width: 428px;
+  height: 54px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 16px 8px;
+  background: var(--qq-bg-nav-primary);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.status-bar .time {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1;
+}
+.status-bar .status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ========== NavBar ========== */
+.navbar {
+  width: 428px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background: var(--qq-bg-nav-primary);
+  position: sticky;
+  top: 54px;
+  z-index: 10;
+}
+.navbar .left-area {
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+}
+.navbar .middle-area {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+}
+.navbar .right-area {
+  min-width: 60px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+/* ========== Segment Control (NavBar C5) ========== */
+.segment-control {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: var(--color-fill-standard-primary);
+  border-radius: var(--radius-segment);
+  position: relative;
+  padding: 2px;
+}
+.segment-item {
+  position: relative;
+  z-index: 1;
+  width: 52px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color 200ms ease-out;
+  white-space: nowrap;
+}
+.segment-item.active {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.segment-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 52px;
+  height: 28px;
+  background: var(--color-bg-item);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  transition: transform 200ms ease-out;
+}
+.segment-control[data-active="1"] .segment-slider {
+  transform: translateX(52px);
+}
+
+/* ========== DataFilter A4 (横滑页签) ========== */
+.data-filter-tabs {
+  width: 428px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--color-bg-item);
+  border-bottom: 0.5px solid var(--color-border-standard);
+  position: sticky;
+  top: 98px;
+  z-index: 9;
+  -webkit-overflow-scrolling: touch;
+}
+.data-filter-tabs::-webkit-scrollbar { display: none; }
+.data-filter-tabs .tab-item {
+  flex-shrink: 0;
+  padding: 0 16px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
+.data-filter-tabs .tab-item.selected {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+.data-filter-tabs .tab-item.selected::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  background: var(--color-brand-standard);
+  border-radius: 2px;
+}
+
+/* ========== Scrollable Content ========== */
+.content-area {
+  height: calc(var(--device-height) - var(--statusbar-height) - var(--navbar-height) - 48px - var(--homebar-height) - 60px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.content-area::-webkit-scrollbar { display: none; }
+
+/* ========== Interest Prompt Banner ========== */
+.interest-banner {
+  margin: 12px 16px;
+  padding: 16px;
+  background: var(--color-bg-item);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.interest-banner .banner-text {
+  flex: 1;
+}
+.interest-banner .banner-title {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 20px;
+}
+.interest-banner .banner-desc {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 17px;
+  margin-top: 2px;
+}
+.interest-banner .banner-btn {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: var(--radius-button-pill);
+  background: var(--qq-button-bg-primary-default);
+  color: var(--qq-button-text-primary-default);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.interest-banner .close-btn {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: 0.56;
+}
+
+/* ========== Section Header (TextBlock H2) ========== */
+.section-header {
+  padding: 20px 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.section-header .section-title {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 28px;
+}
+.section-header .section-link {
+  font-size: 14px;
+  color: var(--color-text-link);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ========== Group Recommend Card ========== */
+.group-card-container {
+  padding: 0 16px;
+  margin-bottom: 8px;
+}
+.group-card {
+  background: var(--color-bg-item);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.group-card .card-header {
+  padding: 12px 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.group-card .card-header .topic-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.group-card .card-header .topic-title {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 24px;
+  flex: 1;
+}
+.group-card .card-header .topic-more {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ========== Group List Item ========== */
+.group-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  cursor: pointer;
+}
+.group-item:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+.group-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 60px;
+  right: 16px;
+  height: 0.5px;
+  background: var(--color-separator);
+}
+.group-item .group-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--color-fill-standard-primary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  overflow: hidden;
+}
+.group-item .group-info {
+  flex: 1;
+  min-width: 0;
+}
+.group-item .group-name {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  line-height: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.group-item .group-tags {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+.group-item .group-tag {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background: var(--color-fill-standard-primary);
+  padding: 1px 6px;
+  border-radius: var(--radius-thumb-s);
+  line-height: 16px;
+}
+.group-item .group-meta {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 17px;
+  margin-top: 2px;
+}
+.group-item .join-btn {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: var(--radius-button-pill);
+  background: var(--qq-button-bg-secondary-default);
+  color: var(--qq-button-text-secondary-default);
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+/* ========== Hot Ranking ========== */
+.ranking-section {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+.ranking-card {
+  background: var(--color-bg-item);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ranking-card .ranking-header {
+  padding: 16px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ranking-card .ranking-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 24px;
+}
+.ranking-card .ranking-subtitle {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 17px;
+}
+.ranking-item {
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+.ranking-item:active {
+  background: rgba(0, 0, 0, 0.04);
+}
+.ranking-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 52px;
+  right: 16px;
+  height: 0.5px;
+  background: var(--color-separator);
+}
+.ranking-item .rank-num {
+  width: 24px;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+.ranking-item .rank-num.top1 { color: #FF3B30; }
+.ranking-item .rank-num.top2 { color: #FF9500; }
+.ranking-item .rank-num.top3 { color: #FFCC00; }
+.ranking-item .rank-info {
+  flex: 1;
+  min-width: 0;
+}
+.ranking-item .rank-name {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  line-height: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ranking-item .rank-tag {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  line-height: 17px;
+  margin-top: 2px;
+}
+.ranking-item .rank-heat {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ========== Bottom Search Bar ========== */
+.bottom-bar {
+  width: 428px;
+  height: 60px;
+  background: var(--color-bg-item);
+  border-top: 0.5px solid var(--color-border-standard);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  position: sticky;
+  bottom: 34px;
+  z-index: 10;
+}
+.search-box {
+  flex: 1;
+  height: 36px;
+  background: var(--color-fill-standard-primary);
+  border-radius: var(--radius-input);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  cursor: pointer;
+}
+.search-box img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.56;
+}
+.search-box .search-placeholder {
+  font-size: 17px;
+  color: var(--color-text-tertiary);
+}
+.ai-assistant-btn {
+  height: 36px;
+  padding: 0 12px;
+  background: linear-gradient(135deg, #0099FF, #6B4DFF);
+  border-radius: var(--radius-button-pill);
+  border: none;
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ai-assistant-btn img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) invert(1);
+}
+
+/* ========== Home Bar ========== */
+.home-bar {
+  width: 428px;
+  height: 34px;
+  background: var(--color-bg-item);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  position: relative;
+  z-index: 999;
+}
+.home-indicator {
+  width: 144px;
+  height: 5px;
+  background: #000;
+  border-radius: 3px;
+}
+
+/* ========== Dialog Overlay ========== */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-overlay-dialog);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+.dialog-overlay.show {
+  display: flex;
+  opacity: 1;
+  animation: overlayIn 250ms ease-out;
+}
+.dialog-overlay.closing {
+  animation: overlayOut 200ms ease-in forwards;
+}
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlayOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+.dialog-box {
+  width: 296px;
+  background: var(--color-bg-item);
+  border-radius: var(--radius-dialog);
+  overflow: hidden;
+  transform: scale(1);
+  animation: dialogIn 250ms ease-out;
+}
+.dialog-box.closing {
+  animation: dialogOut 200ms ease-in forwards;
+}
+@keyframes dialogIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes dialogOut {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.85); opacity: 0; }
+}
+.dialog-box .dialog-content {
+  padding: 20px 24px 16px;
+  text-align: center;
+}
+.dialog-box .dialog-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 23px;
+  font-family: var(--font-family);
+}
+.dialog-box .dialog-body {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  line-height: 20px;
+  margin-top: 4px;
+  font-family: var(--font-family);
+}
+.dialog-box .dialog-actions {
+  display: flex;
+  border-top: 0.5px solid var(--color-border-standard);
+}
+.dialog-box .dialog-btn {
+  flex: 1;
+  height: 54px;
+  border: none;
+  background: none;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--color-text-link);
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+.dialog-box .dialog-btn:first-child:not(:last-child) {
+  border-right: 0.5px solid var(--color-border-standard);
+}
+.dialog-box .dialog-btn.primary {
+  font-weight: 600;
+}
+
+/* ========== Utility ========== */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="status-icons">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" width="20" height="13" alt="network">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" width="18" height="13" alt="wifi">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" width="28" height="13" alt="battery">
+    </div>
+  </div>
+
+  <!-- NavBar: L1 返回 + C5 分段选择(找人/找群) + R1 图标 -->
+  <div class="navbar">
+    <div class="left-area">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS42MDEzIDIuMzk4ODZDMTUuOTMzMiAyLjczMDgxIDE1LjkzMzIgMy4yNjkgMTUuNjAxMyAzLjYwMDk0TDcuNzMyNjUgMTEuNDY5NkM3LjUyNDcyIDExLjY3NzUgNy40MDUzOSAxMS43OTc4IDcuMzI0ODEgMTEuODkyN0M3LjI5MTg2IDExLjkzMTUgNy4yNzU0NyAxMS45NTQ4IDcuMjY4NDQgMTEuOTY1NkM3LjI2MzEyIDExLjk4ODEgNy4yNjMxMiAxMi4wMTE3IDcuMjY4NDQgMTIuMDM0M0M3LjI3NTQ3IDEyLjA0NSA3LjI5MTg2IDEyLjA2ODMgNy4zMjQ4MSAxMi4xMDcxQzcuNDA1NCAxMi4yMDIgNy41MjQ3MyAxMi4zMjIzIDcuNzMyNjUgMTIuNTMwMkwxNS42MDEzIDIwLjM5ODlDMTUuOTMzMiAyMC43MzA4IDE1LjkzMzIgMjEuMjY5IDE1LjYwMTMgMjEuNjAwOUMxNS4yNjkzIDIxLjkzMjkgMTQuNzMxMSAyMS45MzI5IDE0LjM5OTIgMjEuNjAwOUw2LjUxMDMyIDEzLjcxMjFDNi4zMjk3NSAxMy41MzE1IDYuMTU5OTEgMTMuMzYxNyA2LjAyODgzIDEzLjIwNzNDNS44ODY0MiAxMy4wMzk2IDUuNzQwNTggMTIuODM1IDUuNjU1IDEyLjU3MTZDNS41MzQyNyAxMi4yIDUuNTM0MjcgMTEuNzk5OCA1LjY1NSAxMS40MjgyQzUuNzQwNTggMTEuMTY0OCA1Ljg4NjQyIDEwLjk2MDIgNi4wMjg4MyAxMC43OTI1QzYuMTU5OTEgMTAuNjM4MSA2LjMyOTc2IDEwLjQ2ODMgNi41MTAzMyAxMC4yODc3TDE0LjM5OTIgMi4zOTg4NkMxNC43MzExIDIuMDY2OTIgMTUuMjY5MyAyLjA2NjkyIDE1LjYwMTMgMi4zOTg4NloiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgo8L3N2Zz4=" width="24" height="24" alt="back" style="cursor:pointer;">
+    </div>
+    <div class="middle-area">
+      <div class="segment-control" id="navSegment">
+        <div class="segment-item" data-nav="people">找人</div>
+        <div class="segment-item active" data-nav="group">找群</div>
+        <div class="segment-slider"></div>
+      </div>
+    </div>
+    <div class="right-area">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjE0OTkgNy40OTk5QzcuMTQ5OSA0LjgyMTMyIDkuMzIxMzIgMi42NDk5IDExLjk5OTkgMi42NDk5QzE0LjY3ODUgMi42NDk5IDE2Ljg0OTkgNC44MjEzMiAxNi44NDk5IDcuNDk5OUMxNi44NDk5IDEwLjE3ODUgMTQuNjc4NSAxMi4zNDk5IDExLjk5OTkgMTIuMzQ5OUM5LjMyMTMyIDEyLjM0OTkgNy4xNDk5IDEwLjE3ODUgNy4xNDk5IDcuNDk5OVpNMTEuOTk5OSA0LjM0OTlDMTAuMjYwMiA0LjM0OTkgOC44NDk5IDUuNzYwMjEgOC44NDk5IDcuNDk5OUM4Ljg0OTkgOS4yMzk2IDEwLjI2MDIgMTAuNjQ5OSAxMS45OTk5IDEwLjY0OTlDMTMuNzM5NiAxMC42NDk5IDE1LjE0OTkgOS4yMzk2IDE1LjE0OTkgNy40OTk5QzE1LjE0OTkgNS43NjAyMSAxMy43Mzk2IDQuMzQ5OSAxMS45OTk5IDQuMzQ5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljg1MDEgMjAuNTAwMUMxNy44NTAxIDIwLjk2OTUgMTcuNDY5NSAyMS4zNTAxIDE3LjAwMDEgMjEuMzUwMUMxNi41MzA3IDIxLjM1MDEgMTYuMTUwMSAyMC45Njk1IDE2LjE1MDEgMjAuNTAwMVYxOC4zNDk5SDEzLjk5OTlDMTMuNTMwNSAxOC4zNDk5IDEzLjE0OTkgMTcuOTY5MyAxMy4xNDk5IDE3LjQ5OTlDMTMuMTQ5OSAxNy4wMzA1IDEzLjUzMDUgMTYuNjQ5OSAxMy45OTk5IDE2LjY0OTlIMTYuMTUwMVYxNC41MDAxQzE2LjE1MDEgMTQuMDMwNyAxNi41MzA3IDEzLjY1MDEgMTcuMDAwMSAxMy42NTAxQzE3LjQ2OTUgMTMuNjUwMSAxNy44NTAxIDE0LjAzMDcgMTcuODUwMSAxNC41MDAxVjE2LjY0OTlIMTkuOTk5OUMyMC40NjkzIDE2LjY0OTkgMjAuODQ5OSAxNy4wMzA1IDIwLjg0OTkgMTcuNDk5OUMyMC44NDk5IDE3Ljk2OTMgMjAuNDY5MyAxOC4zNDk5IDE5Ljk5OTkgMTguMzQ5OUgxNy44NTAxVjIwLjUwMDFaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik05LjAwMDM5IDE1LjM0OTlDNi43MDg0MSAxNS4zNDk5IDQuODUwMzkgMTcuMjA3OSA0Ljg1MDM5IDE5LjQ5OTlDNC44NTAzOSAxOS41ODI3IDQuOTE3NTUgMTkuNjQ5OSA1LjAwMDM5IDE5LjY0OTlIMTIuMDAwNEMxMi40Njk4IDE5LjY0OTkgMTIuODUwNCAyMC4wMzA1IDEyLjg1MDQgMjAuNDk5OUMxMi44NTA0IDIwLjk2OTMgMTIuNDY5OCAyMS4zNDk5IDEyLjAwMDQgMjEuMzQ5OUg1LjAwMDM5QzMuOTc4NjYgMjEuMzQ5OSAzLjE1MDM5IDIwLjUyMTYgMy4xNTAzOSAxOS40OTk5QzMuMTUwMzkgMTYuMjY5IDUuNzY5NTIgMTMuNjQ5OSA5LjAwMDM5IDEzLjY0OTlIMTIuMDAwNEMxMi40Njk4IDEzLjY0OTkgMTIuODUwNCAxNC4wMzA1IDEyLjg1MDQgMTQuNDk5OUMxMi44NTA0IDE0Ljk2OTMgMTIuNDY5OCAxNS4zNDk5IDEyLjAwMDQgMTUuMzQ5OUg5LjAwMDM5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" width="24" height="24" alt="add" style="cursor:pointer;">
+    </div>
+  </div>
+
+  <!-- DataFilter A4 横滑页签 -->
+  <div class="data-filter-tabs" id="filterTabs">
+    <div class="tab-item selected" data-tab="recommend">推荐</div>
+    <div class="tab-item" data-tab="game">游戏</div>
+    <div class="tab-item" data-tab="acg">二次元</div>
+    <div class="tab-item" data-tab="study">学习</div>
+    <div class="tab-item" data-tab="music">音乐</div>
+    <div class="tab-item" data-tab="movie">影视</div>
+    <div class="tab-item" data-tab="sports">运动</div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="content-area" id="contentArea">
+
+    <!-- 兴趣偏好授权 Banner -->
+    <div class="interest-banner" id="interestBanner">
+      <div class="banner-text">
+        <div class="banner-title">授权兴趣偏好，获取精准群推荐</div>
+        <div class="banner-desc">授权近期兴趣偏好以优化群聊推荐</div>
+      </div>
+      <button class="banner-btn" id="authBtn">去授权</button>
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjM5ODg2IDQuMzk4OTVDNC43MzA4MSA0LjA2NzAxIDUuMjY5IDQuMDY3MDEgNS42MDA5NCA0LjM5ODk1TDExLjk5OTkgMTAuNzk3OUwxOC4zOTg5IDQuMzk4OTVDMTguNzMwOCA0LjA2NzAxIDE5LjI2OSA0LjA2NzAxIDE5LjYwMDkgNC4zOTg5NUMxOS45MzI5IDQuNzMwOSAxOS45MzI5IDUuMjY5MDkgMTkuNjAwOSA1LjYwMTAzTDEzLjIwMiAxMkwxOS42MDA5IDE4LjM5OUMxOS45MzI5IDE4LjczMDkgMTkuOTMyOSAxOS4yNjkxIDE5LjYwMDkgMTkuNjAxQzE5LjI2OSAxOS45MzMgMTguNzMwOCAxOS45MzMgMTguMzk4OSAxOS42MDFMMTEuOTk5OSAxMy4yMDIxTDUuNjAwOTQgMTkuNjAxQzUuMjY5IDE5LjkzMyA0LjczMDgxIDE5LjkzMyA0LjM5ODg2IDE5LjYwMUM0LjA2NjkyIDE5LjI2OTEgNC4wNjY5MiAxOC43MzA5IDQuMzk4ODYgMTguMzk5TDEwLjc5NzggMTJMNC4zOTg4NiA1LjYwMTAzQzQuMDY2OTIgNS4yNjkwOSA0LjA2NjkyIDQuNzMwOSA0LjM5ODg2IDQuMzk4OTVaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="16" height="16" class="close-btn" id="closeBanner" alt="close">
+    </div>
+
+    <!-- 分类推荐区 - 主题1: 王者赛事讨论 -->
+    <div class="group-card-container">
+      <div class="group-card">
+        <div class="card-header">
+          <div class="topic-icon" style="background:rgba(255,59,48,0.10);">🎮</div>
+          <span class="topic-title">王者赛事讨论</span>
+          <span class="topic-more">更多<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjM5ODk2IDIuMzk4ODZDNy4wNjcwMiAyLjczMDgxIDcuMDY3MDIgMy4yNjkgNy4zOTg5NiAzLjYwMDk0TDE1LjI2NzYgMTEuNDY5NkMxNS40NzU1IDExLjY3NzUgMTUuNTk0OCAxMS43OTc4IDE1LjY3NTQgMTEuODkyN0MxNS43MDg0IDExLjkzMTUgMTUuNzI0OCAxMS45NTQ4IDE1LjczMTggMTEuOTY1NkMxNS43MzcxIDExLjk4ODEgMTUuNzM3MSAxMi4wMTE3IDE1LjczMTggMTIuMDM0M0MxNS43MjQ4IDEyLjA0NSAxNS43MDg0IDEyLjA2ODMgMTUuNjc1NCAxMi4xMDcxQzE1LjU5NDggMTIuMjAyIDE1LjQ3NTUgMTIuMzIyMyAxNS4yNjc2IDEyLjUzMDJMNy4zOTg5NiAyMC4zOTg5QzcuMDY3MDIgMjAuNzMwOCA3LjA2NzAyIDIxLjI2OSA3LjM5ODk2IDIxLjYwMDlDNy43MzA5MSAyMS45MzI5IDguMjY5MSAyMS45MzI5IDguNjAxMDUgMjEuNjAwOUwxNi40ODk5IDEzLjcxMjFDMTYuNjcwNSAxMy41MzE1IDE2Ljg0MDMgMTMuMzYxNyAxNi45NzE0IDEzLjIwNzNDMTcuMTEzOCAxMy4wMzk2IDE3LjI1OTcgMTIuODM1IDE3LjM0NTIgMTIuNTcxNkMxNy40NjYgMTIuMiAxNy40NjYgMTEuNzk5OCAxNy4zNDUyIDExLjQyODJDMTcuMjU5NyAxMS4xNjQ4IDE3LjExMzggMTAuOTYwMiAxNi45NzE0IDEwLjc5MjVDMTYuODQwMyAxMC42MzgxIDE2LjY3MDUgMTAuNDY4MyAxNi40ODk5IDEwLjI4NzdMOC42MDEwNSAyLjM5ODg2QzguMjY5MSAyLjA2NjkyIDcuNzMwOTEgMi4wNjY5MiA3LjM5ODk2IDIuMzk4ODZaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="12" height="12" alt="more"></span>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF3B30);">⚔️</div>
+          <div class="group-info">
+            <div class="group-name">KPL赛事实时讨论群</div>
+            <div class="group-tags">
+              <span class="group-tag">热聊阵地</span>
+            </div>
+            <div class="group-meta">2,856人 · 每日发言200+</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#5AC8FA,#007AFF);">🏆</div>
+          <div class="group-info">
+            <div class="group-name">王者荣耀赛事预测</div>
+            <div class="group-tags">
+              <span class="group-tag">宝藏资源</span>
+            </div>
+            <div class="group-meta">1,542人 · 赛前预测必看</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF9500,#FF6B00);">📊</div>
+          <div class="group-info">
+            <div class="group-name">王者数据分析社</div>
+            <div class="group-tags">
+              <span class="group-tag">干货分享</span>
+            </div>
+            <div class="group-meta">986人 · 版本强势英雄推荐</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分类推荐区 - 主题2: 王者英雄攻略 -->
+    <div class="group-card-container">
+      <div class="group-card">
+        <div class="card-header">
+          <div class="topic-icon" style="background:rgba(0,122,255,0.10);">🗡️</div>
+          <span class="topic-title">王者英雄攻略</span>
+          <span class="topic-more">更多<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjM5ODk2IDIuMzk4ODZDNy4wNjcwMiAyLjczMDgxIDcuMDY3MDIgMy4yNjkgNy4zOTg5NiAzLjYwMDk0TDE1LjI2NzYgMTEuNDY5NkMxNS40NzU1IDExLjY3NzUgMTUuNTk0OCAxMS43OTc4IDE1LjY3NTQgMTEuODkyN0MxNS43MDg0IDExLjkzMTUgMTUuNzI0OCAxMS45NTQ4IDE1LjczMTggMTEuOTY1NkMxNS43MzcxIDExLjk4ODEgMTUuNzM3MSAxMi4wMTE3IDE1LjczMTggMTIuMDM0M0MxNS43MjQ4IDEyLjA0NSAxNS43MDg0IDEyLjA2ODMgMTUuNjc1NCAxMi4xMDcxQzE1LjU5NDggMTIuMjAyIDE1LjQ3NTUgMTIuMzIyMyAxNS4yNjc2IDEyLjUzMDJMNy4zOTg5NiAyMC4zOTg5QzcuMDY3MDIgMjAuNzMwOCA3LjA2NzAyIDIxLjI2OSA3LjM5ODk2IDIxLjYwMDlDNy43MzA5MSAyMS45MzI5IDguMjY5MSAyMS45MzI5IDguNjAxMDUgMjEuNjAwOUwxNi40ODk5IDEzLjcxMjFDMTYuNjcwNSAxMy41MzE1IDE2Ljg0MDMgMTMuMzYxNyAxNi45NzE0IDEzLjIwNzNDMTcuMTEzOCAxMy4wMzk2IDE3LjI1OTcgMTIuODM1IDE3LjM0NTIgMTIuNTcxNkMxNy40NjYgMTIuMiAxNy40NjYgMTEuNzk5OCAxNy4zNDUyIDExLjQyODJDMTcuMjU5NyAxMS4xNjQ4IDE3LjExMzggMTAuOTYwMiAxNi45NzE0IDEwLjc5MjVDMTYuODQwMyAxMC42MzgxIDE2LjY3MDUgMTAuNDY4MyAxNi40ODk5IDEwLjI4NzdMOC42MDEwNSAyLjM5ODg2QzguMjY5MSAyLjA2NjkyIDcuNzMwOTEgMi4wNjY5MiA3LjM5ODk2IDIuMzk4ODZaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="12" height="12" alt="more"></span>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#AF52DE,#5856D6);">🦸</div>
+          <div class="group-info">
+            <div class="group-name">王者出装铭文交流</div>
+            <div class="group-tags">
+              <span class="group-tag">宝藏资源</span>
+            </div>
+            <div class="group-meta">3,200人 · 版本最优出装</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#34C759,#30D158);">📖</div>
+          <div class="group-info">
+            <div class="group-name">打野教学交流群</div>
+            <div class="group-tags">
+              <span class="group-tag">热聊阵地</span>
+            </div>
+            <div class="group-meta">2,100人 · 节奏大师养成</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF2D55,#FF375F);">💎</div>
+          <div class="group-info">
+            <div class="group-name">对抗路一哥养成计划</div>
+            <div class="group-tags">
+              <span class="group-tag">干货分享</span>
+            </div>
+            <div class="group-meta">1,680人 · 上分必备</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分类推荐区 - 主题3: 选课经验分享 -->
+    <div class="group-card-container">
+      <div class="group-card">
+        <div class="card-header">
+          <div class="topic-icon" style="background:rgba(52,199,89,0.10);">📚</div>
+          <span class="topic-title">选课经验分享</span>
+          <span class="topic-more">更多<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjM5ODk2IDIuMzk4ODZDNy4wNjcwMiAyLjczMDgxIDcuMDY3MDIgMy4yNjkgNy4zOTg5NiAzLjYwMDk0TDE1LjI2NzYgMTEuNDY5NkMxNS40NzU1IDExLjY3NzUgMTUuNTk0OCAxMS43OTc4IDE1LjY3NTQgMTEuODkyN0MxNS43MDg0IDExLjkzMTUgMTUuNzI0OCAxMS45NTQ4IDE1LjczMTggMTEuOTY1NkMxNS43MzcxIDExLjk4ODEgMTUuNzM3MSAxMi4wMTE3IDE1LjczMTggMTIuMDM0M0MxNS43MjQ4IDEyLjA0NSAxNS43MDg0IDEyLjA2ODMgMTUuNjc1NCAxMi4xMDcxQzE1LjU5NDggMTIuMjAyIDE1LjQ3NTUgMTIuMzIyMyAxNS4yNjc2IDEyLjUzMDJMNy4zOTg5NiAyMC4zOTg5QzcuMDY3MDIgMjAuNzMwOCA3LjA2NzAyIDIxLjI2OSA3LjM5ODk2IDIxLjYwMDlDNy43MzA5MSAyMS45MzI5IDguMjY5MSAyMS45MzI5IDguNjAxMDUgMjEuNjAwOUwxNi40ODk5IDEzLjcxMjFDMTYuNjcwNSAxMy41MzE1IDE2Ljg0MDMgMTMuMzYxNyAxNi45NzE0IDEzLjIwNzNDMTcuMTEzOCAxMy4wMzk2IDE3LjI1OTcgMTIuODM1IDE3LjM0NTIgMTIuNTcxNkMxNy40NjYgMTIuMiAxNy40NjYgMTEuNzk5OCAxNy4zNDUyIDExLjQyODJDMTcuMjU5NyAxMS4xNjQ4IDE3LjExMzggMTAuOTYwMiAxNi45NzE0IDEwLjc5MjVDMTYuODQwMyAxMC42MzgxIDE2LjY3MDUgMTAuNDY4MyAxNi40ODk5IDEwLjI4NzdMOC42MDEwNSAyLjM5ODg2QzguMjY5MSAyLjA2NjkyIDcuNzMwOTEgMi4wNjY5MiA3LjM5ODk2IDIuMzk4ODZaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="12" height="12" alt="more"></span>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#34C759,#30B050);">🎓</div>
+          <div class="group-info">
+            <div class="group-name">大学选课避坑指南</div>
+            <div class="group-tags">
+              <span class="group-tag">宝藏资源</span>
+            </div>
+            <div class="group-meta">4,526人 · 选课季必入</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#007AFF,#5AC8FA);">✏️</div>
+          <div class="group-info">
+            <div class="group-name">考研课程交流群</div>
+            <div class="group-tags">
+              <span class="group-tag">热聊阵地</span>
+            </div>
+            <div class="group-meta">2,890人 · 研友互助</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF9500,#FFB340);">📝</div>
+          <div class="group-info">
+            <div class="group-name">公选课推荐群</div>
+            <div class="group-tags">
+              <span class="group-tag">干货分享</span>
+            </div>
+            <div class="group-meta">1,350人 · 学分轻松拿</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分类推荐区 - 主题4: 跑步健身 -->
+    <div class="group-card-container">
+      <div class="group-card">
+        <div class="card-header">
+          <div class="topic-icon" style="background:rgba(88,86,214,0.10);">🏃</div>
+          <span class="topic-title">跑步健身打卡</span>
+          <span class="topic-more">更多<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjM5ODk2IDIuMzk4ODZDNy4wNjcwMiAyLjczMDgxIDcuMDY3MDIgMy4yNjkgNy4zOTg5NiAzLjYwMDk0TDE1LjI2NzYgMTEuNDY5NkMxNS40NzU1IDExLjY3NzUgMTUuNTk0OCAxMS43OTc4IDE1LjY3NTQgMTEuODkyN0MxNS43MDg0IDExLjkzMTUgMTUuNzI0OCAxMS45NTQ4IDE1LjczMTggMTEuOTY1NkMxNS43MzcxIDExLjk4ODEgMTUuNzM3MSAxMi4wMTE3IDE1LjczMTggMTIuMDM0M0MxNS43MjQ4IDEyLjA0NSAxNS43MDg0IDEyLjA2ODMgMTUuNjc1NCAxMi4xMDcxQzE1LjU5NDggMTIuMjAyIDE1LjQ3NTUgMTIuMzIyMyAxNS4yNjc2IDEyLjUzMDJMNy4zOTg5NiAyMC4zOTg5QzcuMDY3MDIgMjAuNzMwOCA3LjA2NzAyIDIxLjI2OSA3LjM5ODk2IDIxLjYwMDlDNy43MzA5MSAyMS45MzI5IDguMjY5MSAyMS45MzI5IDguNjAxMDUgMjEuNjAwOUwxNi40ODk5IDEzLjcxMjFDMTYuNjcwNSAxMy41MzE1IDE2Ljg0MDMgMTMuMzYxNyAxNi45NzE0IDEzLjIwNzNDMTcuMTEzOCAxMy4wMzk2IDE3LjI1OTcgMTIuODM1IDE3LjM0NTIgMTIuNTcxNkMxNy40NjYgMTIuMiAxNy40NjYgMTEuNzk5OCAxNy4zNDUyIDExLjQyODJDMTcuMjU5NyAxMS4xNjQ4IDE3LjExMzggMTAuOTYwMiAxNi45NzE0IDEwLjc5MjVDMTYuODQwMyAxMC42MzgxIDE2LjY3MDUgMTAuNDY4MyAxNi40ODk5IDEwLjI4NzdMOC42MDEwNSAyLjM5ODg2QzguMjY5MSAyLjA2NjkyIDcuNzMwOTEgMi4wNjY5MiA3LjM5ODk2IDIuMzk4ODZaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="12" height="12" alt="more"></span>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#5856D6,#AF52DE);">🏋️</div>
+          <div class="group-info">
+            <div class="group-name">每日健身打卡群</div>
+            <div class="group-tags">
+              <span class="group-tag">热聊阵地</span>
+            </div>
+            <div class="group-meta">3,680人 · 坚持就是胜利</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF3B30);">🏃</div>
+          <div class="group-info">
+            <div class="group-name">城市跑团约跑群</div>
+            <div class="group-tags">
+              <span class="group-tag">宝藏资源</span>
+            </div>
+            <div class="group-meta">1,420人 · 约跑不孤单</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#34C759,#5AC8FA);">🥗</div>
+          <div class="group-info">
+            <div class="group-name">减脂增肌食谱分享</div>
+            <div class="group-tags">
+              <span class="group-tag">干货分享</span>
+            </div>
+            <div class="group-meta">2,150人 · 科学饮食</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分类推荐区 - 主题5: 音乐交流 -->
+    <div class="group-card-container">
+      <div class="group-card">
+        <div class="card-header">
+          <div class="topic-icon" style="background:rgba(255,149,0,0.10);">🎵</div>
+          <span class="topic-title">音乐交流分享</span>
+          <span class="topic-more">更多<img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik03LjM5ODk2IDIuMzk4ODZDNy4wNjcwMiAyLjczMDgxIDcuMDY3MDIgMy4yNjkgNy4zOTg5NiAzLjYwMDk0TDE1LjI2NzYgMTEuNDY5NkMxNS40NzU1IDExLjY3NzUgMTUuNTk0OCAxMS43OTc4IDE1LjY3NTQgMTEuODkyN0MxNS43MDg0IDExLjkzMTUgMTUuNzI0OCAxMS45NTQ4IDE1LjczMTggMTEuOTY1NkMxNS43MzcxIDExLjk4ODEgMTUuNzM3MSAxMi4wMTE3IDE1LjczMTggMTIuMDM0M0MxNS43MjQ4IDEyLjA0NSAxNS43MDg0IDEyLjA2ODMgMTUuNjc1NCAxMi4xMDcxQzE1LjU5NDggMTIuMjAyIDE1LjQ3NTUgMTIuMzIyMyAxNS4yNjc2IDEyLjUzMDJMNy4zOTg5NiAyMC4zOTg5QzcuMDY3MDIgMjAuNzMwOCA3LjA2NzAyIDIxLjI2OSA3LjM5ODk2IDIxLjYwMDlDNy43MzA5MSAyMS45MzI5IDguMjY5MSAyMS45MzI5IDguNjAxMDUgMjEuNjAwOUwxNi40ODk5IDEzLjcxMjFDMTYuNjcwNSAxMy41MzE1IDE2Ljg0MDMgMTMuMzYxNyAxNi45NzE0IDEzLjIwNzNDMTcuMTEzOCAxMy4wMzk2IDE3LjI1OTcgMTIuODM1IDE3LjM0NTIgMTIuNTcxNkMxNy40NjYgMTIuMiAxNy40NjYgMTEuNzk5OCAxNy4zNDUyIDExLjQyODJDMTcuMjU5NyAxMS4xNjQ4IDE3LjExMzggMTAuOTYwMiAxNi45NzE0IDEwLjc5MjVDMTYuODQwMyAxMC42MzgxIDE2LjY3MDUgMTAuNDY4MyAxNi40ODk5IDEwLjI4NzdMOC42MDEwNSAyLjM5ODg2QzguMjY5MSAyLjA2NjkyIDcuNzMwOTEgMi4wNjY5MiA3LjM5ODk2IDIuMzk4ODZaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" width="12" height="12" alt="more"></span>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF2D55,#AF52DE);">🎸</div>
+          <div class="group-info">
+            <div class="group-name">独立音乐爱好者联盟</div>
+            <div class="group-tags">
+              <span class="group-tag">宝藏资源</span>
+            </div>
+            <div class="group-meta">2,360人 · 小众音乐推荐</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#007AFF,#5856D6);">🎹</div>
+          <div class="group-info">
+            <div class="group-name">吉他钢琴自学交流</div>
+            <div class="group-tags">
+              <span class="group-tag">热聊阵地</span>
+            </div>
+            <div class="group-meta">1,860人 · 零基础入门</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+        <div class="group-item">
+          <div class="group-avatar" style="background:linear-gradient(135deg,#FF9500,#FFCC00);">🎤</div>
+          <div class="group-info">
+            <div class="group-name">华语流行歌单推荐</div>
+            <div class="group-tags">
+              <span class="group-tag">干货分享</span>
+            </div>
+            <div class="group-meta">3,100人 · 日更歌单</div>
+          </div>
+          <button class="join-btn">加入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 热门榜单 -->
+    <div class="section-header">
+      <span class="section-title">平台热门群 Top10</span>
+    </div>
+    <div class="ranking-section">
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <span class="ranking-subtitle">按活跃度排序 · 每日更新</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num top1">1</span>
+          <div class="rank-info">
+            <div class="rank-name">KPL赛事实时讨论群</div>
+            <div class="rank-tag">游戏 · 2,856人</div>
+          </div>
+          <span class="rank-heat">🔥 9,832</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num top2">2</span>
+          <div class="rank-info">
+            <div class="rank-name">大学选课避坑指南</div>
+            <div class="rank-tag">学习 · 4,526人</div>
+          </div>
+          <span class="rank-heat">🔥 8,521</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num top3">3</span>
+          <div class="rank-info">
+            <div class="rank-name">每日健身打卡群</div>
+            <div class="rank-tag">运动 · 3,680人</div>
+          </div>
+          <span class="rank-heat">🔥 7,430</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">4</span>
+          <div class="rank-info">
+            <div class="rank-name">王者出装铭文交流</div>
+            <div class="rank-tag">游戏 · 3,200人</div>
+          </div>
+          <span class="rank-heat">🔥 6,815</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">5</span>
+          <div class="rank-info">
+            <div class="rank-name">华语流行歌单推荐</div>
+            <div class="rank-tag">音乐 · 3,100人</div>
+          </div>
+          <span class="rank-heat">🔥 5,920</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">6</span>
+          <div class="rank-info">
+            <div class="rank-name">考研课程交流群</div>
+            <div class="rank-tag">学习 · 2,890人</div>
+          </div>
+          <span class="rank-heat">🔥 5,340</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">7</span>
+          <div class="rank-info">
+            <div class="rank-name">独立音乐爱好者联盟</div>
+            <div class="rank-tag">音乐 · 2,360人</div>
+          </div>
+          <span class="rank-heat">🔥 4,750</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">8</span>
+          <div class="rank-info">
+            <div class="rank-name">减脂增肌食谱分享</div>
+            <div class="rank-tag">运动 · 2,150人</div>
+          </div>
+          <span class="rank-heat">🔥 4,200</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">9</span>
+          <div class="rank-info">
+            <div class="rank-name">打野教学交流群</div>
+            <div class="rank-tag">游戏 · 2,100人</div>
+          </div>
+          <span class="rank-heat">🔥 3,680</span>
+        </div>
+        <div class="ranking-item">
+          <span class="rank-num">10</span>
+          <div class="rank-info">
+            <div class="rank-name">吉他钢琴自学交流</div>
+            <div class="rank-tag">音乐 · 1,860人</div>
+          </div>
+          <span class="rank-heat">🔥 3,120</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部留白 -->
+    <div style="height:32px;"></div>
+  </div>
+
+  <!-- Bottom Search Bar -->
+  <div class="bottom-bar">
+    <div class="search-box" id="searchBox">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt="search">
+      <span class="search-placeholder">搜索群聊</span>
+    </div>
+    <button class="ai-assistant-btn" id="aiBtn">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5LjQ5OTUgMkMxOS42NDY2IDIgMTkuNzY3NiAyLjExMzIyIDE5Ljc5MjQgMi4yNTgyMUMyMC4wMDU2IDMuNTA3ODMgMjAuOTkxNyA0LjQ5MzkgMjIuMjQxMyA0LjcwNzEzQzIyLjM4NjMgNC43MzE4NyAyMi40OTk1IDQuODUyOTIgMjIuNDk5NSA1QzIyLjQ5OTUgNS4xNDcwOCAyMi4zODYzIDUuMjY4MTMgMjIuMjQxMyA1LjI5Mjg3QzIwLjk5MTcgNS41MDYxIDIwLjAwNTYgNi40OTIxNyAxOS43OTI0IDcuNzQxNzlDMTkuNzY3NiA3Ljg4Njc4IDE5LjY0NjYgOCAxOS40OTk1IDhDMTkuMzUyNCA4IDE5LjIzMTQgNy44ODY3OCAxOS4yMDY2IDcuNzQxNzlDMTguOTkzNCA2LjQ5MjE3IDE4LjAwNzMgNS41MDYxIDE2Ljc1NzcgNS4yOTI4N0MxNi42MTI3IDUuMjY4MTMgMTYuNDk5NSA1LjE0NzA4IDE2LjQ5OTUgNUMxNi40OTk1IDQuODUyOTIgMTYuNjEyNyA0LjczMTg3IDE2Ljc1NzcgNC43MDcxM0MxOC4wMDczIDQuNDkzOSAxOC45OTM0IDMuNTA3ODMgMTkuMjA2NiAyLjI1ODIxQzE5LjIzMTQgMi4xMTMyMiAxOS4zNTI0IDIgMTkuNDk5NSAyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjg0OTQgMy4wMDAwMkMxMi44NDk0IDIuNTMwNTggMTIuNDY4OSAyLjE1MDAyIDExLjk5OTQgMi4xNTAwMkMxMS41MyAyLjE1MDAyIDExLjE0OTQgMi41MzA1OCAxMS4xNDk0IDMuMDAwMDJDMTEuMTQ5NCA3LjUwMTE0IDcuNTAwNTMgMTEuMTUgMi45OTk0MSAxMS4xNUMyLjUyOTk3IDExLjE1IDIuMTQ5NDEgMTEuNTMwNiAyLjE0OTQxIDEyQzIuMTQ5NDEgMTIuNDY5NSAyLjUyOTk3IDEyLjg1IDIuOTk5NDEgMTIuODVDNy41MDA1MyAxMi44NSAxMS4xNDk0IDE2LjQ5ODkgMTEuMTQ5NCAyMUMxMS4xNDk0IDIxLjQ2OTUgMTEuNTMgMjEuODUgMTEuOTk5NCAyMS44NUMxMi40Njg5IDIxLjg1IDEyLjg0OTQgMjEuNDY5NSAxMi44NDk0IDIxQzEyLjg0OTQgMTYuNDk4OSAxNi40OTgzIDEyLjg1IDIwLjk5OTQgMTIuODVDMjEuNDY4OSAxMi44NSAyMS44NDk0IDEyLjQ2OTUgMjEuODQ5NCAxMkMyMS44NDk0IDExLjUzMDYgMjEuNDY4OSAxMS4xNSAyMC45OTk0IDExLjE1QzE2LjQ5ODMgMTEuMTUgMTIuODQ5NCA3LjUwMTE0IDEyLjg0OTQgMy4wMDAwMlpNNy4wMDgyNSAxMkM5LjIyNTY1IDExLjAxMDggMTEuMDEwMiA5LjIyNjI2IDExLjk5OTQgNy4wMDg4NkMxMi45ODg2IDkuMjI2MjYgMTQuNzczMiAxMS4wMTA4IDE2Ljk5MDYgMTJDMTQuNzczMiAxMi45ODkyIDEyLjk4ODYgMTQuNzczOCAxMS45OTk0IDE2Ljk5MTJDMTEuMDEwMiAxNC43NzM4IDkuMjI1NjUgMTIuOTg5MiA3LjAwODI1IDEyWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="ai">
+      AI找群助手
+    </button>
+  </div>
+
+  <!-- Home Bar -->
+  <div class="home-bar">
+    <div class="home-indicator"></div>
+  </div>
+
+  <!-- Dialog: 兴趣偏好授权 -->
+  <div class="dialog-overlay" id="dialogOverlay">
+    <div class="dialog-box">
+      <div class="dialog-content">
+        <div class="dialog-title">授权兴趣偏好</div>
+        <div class="dialog-body">是否授权获取近期兴趣偏好信息，以优化群聊推荐？授权后可随时关闭。</div>
+      </div>
+      <div class="dialog-actions">
+        <button class="dialog-btn" id="dialogCancel">暂不</button>
+        <button class="dialog-btn primary" id="dialogConfirm">授权</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // DataFilter Tab 切换
+  const filterTabs = document.getElementById('filterTabs');
+  filterTabs.addEventListener('click', function(e) {
+    const tab = e.target.closest('.tab-item');
+    if (!tab) return;
+    filterTabs.querySelectorAll('.tab-item').forEach(t => t.classList.remove('selected'));
+    tab.classList.add('selected');
+  });
+
+  // NavBar Segment Control（找人/找群）
+  const navSegment = document.getElementById('navSegment');
+  navSegment.setAttribute('data-active', '1');
+  navSegment.querySelectorAll('.segment-item').forEach((item, index) => {
+    item.addEventListener('click', function() {
+      navSegment.querySelectorAll('.segment-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+      navSegment.setAttribute('data-active', String(index));
+    });
+  });
+
+  // 兴趣偏好 Banner 关闭
+  const banner = document.getElementById('interestBanner');
+  const closeBanner = document.getElementById('closeBanner');
+  closeBanner.addEventListener('click', function() {
+    banner.style.display = 'none';
+  });
+
+  // 兴趣偏好 Banner - 去授权按钮
+  const authBtn = document.getElementById('authBtn');
+  const dialogOverlay = document.getElementById('dialogOverlay');
+  authBtn.addEventListener('click', function() {
+    dialogOverlay.classList.add('show');
+  });
+
+  // Dialog 交互
+  const dialogCancel = document.getElementById('dialogCancel');
+  const dialogConfirm = document.getElementById('dialogConfirm');
+  const dialogBox = dialogOverlay.querySelector('.dialog-box');
+
+  function closeDialog(callback) {
+    dialogBox.classList.add('closing');
+    dialogOverlay.classList.add('closing');
+    setTimeout(function() {
+      dialogOverlay.classList.remove('show');
+      dialogOverlay.classList.remove('closing');
+      dialogBox.classList.remove('closing');
+      if (callback) callback();
+    }, 200);
+  }
+
+  dialogCancel.addEventListener('click', function() {
+    closeDialog();
+  });
+
+  dialogConfirm.addEventListener('click', function() {
+    closeDialog(function() {
+      banner.style.display = 'none';
+    });
+  });
+
+  // 加入按钮点击
+  document.querySelectorAll('.join-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (this.textContent === '加入') {
+        this.textContent = '已申请';
+        this.style.background = 'var(--color-fill-standard-primary)';
+        this.style.color = 'var(--color-text-tertiary)';
+      }
+    });
+  });
+
+  // 搜索框点击（模拟激活态）
+  const searchBox = document.getElementById('searchBox');
+  searchBox.addEventListener('click', function() {
+    // 模拟进入搜索态
+  });
+
+  // 返回按钮
+  document.querySelector('.left-area img').addEventListener('click', function() {
+    // 模拟返回
+  });
+})();
+</script>
+</body>
+</html>

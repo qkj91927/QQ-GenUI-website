@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## QQ GenUI 高还原实现
 
-## Getting Started
+基于 `Next.js 16 + TypeScript + TailwindCSS + Framer Motion` 的双页面高还原项目。
 
-First, run the development server:
+### 页面说明
+
+- `/`：首页（Hero、Commands、In Action、Get Started、Changelog、FAQ）
+- `/cheatsheet`：命令速查页（分类筛选、关键词搜索、复制命令、加载骨架）
+
+### 当前实现能力
+
+- **结构还原**：核心区块结构与导航体系已完成
+- **交互还原**：锚点滚动、移动端菜单、FAQ 折叠、筛选与搜索
+- **动效还原**：分区入场、滚动进度反馈、卡片微交互
+- **资源策略**：缺失素材采用可替换占位
+
+### 本地运行
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+访问 `http://localhost:3000`。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 目录结构
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/page.tsx`：首页路由入口
+- `app/cheatsheet/page.tsx`：Cheatsheet 路由入口
+- `app/cheatsheet/loading.tsx`：Cheatsheet 加载骨架
+- `components/site/home-page.tsx`：首页主视图
+- `components/site/cheatsheet-page.tsx`：Cheatsheet 主视图
+- `data/site-content.ts`：页面内容数据源
 
-## Learn More
+### 后续建议（可继续迭代）
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 替换授权字体、图标与品牌素材
+- 基于目标站做逐断点像素比对
+- 收敛动效时序曲线（统一 easing 与 delay）
+- 增补 SEO 与社交分享元数据

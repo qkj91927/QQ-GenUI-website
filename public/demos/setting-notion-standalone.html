@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="notion-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理群</title>
+<style>
+  /* ===== Notion Color Tokens (notion-light) ===== */
+  [data-theme="notion-light"] {
+    --brand_standard: #2383E2;
+    --brand_light: rgba(35,131,226,0.12);
+    --brand_pressed: #1B6EC2;
+    --text_primary: #37352F;
+    --text_primary_light: #787774;
+    --text_secondary: #787774;
+    --text_tertiary: #ACABA9;
+    --text_link: #2383E2;
+    --text_allwhite_primary: #FFFFFF;
+    --fill_standard_primary: rgba(55, 53, 47, 0.08);
+    --fill_standard_secondary: rgba(55, 53, 47, 0.16);
+    --fill_pressed: rgba(55, 53, 47, 0.08);
+    --bg_bottom_light: #FFFFFF;
+    --bg_bottom_standard: #F7F6F3;
+    --bg_middle_standard: #F7F6F3;
+    --bg_item: #FFFFFF;
+    --border_standard: #E3E2E0;
+    --border_light: #E3E2E0;
+    --separator: #E3E2E0;
+  }
+
+  /* ===== Global Tokens ===== */
+  :root {
+    --device-width: 428px;
+    --device-screen-height: 926px;
+    --device-status-bar-height: 54px;
+    --device-home-bar-height: 34px;
+    --device-home-bar-indicator-width: 144px;
+    --device-home-bar-indicator-height: 5px;
+    --device-home-bar-indicator-radius: 2.5px;
+    --spacing-page-padding: 16px;
+    --spacing-icon-gap: 12px;
+    --spacing-section-gap: 8px;
+    --spacing-grid-unit: 4px;
+    --spacing-b1: 4px;
+    --spacing-b2: 8px;
+    --spacing-b3: 12px;
+    --spacing-b4: 16px;
+    --spacing-b5: 24px;
+    --spacing-b6: 32px;
+    --radius-button: 4px;
+    --radius-menu: 6px;
+    --radius-input: 4px;
+    --typo-headline-size: 16px;
+    --typo-headline-weight: 600;
+    --typo-headline-line: 24px;
+    --typo-body-size: 16px;
+    --typo-body-weight: 400;
+    --typo-body-line: 24px;
+    --typo-footnote-size: 12px;
+    --typo-footnote-weight: 500;
+    --typo-footnote-line: 18px;
+    --typo-caption1-size: 12px;
+    --typo-caption1-weight: 400;
+    --typo-caption1-line: 17px;
+    --anim-press-in-duration: 80ms;
+    --anim-press-in-easing: ease-in;
+    --anim-press-out-duration: 150ms;
+    --anim-press-out-easing: ease-in;
+  }
+
+  /* ===== Reset ===== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "PingFang SC", Arial, sans-serif;
+    width: var(--device-width);
+    height: var(--device-screen-height);
+    margin: 0 auto;
+    background: var(--bg_bottom_standard);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== StatusBar (428×54) ===== */
+  .status-bar {
+    width: var(--device-width);
+    height: var(--device-status-bar-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-page-padding);
+    background: var(--bg_bottom_light);
+    position: relative;
+    z-index: 20;
+  }
+  .status-bar-time {
+    font-family: "SF Pro Display", -apple-system, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text_primary);
+    padding-left: 12px;
+    padding-top: 12px;
+  }
+  .status-bar-icons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-top: 12px;
+    padding-right: 4px;
+  }
+  .status-bar-icons img {
+    display: block;
+  }
+
+  /* ===== NavBar (428×44) ===== */
+  .navbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-page-padding);
+    width: var(--device-width);
+    height: 44px;
+    background: var(--bg_bottom_light);
+    border-bottom: 1px solid var(--border_light);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .navbar-left {
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+  }
+  .navbar-left img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px;
+    transition: background var(--anim-press-in-duration) var(--anim-press-in-easing);
+  }
+  .navbar-left img:hover {
+    background: var(--fill_standard_primary);
+  }
+  .navbar-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text_primary);
+    white-space: nowrap;
+  }
+  .navbar-right {
+    min-width: 60px;
+  }
+
+  /* ===== DataFilter Tab (428×48) ===== */
+  .df-tabs {
+    width: var(--device-width);
+    height: 44px;
+    display: flex;
+    background: var(--bg_bottom_light);
+    position: relative;
+    border-bottom: 1px solid var(--border_light);
+  }
+  .df-tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--text_secondary);
+    transition: color var(--anim-press-in-duration) var(--anim-press-in-easing);
+  }
+  .df-tab-item.selected {
+    font-weight: 500;
+    color: var(--text_primary);
+  }
+  .df-tab-indicator {
+    position: absolute;
+    bottom: 0;
+    width: 28px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--text_primary);
+    opacity: 0;
+    transition: opacity var(--anim-press-in-duration) var(--anim-press-in-easing);
+  }
+  .df-tab-item.selected .df-tab-indicator {
+    opacity: 1;
+  }
+
+  /* ===== Content Area (Scrollable) ===== */
+  .content-area {
+    width: var(--device-width);
+    height: calc(var(--device-screen-height) - var(--device-status-bar-height) - 44px - 44px - var(--device-home-bar-height));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--spacing-b4);
+  }
+  .content-area::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+  .content-area::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .content-area::-webkit-scrollbar-thumb {
+    background: rgba(55, 53, 47, 0.16);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .content-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(55, 53, 47, 0.3);
+    background-clip: content-box;
+  }
+
+  /* ===== Grouped List (Form Group) ===== */
+  .form-group {
+    background: var(--bg_middle_standard);
+    padding: 0;
+    width: var(--device-width);
+    display: flex;
+    flex-direction: column;
+  }
+  .form-group-header {
+    padding: var(--spacing-b3) var(--spacing-b6) var(--spacing-b1);
+    font-size: var(--typo-footnote-size);
+    font-weight: var(--typo-footnote-weight);
+    line-height: var(--typo-footnote-line);
+    color: var(--text_secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .form-group-content {
+    background: var(--bg_bottom_light);
+    margin: 0 var(--spacing-page-padding);
+    border-radius: 4px;
+    overflow: hidden;
+    width: 396px;
+    box-shadow: rgba(15, 15, 15, 0.04) 0px 0px 0px 1px, rgba(15, 15, 15, 0.03) 0px 2px 4px;
+  }
+  .form-group-footer {
+    padding: var(--spacing-b2) var(--spacing-b6) var(--spacing-b1);
+    font-size: var(--typo-caption1-size);
+    font-weight: var(--typo-caption1-weight);
+    line-height: 1.4;
+    color: var(--text_secondary);
+  }
+
+  /* ===== Form Row ===== */
+  .form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-page-padding);
+    height: 48px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    transition: background var(--anim-press-in-duration) var(--anim-press-in-easing);
+  }
+  .form-row:active {
+    background: var(--fill_pressed);
+  }
+  .form-row.no-press:active {
+    background: transparent;
+  }
+  .form-row .left-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-b2);
+    flex: 1;
+    min-width: 0;
+  }
+  .form-row .left-area .title {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text_primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .form-row .right-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-b1);
+    margin-left: var(--spacing-b3);
+    flex-shrink: 0;
+  }
+  .form-row .right-area .aux-text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--text_secondary);
+    white-space: nowrap;
+  }
+  .form-row .right-area .chevron {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    opacity: 0.35;
+  }
+  .form-row .right-area .add-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    opacity: 0.45;
+  }
+
+  /* ===== Switch (Notion style) ===== */
+  .switch-track {
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    background: #D6D3D1;
+    position: relative;
+    cursor: pointer;
+    transition: background 80ms ease-in;
+    flex-shrink: 0;
+  }
+  .switch-track.on {
+    background: var(--brand_standard);
+  }
+  .switch-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--bg_bottom_light);
+    box-shadow: rgba(15,15,15,0.1) 0px 0px 0px 1px, rgba(15,15,15,0.1) 0px 1px 2px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 150ms ease-in;
+  }
+  .switch-track.on .switch-thumb {
+    transform: translateX(16px);
+  }
+
+  /* ===== Child Rows (展开/收起) ===== */
+  .child-card {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 250ms cubic-bezier(0.25, 0.1, 0.25, 1),
+                opacity 150ms ease-in;
+  }
+  .child-card.expanded {
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 250ms cubic-bezier(0.25, 0.1, 0.25, 1),
+                opacity 150ms ease-in;
+  }
+
+  /* ===== L5 二级缩进行 ===== */
+  .form-row .left-area .secondary-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    opacity: 0.5;
+  }
+
+  /* ===== Separator ===== */
+  .form-separator {
+    height: 1px;
+    background: var(--separator);
+    margin-left: var(--spacing-page-padding);
+    margin-right: var(--spacing-page-padding);
+  }
+
+  /* ===== Home Bar ===== */
+  .home-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: var(--device-width);
+    height: var(--device-home-bar-height);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    z-index: 30;
+    background: var(--bg_bottom_standard);
+  }
+  .home-bar-indicator {
+    width: var(--device-home-bar-indicator-width);
+    height: var(--device-home-bar-indicator-height);
+    border-radius: var(--device-home-bar-indicator-radius);
+    background: #37352F;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== StatusBar ===== -->
+<div class="status-bar">
+  <div class="status-bar-time">9:41</div>
+  <div class="status-bar-icons">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="network" width="20" height="13">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" alt="wifi" width="18" height="13">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" alt="battery" width="28" height="13">
+  </div>
+</div>
+
+<!-- ===== NavBar (L1 + C1 + R0) ===== -->
+<div class="navbar-row">
+  <div class="navbar-left">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS42MDEzIDIuMzk4ODZDMTUuOTMzMiAyLjczMDgxIDE1LjkzMzIgMy4yNjkgMTUuNjAxMyAzLjYwMDk0TDcuNzMyNjUgMTEuNDY5NkM3LjUyNDcyIDExLjY3NzUgNy40MDUzOSAxMS43OTc4IDcuMzI0ODEgMTEuODkyN0M3LjI5MTg2IDExLjkzMTUgNy4yNzU0NyAxMS45NTQ4IDcuMjY4NDQgMTEuOTY1NkM3LjI2MzEyIDExLjk4ODEgNy4yNjMxMiAxMi4wMTE3IDcuMjY4NDQgMTIuMDM0M0M3LjI3NTQ3IDEyLjA0NSA3LjI5MTg2IDEyLjA2ODMgNy4zMjQ4MSAxMi4xMDcxQzcuNDA1NCAxMi4yMDIgNy41MjQ3MyAxMi4zMjIzIDcuNzMyNjUgMTIuNTMwMkwxNS42MDEzIDIwLjM5ODlDMTUuOTMzMiAyMC43MzA4IDE1LjkzMzIgMjEuMjY5IDE1LjYwMTMgMjEuNjAwOUMxNS4yNjkzIDIxLjkzMjkgMTQuNzMxMSAyMS45MzI5IDE0LjM5OTIgMjEuNjAwOUw2LjUxMDMyIDEzLjcxMjFDNi4zMjk3NSAxMy41MzE1IDYuMTU5OTEgMTMuMzYxNyA2LjAyODgzIDEzLjIwNzNDNS44ODY0MiAxMy4wMzk2IDUuNzQwNTggMTIuODM1IDUuNjU1IDEyLjU3MTZDNS41MzQyNyAxMi4yIDUuNTM0MjcgMTEuNzk5OCA1LjY1NSAxMS40MjgyQzUuNzQwNTggMTEuMTY0OCA1Ljg4NjQyIDEwLjk2MDIgNi4wMjg4MyAxMC43OTI1QzYuMTU5OTEgMTAuNjM4MSA2LjMyOTc2IDEwLjQ2ODMgNi41MTAzMyAxMC4yODc3TDE0LjM5OTIgMi4zOTg4NkMxNC43MzExIDIuMDY2OTIgMTUuMjY5MyAyLjA2NjkyIDE1LjYwMTMgMi4zOTg4NloiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgo8L3N2Zz4=" alt="返回">
+  </div>
+  <div class="navbar-center">管理群</div>
+  <div class="navbar-right"></div>
+</div>
+
+<!-- ===== DataFilter Tab (A1 - 两页签，使用等分模式) ===== -->
+<div class="df-tabs">
+  <div class="df-tab-item selected" onclick="switchTab(this)">
+    <span>单群管理</span>
+    <div class="df-tab-indicator"></div>
+  </div>
+  <div class="df-tab-item" onclick="switchTab(this)">
+    <span>多群管理</span>
+    <div class="df-tab-indicator"></div>
+  </div>
+</div>
+
+<!-- ===== Content Area ===== -->
+<div class="content-area">
+
+  <!-- 基础管理 -->
+  <div class="form-group">
+    <div class="form-group-header">基础管理</div>
+    <div class="form-group-content">
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">群资料管理</span>
+        </div>
+        <div class="right-area">
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">群资料卡展示信息管理</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">展示群精华等</span>
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">个性管理</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">群身份等</span>
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 加群管理 -->
+  <div class="form-group">
+    <div class="form-group-header">加群管理</div>
+    <div class="form-group-content">
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">加群方式</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">需要发送验证消息</span>
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">加群自动审批</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">未开启</span>
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">群搜索方式</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">不允许被搜索</span>
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="form-group-footer">设置后，可通过指定搜索方式搜到本群</div>
+  </div>
+
+  <!-- 成员管理 -->
+  <div class="form-group">
+    <div class="form-group-header">成员管理</div>
+    <div class="form-group-content">
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">设置管理员</span>
+        </div>
+        <div class="right-area">
+          <span class="aux-text">暂无</span>
+          <img class="add-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0zLjg0OTkgMTIuMDAwNEMzLjg0OTkgNy40OTkyNyA3LjQ5ODc4IDMuODUwMzkgMTEuOTk5OSAzLjg1MDM5QzE2LjUwMSAzLjg1MDM5IDIwLjE0OTkgNy40OTkyNyAyMC4xNDk5IDEyLjAwMDRDMjAuMTQ5OSAxNi41MDE1IDE2LjUwMSAyMC4xNTA0IDExLjk5OTkgMjAuMTUwNEM3LjQ5ODc4IDIwLjE1MDQgMy44NDk5IDE2LjUwMTUgMy44NDk5IDEyLjAwMDRaTTExLjk5OTkgMi4xNTAzOUM2LjU1OTkgMi4xNTAzOSAyLjE0OTkgNi41NjAzOSAyLjE0OTkgMTIuMDAwNEMyLjE0OTkgMTcuNDQwNCA2LjU1OTkgMjEuODUwNCAxMS45OTk5IDIxLjg1MDRDMTcuNDM5OSAyMS44NTA0IDIxLjg0OTkgMTcuNDQwNCAyMS44NDk5IDEyLjAwMDRDMjEuODQ5OSA2LjU2MDM5IDE3LjQzOTkgMi4xNTAzOSAxMS45OTk5IDIuMTUwMzlaTTExLjk5OTkgNi42NTAzOUMxMi40NjkzIDYuNjUwMzkgMTIuODQ5OSA3LjAzMDk1IDEyLjg0OTkgNy41MDAzOVYxMS4xNTA0SDE2LjQ5OTlDMTYuOTY5MyAxMS4xNTA0IDE3LjM0OTkgMTEuNTMwOSAxNy4zNDk5IDEyLjAwMDRDMTcuMzQ5OSAxMi40Njk4IDE2Ljk2OTMgMTIuODUwNCAxNi40OTk5IDEyLjg1MDRIMTIuODQ5OVYxNi41MDA0QzEyLjg0OTkgMTYuOTY5OCAxMi40NjkzIDE3LjM1MDQgMTEuOTk5OSAxNy4zNTA0QzExLjUzMDUgMTcuMzUwNCAxMS4xNDk5IDE2Ljk2OTggMTEuMTQ5OSAxNi41MDA0VjEyLjg1MDRINy40OTk5QzcuMDMwNDYgMTIuODUwNCA2LjY0OTkgMTIuNDY5OCA2LjY0OTkgMTIuMDAwNEM2LjY0OTkgMTEuNTMwOSA3LjAzMDQ2IDExLjE1MDQgNy40OTk5IDExLjE1MDRIMTEuMTQ5OVY3LjUwMDM5QzExLjE0OTkgNy4wMzA5NSAxMS41MzA1IDYuNjUwMzkgMTEuOTk5OSA2LjY1MDM5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt="添加">
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">成员数据</span>
+        </div>
+        <div class="right-area">
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">群黑名单管理</span>
+        </div>
+        <div class="right-area">
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row">
+        <div class="left-area">
+          <span class="title">提升群人数</span>
+        </div>
+        <div class="right-area">
+          <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI管理 -->
+  <div class="form-group">
+    <div class="form-group-header">AI管理</div>
+    <div class="form-group-content">
+      <div class="form-row no-press" style="cursor: default;">
+        <div class="left-area">
+          <span class="title">群AI管理</span>
+        </div>
+        <div class="right-area">
+          <div class="switch-track" id="aiSwitch" onclick="toggleAiSwitch()">
+            <div class="switch-thumb"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="child-card" id="aiChildCard" style="margin-top: 8px;">
+      <div class="form-group-content">
+        <div class="form-row" onclick="goAgentPage()">
+          <div class="left-area">
+            <img class="secondary-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjY1MzgxIDEyLjAwMDRDNi42NTM4MSAxMS41MzA5IDcuMDM0MzcgMTEuMTUwNCA3LjUwMzgxIDExLjE1MDRIMTYuNTAzOEMxNi45NzMzIDExLjE1MDQgMTcuMzUzOCAxMS41MzA5IDE3LjM1MzggMTIuMDAwNEMxNy4zNTM4IDEyLjQ2OTggMTYuOTczMyAxMi44NTA0IDE2LjUwMzggMTIuODUwNEg3LjUwMzgxQzcuMDM0MzcgMTIuODUwNCA2LjY1MzgxIDEyLjQ2OTggNi42NTM4MSAxMi4wMDA0WiIgZmlsbD0iIzZCNkI3MCIvPgo8L3N2Zz4K" alt="">
+            <span class="title" id="agentRowTitle">修改Agent资料</span>
+          </div>
+          <div class="right-area">
+            <span class="aux-text" id="agentRowStatus"></span>
+            <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+          </div>
+        </div>
+        <div class="form-separator"></div>
+        <div class="form-row">
+          <div class="left-area">
+            <img class="secondary-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjY1MzgxIDEyLjAwMDRDNi42NTM4MSAxMS41MzA5IDcuMDM0MzcgMTEuMTUwNCA3LjUwMzgxIDExLjE1MDRIMTYuNTAzOEMxNi45NzMzIDExLjE1MDQgMTcuMzUzOCAxMS41MzA5IDE3LjM1MzggMTIuMDAwNEMxNy4zNTM4IDEyLjQ2OTggMTYuOTczMyAxMi44NTA0IDE2LjUwMzggMTIuODUwNEg3LjUwMzgxQzcuMDM0MzcgMTIuODUwNCA2LjY1MzgxIDEyLjQ2OTggNi42NTM4MSAxMi4wMDA0WiIgZmlsbD0iIzZCNkI3MCIvPgo8L3N2Zz4K" alt="">
+            <span class="title">读取频率</span>
+          </div>
+          <div class="right-area">
+            <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+          </div>
+        </div>
+        <div class="form-separator"></div>
+        <div class="form-row">
+          <div class="left-area">
+            <img class="secondary-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjY1MzgxIDEyLjAwMDRDNi42NTM4MSAxMS41MzA5IDcuMDM0MzcgMTEuMTUwNCA3LjUwMzgxIDExLjE1MDRIMTYuNTAzOEMxNi45NzMzIDExLjE1MDQgMTcuMzUzOCAxMS41MzA5IDE3LjM1MzggMTIuMDAwNEMxNy4zNTM4IDEyLjQ2OTggMTYuOTczMyAxMi44NTA0IDE2LjUwMzggMTIuODUwNEg3LjUwMzgxQzcuMDM0MzcgMTIuODUwNCA2LjY1MzgxIDEyLjQ2OTggNi42NTM4MSAxMi4wMDA0WiIgZmlsbD0iIzZCNkI3MCIvPgo8L3N2Zz4K" alt="">
+            <span class="title">聊天记录范围</span>
+          </div>
+          <div class="right-area">
+            <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+          </div>
+        </div>
+        <div class="form-separator"></div>
+        <div class="form-row">
+          <div class="left-area">
+            <img class="secondary-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjY1MzgxIDEyLjAwMDRDNi42NTM4MSAxMS41MzA5IDcuMDM0MzcgMTEuMTUwNCA3LjUwMzgxIDExLjE1MDRIMTYuNTAzOEMxNi45NzMzIDExLjE1MDQgMTcuMzUzOCAxMS41MzA5IDE3LjM1MzggMTIuMDAwNEMxNy4zNTM4IDEyLjQ2OTggMTYuOTczMyAxMi44NTA0IDE2LjUwMzggMTIuODUwNEg3LjUwMzgxQzcuMDM0MzcgMTIuODUwNCA2LjY1MzgxIDEyLjQ2OTggNi42NTM4MSAxMi4wMDA0WiIgZmlsbD0iIzZCNkI3MCIvPgo8L3N2Zz4K" alt="">
+            <span class="title">聊天记录时间周期</span>
+          </div>
+          <div class="right-area">
+            <img class="chevron" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Home Bar ===== -->
+<div class="home-bar">
+  <div class="home-bar-indicator"></div>
+</div>
+
+<script>
+  // DataFilter Tab 切换交互
+  function switchTab(el) {
+    var tabs = document.querySelectorAll('.df-tab-item');
+    tabs.forEach(function(tab) {
+      tab.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  }
+
+  // AI Switch 开关状态
+  var aiSwitchOn = localStorage.getItem('aiSwitchOn') === 'true';
+
+  function initAiSwitch() {
+    var sw = document.getElementById('aiSwitch');
+    var childCard = document.getElementById('aiChildCard');
+    if (aiSwitchOn) {
+      sw.classList.add('on');
+      childCard.classList.add('expanded');
+    }
+    updateAgentStatus();
+  }
+
+  function toggleAiSwitch() {
+    aiSwitchOn = !aiSwitchOn;
+    localStorage.setItem('aiSwitchOn', aiSwitchOn);
+    var sw = document.getElementById('aiSwitch');
+    var childCard = document.getElementById('aiChildCard');
+    if (aiSwitchOn) {
+      sw.classList.add('on');
+      childCard.classList.add('expanded');
+    } else {
+      sw.classList.remove('on');
+      childCard.classList.remove('expanded');
+    }
+  }
+
+  function updateAgentStatus() {
+    var agentData = localStorage.getItem('agentData');
+    var statusEl = document.getElementById('agentRowStatus');
+    if (agentData) {
+      statusEl.textContent = '已设置';
+    } else {
+      statusEl.textContent = '';
+    }
+  }
+
+  function goAgentPage() {
+    window.location.href = 'agent.html';
+  }
+
+  initAiSwitch();
+</script>
+
+</body>
+</html>

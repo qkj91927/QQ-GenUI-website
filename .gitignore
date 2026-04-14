@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# codebuddy
+.codebuddy-dev.log
+.codebuddy/
+
+# deploy
+Dockerfile
+.dockerignore
+video/
