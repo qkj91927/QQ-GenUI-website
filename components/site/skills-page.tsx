@@ -137,7 +137,7 @@ export function SkillsPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
-        <div className="mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
             QQ{"\u00a0"}GenUI
           </Link>
@@ -190,7 +190,7 @@ export function SkillsPage() {
       </header>
 
       {/* ── Main ── */}
-      <main className="mx-auto w-full max-w-[1360px] px-4 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
+      <main className="mx-auto w-full max-w-[1140px] px-4 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
         {/* Hero */}
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -327,7 +327,7 @@ export function SkillsPage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-[rgba(16,20,30,.08)]">
-        <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
+        <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
           <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">QQ{"\u00a0"}GenUI</p>
           <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 QQ{"\u00a0"}GenUI</p>
         </div>

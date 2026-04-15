@@ -684,7 +684,7 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
-        <div className="mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <span className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">QQ{"\u00a0"}GenUI</span>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -775,7 +775,7 @@ export function HomePage() {
         </AnimatePresence>
       </header>
 
-      <main className="mx-auto w-full max-w-[1360px] px-4 pb-22 pt-8 sm:px-7 sm:pt-12 lg:px-10">
+      <main className="mx-auto w-full max-w-[1140px] px-4 pb-22 pt-8 sm:px-7 sm:pt-12 lg:px-10">
         <section className="grid min-h-[calc(100svh-72px)] items-center gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-20">
           <motion.div
             initial={{ opacity: 0, y: 16 }}

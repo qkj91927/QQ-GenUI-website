@@ -573,7 +573,7 @@ export function CasesPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
-        <div className="mx-auto flex h-14 w-full max-w-[1360px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
             QQ{"\u00a0"}GenUI
           </Link>
@@ -622,7 +622,7 @@ export function CasesPage() {
       </header>
 
       {/* ── Main ── */}
-      <main className="mx-auto w-full max-w-[1360px] px-4 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
+      <main className="mx-auto w-full max-w-[1140px] px-4 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
         <p className="text-[15px] leading-none tracking-[0.012em] text-[#949aa4]">{isZh ? "实战案例" : "Cases"}</p>
         <h1 className="mt-6 font-serif text-[clamp(2.6rem,5vw,4.2rem)] leading-[0.96] tracking-[-0.025em] text-[#0b0d13]">
           {isZh ? "真实场景，真实效果" : "Real scenarios, real results"}

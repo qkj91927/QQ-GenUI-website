@@ -125,7 +125,7 @@ export function CheatsheetPage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       {/* ── Header (matches home page) ── */}
       <header className="border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)]">
-        <div className="mx-auto flex h-18 w-full max-w-[1360px] items-center justify-between px-4 sm:px-7 lg:px-10">
+        <div className="mx-auto flex h-18 w-full max-w-[1140px] items-center justify-between px-4 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.85rem,2.6vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
             QQ{"\u00a0"}GenUI
           </Link>
@@ -156,7 +156,7 @@ export function CheatsheetPage() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1360px] px-4 pb-22 pt-10 sm:px-7 lg:px-10">
+      <main className="mx-auto w-full max-w-[1140px] px-4 pb-22 pt-10 sm:px-7 lg:px-10">
         {/* Hero */}
         <p className="text-[16px] leading-none tracking-[0.012em] text-[#949aa4]">Cheatsheet</p>
         <h1 className="mt-8 font-serif text-[clamp(2.35rem,4.1vw,3.5rem)] leading-[1.01] tracking-[-0.02em] text-[#11131a]">
@@ -279,7 +279,7 @@ export function CheatsheetPage() {
       </main>
 
       <footer className="border-t border-[rgba(16,20,30,.08)]">
-        <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
+        <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
           <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">QQ{"\u00a0"}GenUI</p>
           <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 QQ{"\u00a0"}GenUI</p>
         </div>
