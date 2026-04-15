@@ -775,7 +775,7 @@ export function HomePage() {
         </AnimatePresence>
       </header>
 
-      <main className="mx-auto w-full max-w-[1360px] px-4 pb-22 pt-0 sm:px-7 lg:px-10">
+      <main className="mx-auto w-full max-w-[1360px] px-4 pb-22 pt-8 sm:px-7 sm:pt-12 lg:px-10">
         <section className="grid min-h-[calc(100svh-72px)] items-center gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:gap-20">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
