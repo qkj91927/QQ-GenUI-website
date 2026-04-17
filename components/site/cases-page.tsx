@@ -118,6 +118,7 @@ type CaseItem = {
   tripleUrls?: [string, string, string];
   tripleLabels?: [string, string, string];
   tripleLabelsEn?: [string, string, string];
+  chromeTitle?: string;
 };
 
 const cases: CaseItem[] = [
@@ -141,6 +142,7 @@ const cases: CaseItem[] = [
     specLink: "/assets",
     specLabel: "查看设置组件规范",
     specLabelEn: "View settings component spec",
+    chromeTitle: "群管理.html",
   },
   {
     id: "halfscreen",
@@ -160,6 +162,7 @@ const cases: CaseItem[] = [
     specLink: "/assets",
     specLabel: "查看半屏组件规范",
     specLabelEn: "View half-screen component spec",
+    chromeTitle: "半屏弹窗.html",
   },
   {
     id: "demo-convert",
@@ -179,6 +182,7 @@ const cases: CaseItem[] = [
     beforeLabelEn: "Original HTML Demo",
     afterLabel: "规范化界面",
     afterLabelEn: "Spec-compliant interface",
+    chromeTitle: "AI找群.html",
   },
   {
     id: "batch-produce",
@@ -198,6 +202,7 @@ const cases: CaseItem[] = [
     beforeLabelEn: "Single screen",
     afterLabel: "完整流程界面",
     afterLabelEn: "Complete flow screens",
+    chromeTitle: "陌生人社交.html",
   },
   {
     id: "style-eval",
@@ -217,6 +222,7 @@ const cases: CaseItem[] = [
     beforeLabelEn: "Original style",
     afterLabel: "切换后风格",
     afterLabelEn: "Switched style",
+    chromeTitle: "风格对比.html",
   },
 ];
 
@@ -907,6 +913,7 @@ export function CasesPage() {
                               <span className="size-2.5 rounded-full bg-[#ff5f57]" />
                               <span className="size-2.5 rounded-full bg-[#febc2e]" />
                               <span className="size-2.5 rounded-full bg-[#28c840]" />
+                              {c.chromeTitle && <span className="ml-2 text-[0.9rem] leading-none text-[#5c6170]">{c.chromeTitle}</span>}
                             </div>
                             <div className="flex items-center gap-2">
                               {/* QR icon */}
