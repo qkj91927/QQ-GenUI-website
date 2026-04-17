@@ -909,11 +909,11 @@ export function CasesPage() {
                         <div className="overflow-hidden rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]">
                           {/* Chrome bar */}
                           <div className="flex items-center justify-between border-b border-[#f0f1f4] bg-[#fafafc] px-5 py-3">
-                            <div className="flex items-center gap-2.5">
+                            <div className="flex min-w-0 items-center gap-2.5">
                               <span className="size-2.5 rounded-full bg-[#ff5f57]" />
                               <span className="size-2.5 rounded-full bg-[#febc2e]" />
                               <span className="size-2.5 rounded-full bg-[#28c840]" />
-                              {c.chromeTitle && <span className="ml-2 text-[0.9rem] leading-none text-[#5c6170]">{c.chromeTitle}</span>}
+                              {c.chromeTitle && <span className="ml-2 min-w-0 truncate text-[0.9rem] leading-none text-[#5c6170]">{c.chromeTitle}</span>}
                             </div>
                             <div className="flex items-center gap-2">
                               {/* QR icon */}
