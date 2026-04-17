@@ -783,39 +783,39 @@ export function HomePage() {
             transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-10 lg:max-w-[600px]"
           >
-            <div className="space-y-6">
-              <h1 className="font-serif text-[clamp(3.9rem,7.2vw,6.3rem)] italic leading-[0.9] tracking-[-0.03em] text-[#0b0d13]">QQ GenUI</h1>
-              <p className="max-w-[470px] font-serif text-[clamp(1.75rem,3.1vw,2.7rem)] italic leading-[1.06] text-[#141821]">
+            <div className="space-y-5">
+              <h1 className="font-serif text-[clamp(3.2rem,6vw,5rem)] italic leading-[0.9] tracking-[-0.03em] text-[#0b0d13]">QQ GenUI</h1>
+              <p className="max-w-[470px] font-serif text-[clamp(1.45rem,2.5vw,2.1rem)] italic leading-[1.1] text-[#141821]">
                 {isZh ? "AI harnesses 提升设计质量" : "AI harnesses that elevate design quality"}
               </p>
             </div>
 
-            <p className={`max-w-[590px] ${isZh ? "text-[clamp(1rem,1.2vw,1.3rem)] leading-[1.82]" : "text-[clamp(1.02rem,1.18vw,1.32rem)] leading-[1.72]"} text-[#1d232f]`}>
+            <p className={`max-w-[590px] ${isZh ? "text-[clamp(0.92rem,1.05vw,1.08rem)] leading-[1.82]" : "text-[clamp(0.92rem,1.02vw,1.1rem)] leading-[1.72]"} text-[#1d232f]`}>
               {isZh
-                ? "在实际业务中，好的设计输出要求稳定生成，符合产品设计语言。你不能要求AI为你生成“符合QQ规范的界面”而不提供任何设计上下文和约束。QQ GenUI为你提供了完整的AI友好的QQ设计规范，开箱即用，对使用者的提示词水平和使用的开发工具无要求。"
-                : "In real-world product work, high-quality design output must be consistently generated and aligned with the product design language. You cannot ask AI to generate a \"QQ-compliant interface\" without providing any design context or constraints. QQ GenUI gives you a complete, AI-friendly QQ design specification out of the box, with no requirements on users’ prompt-writing skills or development tools."}
+                ? <>在实际业务中，好的设计输出要求稳定生成，符合产品设计语言。你不能要求AI为你生成{"\u201c"}符合QQ规范的界面{"\u201d"}而不提供任何设计上下文和约束。QQ GenUI为你提供了完整的AI友好的QQ设计规范，开箱即用，对使用者的提示词水平和使用的开发工具无要求。</>
+                : "In real-world product work, high-quality design output must be consistently generated and aligned with the product design language. You cannot ask AI to generate a \"QQ-compliant interface\" without providing any design context or constraints. QQ GenUI gives you a complete, AI-friendly QQ design specification out of the box, with no requirements on users' prompt-writing skills or development tools."}
             </p>
 
             <div className="max-w-[560px] border border-[#e5e8ee] bg-white px-5 py-3">
-              <p className="text-[0.9rem] uppercase tracking-[0.13em] text-[#8f95a0]">{isZh ? "包括" : "What's included"}</p>
-              <p className={`mt-2 ${isZh ? "text-[clamp(0.98rem,1.12vw,1.2rem)] leading-[1.6]" : "text-[clamp(0.96rem,1.02vw,1.12rem)] leading-[1.56]"} text-[#202734]`}>
+              <p className="text-[0.82rem] uppercase tracking-[0.13em] text-[#8f95a0]">{isZh ? "包括" : "What's included"}</p>
+              <p className={`mt-2 ${isZh ? "text-[clamp(0.88rem,1vw,1.02rem)] leading-[1.6]" : "text-[clamp(0.88rem,0.95vw,1rem)] leading-[1.56]"} text-[#202734]`}>
                 {isZh
                   ? "组件规范：20 个组件类型（导航、数据、操作、模态...）的所有组件变体（带组件交互及组合规则），designtoken，QUI图标库，强约束的工作流skill..."
                   : "Component specs: all component variants (with interactions and composition rules) across 20 component types (navigation, data, action, modal...), designtokens, QUI icon library, and workflow skills..."}
               </p>
             </div>
 
-            <div className="flex flex-col gap-6 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="flex flex-col gap-5 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
               <a
                 href="#get-started"
-                className="relative inline-flex h-[72px] w-full items-center justify-center overflow-hidden border border-[#242932] bg-[#0f1218] text-[1.25rem] font-semibold uppercase leading-[1.1] tracking-[0.03em] text-white transition hover:brightness-110 sm:h-[104px] sm:w-[268px] sm:text-[1.45rem]"
+                className="relative inline-flex h-[58px] w-full items-center justify-center overflow-hidden border border-[#242932] bg-[#0f1218] text-[1.08rem] font-semibold uppercase leading-[1.1] tracking-[0.03em] text-white transition hover:brightness-110 sm:h-[80px] sm:w-[220px] sm:text-[1.2rem]"
               >
                 <span className="pointer-events-none absolute inset-0 z-0 opacity-24 [background-image:radial-gradient(circle_at_18%_24%,rgba(255,255,255,.2),transparent_42%),radial-gradient(circle_at_88%_82%,rgba(255,255,255,.12),transparent_36%)]" />
                 <span className={`relative z-20 text-center text-white ${isZh ? "whitespace-nowrap" : ""}`}>{isZh ? "开始使用" : <>GET<br />STARTED</>}</span>
               </a>
 
               <div className="space-y-2 text-[#4d535d]">
-                <p className="text-[1.34rem] text-[#7d8490]">Works with</p>
+                <p className="text-[1.1rem] text-[#7d8490]">Works with</p>
                 <div className="flex flex-wrap gap-1.5 text-[10px]">
                   {["Codebuddy", "With", "Workbuddy", "Claude Code", "Codex", "Cursor", "VS Code"].map((item) => (
                     <span key={item} className="rounded-md border border-[#dee1e7] bg-white px-2.5 py-1">
@@ -826,7 +826,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <p className="text-[1.45rem] leading-none text-[#8a909b]">{isZh ? "v1.3.0 - 图标绑定完善，新增半屏模态组件规则" : "v1.3.0 - Icon binding improved, new half-screen modal component rules"}</p>
+            <p className="text-[1.15rem] leading-none text-[#8a909b]">{isZh ? "v1.3.0 - 图标绑定完善，新增半屏模态组件规则" : "v1.3.0 - Icon binding improved, new half-screen modal component rules"}</p>
           </motion.div>
 
           <motion.div
@@ -837,7 +837,7 @@ export function HomePage() {
           >
             <BeforeAfterCompare isZh={isZh} />
 
-            <div className="mt-6 flex items-center justify-center gap-12 text-[1.02rem] text-[#737b8a]">
+            <div className="mt-6 flex items-center justify-center gap-12 text-[0.9rem] text-[#737b8a]">
               <span className="inline-flex items-center gap-2.5">
                 <span className="size-2.5 rounded-full bg-[#d6dae0]" /> {isZh ? "通用 AI 输出" : "General AI Output"}
               </span>
@@ -850,10 +850,10 @@ export function HomePage() {
 
         <section id="commands" className="mt-24">
           <p className="text-[16px] leading-none tracking-[0.012em] text-[#939aa5]">01</p>
-          <h2 className="mt-10 font-serif text-[clamp(2.35rem,4.1vw,3.5rem)] leading-[1.01] tracking-[-0.02em] text-[#11131a]">
+          <h2 className="mt-10 font-serif text-[clamp(1.9rem,3.4vw,2.8rem)] leading-[1.01] tracking-[-0.02em] text-[#11131a]">
             {isZh ? "架构体系" : "The Framework"}
           </h2>
-          <p className="mt-[36px] max-w-[920px] text-[clamp(1.26rem,1.75vw,2.12rem)] leading-[1.34] text-[#1f2531]">
+          <p className="mt-[36px] max-w-[920px] text-[clamp(1.05rem,1.4vw,1.6rem)] leading-[1.4] text-[#1f2531]">
             {isZh
               ? "一个具备深度能力的综合 skill 集合，赋予 agent 对交互行为、视觉语言、设计原则以及实际产品需求的深刻理解。帮助 agent 挑选适当的组件、应用统一的样式，并在构建界面时始终遵循平台规范、间距体系、排版规则以及交互模式。"
               : "A comprehensive skill set with deep expertise, giving agents a profound understanding of interaction behavior, visual language, design principles, and real-world product requirements. Helps agents select appropriate components, apply consistent styles, and always follow platform specifications, spacing systems, typographic rules, and interaction patterns when building interfaces."}
@@ -865,7 +865,7 @@ export function HomePage() {
                 const tone = frameworkTone[group.tone];
                 return (
                   <div key={group.title}>
-                    <p className={`mb-[12px] text-[1.46rem] font-semibold tracking-[0.032em] ${tone.title}`}>{group.title}</p>
+                    <p className={`mb-[12px] text-[1.2rem] font-semibold tracking-[0.032em] ${tone.title}`}>{group.title}</p>
 
                     <div className="flex flex-wrap gap-[8px]">
                       {group.items.map((item) => (
@@ -888,10 +888,10 @@ export function HomePage() {
           <div className="space-y-7 pb-0 xl:pb-[420px]">
             <p className="text-[16px] leading-none tracking-[0.012em] text-[#949aa4]">02</p>
             <div>
-              <h2 className="mt-3 font-serif text-[clamp(2.35rem,4.1vw,3.5rem)] leading-[1.06] tracking-[-0.02em] text-[#121317]">
+              <h2 className="mt-3 font-serif text-[clamp(1.9rem,3.4vw,2.8rem)] leading-[1.06] tracking-[-0.02em] text-[#121317]">
                 {isZh ? "场景" : "Scenarios"}
               </h2>
-              <p className="mt-4 text-[1.27rem] text-[#202532]">
+              <p className="mt-4 text-[1.08rem] text-[#202532]">
                 {isZh ? "不同场景下的使用方式" : "How to use in different scenarios"}
                 <Link href="/cheatsheet" className="ml-2 font-semibold text-[#0099ff] hover:opacity-80">
                   {isZh ? "查看 cheatsheet →" : "View cheatsheet →"}
@@ -902,7 +902,7 @@ export function HomePage() {
             <div ref={commandListRef} className="space-y-10">
               {localizedActionGroups.map((group) => (
                 <div key={group.label} className="border-t border-[rgba(16,20,30,.08)] pt-6">
-                  <p className="text-[1.52rem] font-serif tracking-[0.14em] text-[#0099ff]">{group.label}</p>
+                  <p className="text-[1.25rem] font-serif tracking-[0.14em] text-[#0099ff]">{group.label}</p>
 
                   <div className="mt-6 space-y-10">
                     {group.items.map((item) => (
@@ -912,8 +912,8 @@ export function HomePage() {
                         className={`cursor-pointer transition-all duration-200 ${activeCommand === item.cmd ? "border-l-2 border-[#0099ff] pl-5" : "border-l-2 border-transparent pl-5 opacity-45 hover:opacity-70"}`}
                         onClick={() => setActiveCommand(item.cmd)}
                       >
-                        <h3 className="font-serif text-[clamp(2rem,3vw,3rem)] italic leading-none tracking-[-0.02em] text-[#12151b]">{item.cmd.replace(/^\//, "")}</h3>
-                        <p className="mt-3 max-w-[560px] text-[1.02rem] leading-8 text-[#404857]">{item.desc}</p>
+                        <h3 className="font-serif text-[clamp(1.6rem,2.4vw,2.4rem)] italic leading-none tracking-[-0.02em] text-[#12151b]">{item.cmd.replace(/^\//, "")}</h3>
+                        <p className="mt-3 max-w-[560px] text-[0.92rem] leading-8 text-[#404857]">{item.desc}</p>
 
                         {item.spec && (
                           <p className="mt-3 text-[1.02rem] text-[#4f5563]">
@@ -1265,19 +1265,19 @@ export function HomePage() {
 
         <section id="get-started" className="mt-18 border-t border-[rgba(16,20,30,.08)] pt-10">
           <p className="text-[16px] leading-none tracking-[0.012em] text-[#949aa4]">03</p>
-          <h2 className="mt-10 font-serif text-[clamp(2.35rem,4.1vw,3.5rem)] leading-[1.06] tracking-[-0.02em] text-[#121317]">
+          <h2 className="mt-10 font-serif text-[clamp(1.9rem,3.4vw,2.8rem)] leading-[1.06] tracking-[-0.02em] text-[#121317]">
             {isZh ? "开始使用" : "Get Started"}
           </h2>
-          <p className="mt-4 text-[clamp(1.2rem,1.9vw,2rem)] leading-[1.36] text-[#1f2532]">
+          <p className="mt-4 text-[clamp(1.02rem,1.5vw,1.5rem)] leading-[1.36] text-[#1f2532]">
             {isZh ? "一步开始 QQ GenUI 设计。" : "One step to QQ GenUI design."}
           </p>
 
           <div className="mx-auto mt-10 w-full max-w-[830px] space-y-9">
             <div className="flex items-start gap-6">
-              <span className="inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-[#00adff] text-[1.45rem] font-semibold leading-none text-[#00a8ff]">1</span>
+              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-[#00adff] text-[1.2rem] font-semibold leading-none text-[#00a8ff]">1</span>
               <div className="pt-1">
-                <p className="font-serif text-[1.85rem] leading-[1.04] text-[#111318]">{isZh ? "安装 skills" : "Install the skills"}</p>
-                <p className="mt-2 text-[1.28rem] leading-[1.16] text-[#7f8591]">{isZh ? "一条命令，适配所有开发工具。" : "One command. Every provider."}</p>
+                <p className="font-serif text-[1.5rem] leading-[1.04] text-[#111318]">{isZh ? "安装 skills" : "Install the skills"}</p>
+                <p className="mt-2 text-[1.08rem] leading-[1.16] text-[#7f8591]">{isZh ? "一条命令，适配所有开发工具。" : "One command. Every provider."}</p>
               </div>
             </div>
 
@@ -1292,7 +1292,7 @@ export function HomePage() {
 
               <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:px-9 sm:py-8">
                 <div className="min-w-0">
-                  <p className="font-mono text-[clamp(1.1rem,2.2vw,2.02rem)] leading-[1.15] text-[#12151d]">
+                  <p className="font-mono text-[clamp(0.95rem,1.8vw,1.6rem)] leading-[1.15] text-[#12151d]">
                     <span aria-hidden="true" className="mr-2 inline-flex select-none text-[#00a6ff]">
                       <svg viewBox="0 0 24 24" className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12h5" />
@@ -1301,7 +1301,7 @@ export function HomePage() {
                     </span>
                     <span className="whitespace-nowrap">npx skills add <span className="relative inline-block w-[1ch] overflow-hidden align-bottom" style={{ color: "transparent", caretColor: "transparent" }}><span className="select-all">qkj91927</span><span className="pointer-events-none absolute left-0 top-0 select-none" style={{ color: "#12151d" }} aria-hidden="true">*</span></span>/QQ_GenUI</span>
                   </p>
-                  <p className="mt-3 max-w-[980px] text-[clamp(0.95rem,1.5vw,1.48rem)] leading-[1.34] text-[#7f8591]">
+                  <p className="mt-3 max-w-[980px] text-[clamp(0.88rem,1.2vw,1.15rem)] leading-[1.34] text-[#7f8591]">
                     {isZh
                       ? "直接复制到 Codebuddy、With、Workbuddy、Claude Code、Codex、Cursor 等工具即可。"
                       : "Just copy and paste in Codebuddy, With, Workbuddy, Claude Code, Codex, Cursor, and more."}
@@ -1326,10 +1326,10 @@ export function HomePage() {
             </article>
 
             <div className="mt-20 flex items-start gap-6">
-              <span className="inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2 border-[#00adff] text-[1.45rem] font-semibold leading-none text-[#00a8ff]">2</span>
+              <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-[#00adff] text-[1.2rem] font-semibold leading-none text-[#00a8ff]">2</span>
               <div className="pt-1">
-                <p className="font-serif text-[1.85rem] leading-[1.04] text-[#111318]">{isZh ? "输入你的 prompts" : "Input your prompts"}</p>
-                <p className="mt-2 text-[1.28rem] leading-[1.16] text-[#7f8591]">{isZh ? "skills 可搭配任意 prompts 使用。" : "Use skills with any prompts."}</p>
+                <p className="font-serif text-[1.5rem] leading-[1.04] text-[#111318]">{isZh ? "输入你的 prompts" : "Input your prompts"}</p>
+                <p className="mt-2 text-[1.08rem] leading-[1.16] text-[#7f8591]">{isZh ? "skills 可搭配任意 prompts 使用。" : "Use skills with any prompts."}</p>
               </div>
             </div>
 
@@ -1344,7 +1344,7 @@ export function HomePage() {
 
               <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6 sm:px-9 sm:py-8">
                 <div className="min-w-0">
-                  <p className="text-[clamp(1.05rem,1.8vw,1.68rem)] leading-[1.3] text-[#12151d]">
+                  <p className="text-[clamp(0.95rem,1.5vw,1.35rem)] leading-[1.3] text-[#12151d]">
                     <span aria-hidden="true" className="mr-2 inline-flex select-none text-[#00a6ff]">
                       <svg viewBox="0 0 24 24" className="size-5 sm:size-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12h5" />
@@ -1353,7 +1353,7 @@ export function HomePage() {
                     </span>
                     {useCommand}
                   </p>
-                  <p className="mt-3 max-w-[980px] text-[clamp(0.95rem,1.5vw,1.48rem)] leading-[1.34] text-[#7f8591]">
+                  <p className="mt-3 max-w-[980px] text-[clamp(0.88rem,1.2vw,1.15rem)] leading-[1.34] text-[#7f8591]">
                     {isZh
                       ? "你可以让 skills 搭配任意 prompts，直接发送给 agent，等待 magic 发生。"
                       : "You can use any prompts with skills, just send to agent and wait for magic."}
@@ -1377,7 +1377,7 @@ export function HomePage() {
               </div>
             </article>
 
-            <p className="max-w-[830px] text-[1.02rem] leading-[1.7] text-[#636c7a]">
+            <p className="max-w-[830px] text-[0.92rem] leading-[1.7] text-[#636c7a]">
               {isZh ? "建议把" : "Keep the"}
               <Link
                 href="/cheatsheet"
@@ -1394,14 +1394,14 @@ export function HomePage() {
 
         <section id="changelog" className="mt-20 border-t border-[rgba(16,20,30,.08)] pt-10">
           <p className="text-[16px] leading-none tracking-[0.012em] text-[#949aa4]">04</p>
-          <h2 className="mt-10 font-serif text-[clamp(2.3rem,4vw,3.35rem)] leading-[1.04] tracking-[-0.02em] text-[#141518]">
+          <h2 className="mt-10 font-serif text-[clamp(1.9rem,3.4vw,2.8rem)] leading-[1.04] tracking-[-0.02em] text-[#141518]">
             {isZh ? "最新动态" : "What's New"}
           </h2>
 
-          <article className="mt-10 max-w-[980px] space-y-5 text-[1.03rem] leading-[1.55] text-[#222734]">
+          <article className="mt-10 max-w-[980px] space-y-5 text-[0.95rem] leading-[1.55] text-[#222734]">
             <div className="flex flex-wrap items-center gap-3">
-              <p className="text-[1.85rem] font-semibold leading-none text-[#101218]">v1.3.0</p>
-              <p className="text-[1.02rem] text-[#8d94a1]">April 7, 2026</p>
+              <p className="text-[1.5rem] font-semibold leading-none text-[#101218]">v1.3.0</p>
+              <p className="text-[0.92rem] text-[#8d94a1]">April 7, 2026</p>
             </div>
 
             <ul className="space-y-3.5 pl-6 marker:text-[#20242d]">
@@ -1411,13 +1411,13 @@ export function HomePage() {
               <li>{isZh ? "修复部分组件变体的组合规则缺失问题" : "Fixed missing composition rules for some component variants"}</li>
             </ul>
 
-            <button className="pt-6 text-[1.02rem] font-semibold text-[#0099ff] transition hover:opacity-75">+ View older releases</button>
+            <button className="pt-6 text-[0.92rem] font-semibold text-[#0099ff] transition hover:opacity-75">+ View older releases</button>
           </article>
 
           <div className="mx-auto mt-12 w-full max-w-[980px]">
             <div className="pl-0 pt-1 sm:pl-[80px]">
-              <p className="font-serif text-[1.85rem] leading-[1.04] text-[#111318]">{isZh ? "保持更新" : "Stay up to date"}</p>
-              <p className="mt-2 text-[clamp(1rem,1.4vw,1.28rem)] leading-[1.16] text-[#7f8591]">{isZh ? "发布新版本时，我们将通过企微邮件通知你。" : "New skills, pattern updates, and design tips."}</p>
+                <p className="font-serif text-[1.5rem] leading-[1.04] text-[#111318]">{isZh ? "保持更新" : "Stay up to date"}</p>
+                <p className="mt-2 text-[clamp(0.92rem,1.2vw,1.08rem)] leading-[1.16] text-[#7f8591]">{isZh ? "发布新版本时，我们将通过企微邮件通知你。" : "New skills, pattern updates, and design tips."}</p>
             </div>
 
             <article className="mt-7 rounded-[10px] border border-[#ececf0] bg-white px-4 py-5 sm:px-7 sm:py-8">
@@ -1426,15 +1426,15 @@ export function HomePage() {
                   <input
                     type="email"
                     placeholder={isZh ? "输入你的邮箱..." : "Type your email..."}
-                    className="h-12 border-0 px-4 text-[clamp(1rem,1.6vw,1.8rem)] text-[#8a8f98] placeholder:text-[#b4b8be] focus:outline-none sm:h-13 sm:px-5"
+                    className="h-12 border-0 px-4 text-[clamp(0.92rem,1.2vw,1.3rem)] text-[#8a8f98] placeholder:text-[#b4b8be] focus:outline-none sm:h-13 sm:px-5"
                   />
-                  <button type="button" className="h-12 rounded-[10px] bg-[#35b6ff] px-6 text-[clamp(1rem,1.6vw,1.88rem)] font-semibold text-white sm:h-13 sm:px-8">
+                  <button type="button" className="h-12 rounded-[10px] bg-[#35b6ff] px-6 text-[clamp(0.92rem,1.2vw,1.35rem)] font-semibold text-white sm:h-13 sm:px-8">
                     {isZh ? "订阅" : "Subscribe"}
                   </button>
                 </div>
               </div>
 
-              <p className="mx-auto mt-4 max-w-[760px] text-center text-[1.22rem] leading-[1.35] text-[#8c919a]">
+              <p className="mx-auto mt-4 max-w-[760px] text-center text-[1.02rem] leading-[1.35] text-[#8c919a]">
                 {isZh
                   ? "订阅即表示你同意我们的使用条款和隐私政策。"
                   : <>By subscribing you agree to
@@ -1451,7 +1451,7 @@ export function HomePage() {
 
         <section id="faq" className="mt-16 border-t border-[rgba(16,20,30,.08)] pt-10">
           <p className="text-[16px] leading-none tracking-[0.012em] text-[#949aa4]">05</p>
-          <h2 className="mt-10 font-serif text-[clamp(2.35rem,4.1vw,3.5rem)] leading-[1.05] tracking-[-0.02em] text-[#141518]">
+          <h2 className="mt-10 font-serif text-[clamp(1.9rem,3.4vw,2.8rem)] leading-[1.05] tracking-[-0.02em] text-[#141518]">
             {isZh ? "常见问题" : "Frequently Asked Questions"}
           </h2>
 
@@ -1466,7 +1466,7 @@ export function HomePage() {
                     onClick={() => setOpenFaq(isOpen ? -1 : index)}
                     aria-expanded={isOpen}
                   >
-                    <span className="font-serif text-[clamp(1.35rem,2.35vw,2.05rem)] leading-[1.2] tracking-[-0.01em] text-[#1a1d24]">
+                    <span className="font-serif text-[clamp(1.15rem,1.9vw,1.6rem)] leading-[1.2] tracking-[-0.01em] text-[#1a1d24]">
                       {faq.question}
                     </span>
                     <motion.span
@@ -1491,7 +1491,7 @@ export function HomePage() {
                         }}
                         className="overflow-hidden"
                       >
-                        <p className="max-w-3xl pb-6 pr-12 text-[1.03rem] leading-8 text-[#5c6472]">{faq.answer}</p>
+                        <p className="max-w-3xl pb-6 pr-12 text-[0.94rem] leading-8 text-[#5c6472]">{faq.answer}</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

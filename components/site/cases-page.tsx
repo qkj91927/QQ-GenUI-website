@@ -9,10 +9,27 @@ import { useCallback, useEffect, useRef, useState } from "react";
 function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; title: string; iframeWidth?: number; iframeHeight?: number }) {
   const [mode, setMode] = useState<"demo" | "code">("demo");
   const [code, setCode] = useState<string>("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
 
   const w = iframeWidth ?? 428;
   const h = iframeHeight ?? 926;
   const isWide = !!iframeWidth;
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const containerW = containerRef.current.clientWidth;
+      const availH = window.innerHeight * 0.78;
+      const baseH = isWide ? 926 : h;
+      const sw = containerW / (isWide ? 428 : w);
+      const sh = availH / baseH;
+      setScale(Math.min(1, sw, sh));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, [w, h]);
 
   useEffect(() => {
     if (mode === "code" && !code) {
@@ -50,22 +67,29 @@ function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; t
       </div>
       {mode === "demo" ? (
         isWide ? (
-          <div className="overflow-auto bg-white" style={{ maxHeight: h + 40 }}>
+          <div ref={containerRef} className="overflow-x-auto overflow-y-hidden bg-[var(--background)]" style={{ height: h * scale }}>
+            <div style={{ width: w * scale, height: h * scale }}>
+              <iframe
+                src={url}
+                title={title}
+                className="block border-0"
+                width={w}
+                height={h}
+                style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div ref={containerRef} className="flex justify-center overflow-hidden bg-[var(--background)]" style={{ height: h * scale }}>
             <iframe
               src={url}
               title={title}
-              className="block border-0"
-              style={{ width: w, height: h, minWidth: w }}
+              className="border-0"
+              width={w}
+              height={h}
+              style={{ transform: `scale(${scale})`, transformOrigin: "top center" }}
             />
           </div>
-        ) : (
-          <iframe
-            src={url}
-            title={title}
-            className="mx-auto block max-w-full border-0 bg-white"
-            width={w}
-            height={h}
-          />
         )
       ) : (
         <pre className="max-h-[926px] overflow-auto bg-[#1e1e2e] p-6 text-[0.82rem] leading-[1.6]">
@@ -304,6 +328,21 @@ function IframeCompare({
   const containerRef = useRef<HTMLDivElement>(null);
   const [split, setSplit] = useState(50);
   const [dragging, setDragging] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const cw = containerRef.current.clientWidth;
+      const availH = window.innerHeight * 0.78;
+      const sw = cw / 428;
+      const sh = availH / 926;
+      setScale(Math.min(1, sw, sh));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
 
   const handleMove = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -332,67 +371,62 @@ function IframeCompare({
   const skew = 14;
   const topPct = split + skew / 2;
   const botPct = split - skew / 2;
+  const scaledH = 926 * scale;
+  const scaledW = 428 * scale;
 
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]"
-      style={{ height: 926 }}
-    >
-      {/* Before layer — full width */}
-      <div className="absolute inset-0 z-0 flex justify-center">
-        <iframe src={beforeUrl} title="Before" className="h-full border-0 bg-white" width="428" height="926" />
+    <div ref={containerRef} className="overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]">
+      <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
+        <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+          {/* Before layer — full width */}
+          <div className="absolute inset-0 z-0">
+            <iframe src={beforeUrl} title="Before" className="h-full w-full border-0 bg-white" width="428" height="926" />
+          </div>
+
+          {/* After layer — clipped */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{ clipPath: `polygon(${topPct}% 0%, 100% 0%, 100% 100%, ${botPct}% 100%)` }}
+          >
+            <iframe src={afterUrl} title="After" className="h-full w-full border-0 bg-white" width="428" height="926" />
+          </div>
+
+          {/* Pointer blocker — only when dragging */}
+          {dragging && <div className="absolute inset-0 z-20" />}
+
+          {/* Labels */}
+          <span
+            className="pointer-events-none absolute left-4 top-4 z-30 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4] transition-opacity duration-150"
+            style={{ opacity: split > 14 ? 1 : 0 }}
+          >
+            {beforeLabel}
+          </span>
+          <span
+            className="pointer-events-none absolute right-4 top-4 z-30 rounded-md bg-[#0099ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-white transition-opacity duration-150"
+            style={{ opacity: split < 86 ? 1 : 0 }}
+          >
+            {afterLabel}
+          </span>
+
+          {/* Divider line (visual) */}
+          <svg className="pointer-events-none absolute inset-0 z-40" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
+            <line x1={`${topPct}%`} y1="0%" x2={`${botPct}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
+          </svg>
+
+          {/* Draggable hit area */}
+          <svg className="absolute inset-0 z-50 pointer-events-none" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
+            <line
+              x1={`${topPct}%`} y1="0%" x2={`${botPct}%`} y2="100%"
+              stroke="transparent" strokeWidth="32"
+              className="pointer-events-auto cursor-col-resize"
+              onMouseDown={(e) => { e.preventDefault(); setDragging(true); handleMove(e.clientX); }}
+              onTouchStart={(e) => { setDragging(true); if (e.touches[0]) handleMove(e.touches[0].clientX); }}
+            />
+          </svg>
+
+          <p className="pointer-events-none absolute bottom-3 left-1/2 z-40 -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.85)] px-3 py-1 text-xs tracking-[0.2em] text-[#a5a9b1]">← DRAG →</p>
+        </div>
       </div>
-
-      {/* After layer — clipped */}
-      <div
-        className="absolute inset-0 z-10 flex justify-center"
-        style={{ clipPath: `polygon(${topPct}% 0%, 100% 0%, 100% 100%, ${botPct}% 100%)` }}
-      >
-        <iframe src={afterUrl} title="After" className="h-full border-0 bg-white" width="428" height="926" />
-      </div>
-
-      {/* Pointer blocker — only when dragging, prevents iframe from capturing mouse */}
-      {dragging && <div className="absolute inset-0 z-20" />}
-
-      {/* Labels */}
-      <span
-        className="pointer-events-none absolute left-4 top-4 z-30 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4] transition-opacity duration-150"
-        style={{ opacity: split > 14 ? 1 : 0 }}
-      >
-        {beforeLabel}
-      </span>
-      <span
-        className="pointer-events-none absolute right-4 top-4 z-30 rounded-md bg-[#0099ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-white transition-opacity duration-150"
-        style={{ opacity: split < 86 ? 1 : 0 }}
-      >
-        {afterLabel}
-      </span>
-
-      {/* Divider line (visual) */}
-      {/* Divider line (visual) */}
-      <svg className="pointer-events-none absolute inset-0 z-40" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
-        <line x1={`${topPct}%`} y1="0%" x2={`${botPct}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
-      </svg>
-
-      {/* Draggable hit area along the divider — wide invisible strip for easy grabbing */}
-      <svg
-        className="absolute inset-0 z-50 pointer-events-none"
-        width="100%"
-        height="100%"
-        preserveAspectRatio="none"
-        style={{ overflow: "visible" }}
-      >
-        <line
-          x1={`${topPct}%`} y1="0%" x2={`${botPct}%`} y2="100%"
-          stroke="transparent" strokeWidth="32"
-          className="pointer-events-auto cursor-col-resize"
-          onMouseDown={(e) => { e.preventDefault(); setDragging(true); handleMove(e.clientX); }}
-          onTouchStart={(e) => { setDragging(true); if (e.touches[0]) handleMove(e.touches[0].clientX); }}
-        />
-      </svg>
-
-      <p className="pointer-events-none absolute bottom-3 left-1/2 z-40 -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.85)] px-3 py-1 text-xs tracking-[0.2em] text-[#a5a9b1]">← DRAG →</p>
     </div>
   );
 }
@@ -408,7 +442,22 @@ function TripleIframeCompare({
   const containerRef = useRef<HTMLDivElement>(null);
   const [split1, setSplit1] = useState(33.3);
   const [split2, setSplit2] = useState(66.6);
-  const [dragging, setDragging] = useState<0 | 1 | 2>(0); // 0=none, 1=left divider, 2=right divider
+  const [dragging, setDragging] = useState<0 | 1 | 2>(0);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const cw = containerRef.current.clientWidth;
+      const availH = window.innerHeight * 0.78;
+      const sw = cw / 428;
+      const sh = availH / 926;
+      setScale(Math.min(1, sw, sh));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
 
   const pctFromX = useCallback((clientX: number) => {
     const el = containerRef.current;
@@ -449,82 +498,84 @@ function TripleIframeCompare({
   const bot1 = split1 - skew / 2;
   const top2 = split2 + skew / 2;
   const bot2 = split2 - skew / 2;
+  const scaledH = 926 * scale;
+  const scaledW = 428 * scale;
 
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]"
-      style={{ height: 926 }}
-    >
-      {/* Layer 1 (left) — full background */}
-      <div className="absolute inset-0 z-0 flex justify-center">
-        <iframe src={urls[0]} title={labels[0]} className="h-full border-0 bg-white" width="428" height="926" />
+    <div ref={containerRef} className="overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]">
+      <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
+        <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
+          {/* Layer 1 (left) — full background */}
+          <div className="absolute inset-0 z-0">
+            <iframe src={urls[0]} title={labels[0]} className="h-full w-full border-0 bg-white" width="428" height="926" />
+          </div>
+
+          {/* Layer 2 (middle) — clipped between split1 and split2 */}
+          <div
+            className="absolute inset-0 z-10"
+            style={{ clipPath: `polygon(${top1}% 0%, ${top2}% 0%, ${bot2}% 100%, ${bot1}% 100%)` }}
+          >
+            <iframe src={urls[1]} title={labels[1]} className="h-full w-full border-0 bg-white" width="428" height="926" />
+          </div>
+
+          {/* Layer 3 (right) — clipped from split2 to right */}
+          <div
+            className="absolute inset-0 z-20"
+            style={{ clipPath: `polygon(${top2}% 0%, 100% 0%, 100% 100%, ${bot2}% 100%)` }}
+          >
+            <iframe src={urls[2]} title={labels[2]} className="h-full w-full border-0 bg-white" width="428" height="926" />
+          </div>
+
+          {/* Pointer blocker when dragging */}
+          {dragging > 0 && <div className="absolute inset-0 z-30" />}
+
+          {/* Labels */}
+          <span
+            className="pointer-events-none absolute left-4 top-4 z-40 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4] transition-opacity duration-150"
+            style={{ opacity: split1 > 14 ? 1 : 0 }}
+          >
+            {labels[0]}
+          </span>
+          <span
+            className="pointer-events-none absolute left-1/2 top-4 z-40 -translate-x-1/2 rounded-md border border-[#c8d8f0] bg-[#f0f6ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#5b7ba6] transition-opacity duration-150"
+            style={{ opacity: split2 - split1 > 12 ? 1 : 0 }}
+          >
+            {labels[1]}
+          </span>
+          <span
+            className="pointer-events-none absolute right-4 top-4 z-40 rounded-md bg-[#0099ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-white transition-opacity duration-150"
+            style={{ opacity: split2 < 86 ? 1 : 0 }}
+          >
+            {labels[2]}
+          </span>
+
+          {/* Divider lines (visual) */}
+          <svg className="pointer-events-none absolute inset-0 z-50" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
+            <line x1={`${top1}%`} y1="0%" x2={`${bot1}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
+            <line x1={`${top2}%`} y1="0%" x2={`${bot2}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
+          </svg>
+
+          {/* Draggable hit areas */}
+          <svg className="pointer-events-none absolute inset-0 z-[60]" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
+            <line
+              x1={`${top1}%`} y1="0%" x2={`${bot1}%`} y2="100%"
+              stroke="transparent" strokeWidth="32"
+              className="pointer-events-auto cursor-col-resize"
+              onMouseDown={(e) => { e.preventDefault(); setDragging(1); }}
+              onTouchStart={() => setDragging(1)}
+            />
+            <line
+              x1={`${top2}%`} y1="0%" x2={`${bot2}%`} y2="100%"
+              stroke="transparent" strokeWidth="32"
+              className="pointer-events-auto cursor-col-resize"
+              onMouseDown={(e) => { e.preventDefault(); setDragging(2); }}
+              onTouchStart={() => setDragging(2)}
+            />
+          </svg>
+
+          <p className="pointer-events-none absolute bottom-3 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.85)] px-3 py-1 text-xs tracking-[0.2em] text-[#a5a9b1]">← DRAG →</p>
+        </div>
       </div>
-
-      {/* Layer 2 (middle) — clipped between split1 and split2 */}
-      <div
-        className="absolute inset-0 z-10 flex justify-center"
-        style={{ clipPath: `polygon(${top1}% 0%, ${top2}% 0%, ${bot2}% 100%, ${bot1}% 100%)` }}
-      >
-        <iframe src={urls[1]} title={labels[1]} className="h-full border-0 bg-white" width="428" height="926" />
-      </div>
-
-      {/* Layer 3 (right) — clipped from split2 to right */}
-      <div
-        className="absolute inset-0 z-20 flex justify-center"
-        style={{ clipPath: `polygon(${top2}% 0%, 100% 0%, 100% 100%, ${bot2}% 100%)` }}
-      >
-        <iframe src={urls[2]} title={labels[2]} className="h-full border-0 bg-white" width="428" height="926" />
-      </div>
-
-      {/* Pointer blocker when dragging */}
-      {dragging > 0 && <div className="absolute inset-0 z-30" />}
-
-      {/* Labels */}
-      <span
-        className="pointer-events-none absolute left-4 top-4 z-40 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4] transition-opacity duration-150"
-        style={{ opacity: split1 > 14 ? 1 : 0 }}
-      >
-        {labels[0]}
-      </span>
-      <span
-        className="pointer-events-none absolute left-1/2 top-4 z-40 -translate-x-1/2 rounded-md border border-[#c8d8f0] bg-[#f0f6ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#5b7ba6] transition-opacity duration-150"
-        style={{ opacity: split2 - split1 > 12 ? 1 : 0 }}
-      >
-        {labels[1]}
-      </span>
-      <span
-        className="pointer-events-none absolute right-4 top-4 z-40 rounded-md bg-[#0099ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-white transition-opacity duration-150"
-        style={{ opacity: split2 < 86 ? 1 : 0 }}
-      >
-        {labels[2]}
-      </span>
-
-      {/* Divider lines (visual) */}
-      <svg className="pointer-events-none absolute inset-0 z-50" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
-        <line x1={`${top1}%`} y1="0%" x2={`${bot1}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
-        <line x1={`${top2}%`} y1="0%" x2={`${bot2}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
-      </svg>
-
-      {/* Draggable hit areas */}
-      <svg className="pointer-events-none absolute inset-0 z-[60]" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
-        <line
-          x1={`${top1}%`} y1="0%" x2={`${bot1}%`} y2="100%"
-          stroke="transparent" strokeWidth="32"
-          className="pointer-events-auto cursor-col-resize"
-          onMouseDown={(e) => { e.preventDefault(); setDragging(1); }}
-          onTouchStart={() => setDragging(1)}
-        />
-        <line
-          x1={`${top2}%`} y1="0%" x2={`${bot2}%`} y2="100%"
-          stroke="transparent" strokeWidth="32"
-          className="pointer-events-auto cursor-col-resize"
-          onMouseDown={(e) => { e.preventDefault(); setDragging(2); }}
-          onTouchStart={() => setDragging(2)}
-        />
-      </svg>
-
-      <p className="pointer-events-none absolute bottom-3 left-1/2 z-[60] -translate-x-1/2 rounded-full bg-[rgba(255,255,255,0.85)] px-3 py-1 text-xs tracking-[0.2em] text-[#a5a9b1]">← DRAG →</p>
     </div>
   );
 }

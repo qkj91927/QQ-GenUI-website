@@ -92,6 +92,58 @@ const skills: Skill[] = [
     installCmd: "npx skills add qkj91927/QQ_GenUI/switch-style",
     official: true,
   },
+  {
+    id: "demo-to-phone",
+    name: "demo-to-phone",
+    nameZh: "demo-to-phone",
+    version: "1.0",
+    author: "QQ GenUI",
+    tag: "Tool",
+    tagZh: "工具",
+    desc: "Publish local HTML files online and generate QR code pages with QQ WebView parameters. Scan with QQ to preview demos on your phone instantly.",
+    descZh: "将本地 HTML 文件发布到线上，生成带 QQ WebView 参数的访问链接并自动创建二维码页面，用 QQ 扫码即可在手机上体验 demo。",
+    highlights: [
+      "One-click publish HTML to COS",
+      "Auto QQ WebView parameter injection",
+      "QR code page generation",
+      "Instant mobile preview via QQ scan",
+    ],
+    highlightsZh: [
+      "一键发布 HTML 到 COS",
+      "自动注入 QQ WebView 参数",
+      "自动生成二维码页面",
+      "QQ 扫码即可手机预览",
+    ],
+    repo: "https://github.com/qkj91927/QQ_GenUI/tree/main/skills/demo-to-phone",
+    installCmd: "npx skills add qkj91927/QQ_GenUI/demo-to-phone",
+    official: true,
+  },
+  {
+    id: "skill-creator",
+    name: "skill-creator",
+    nameZh: "skill-creator",
+    version: "1.0",
+    author: "QQ GenUI",
+    tag: "Dev",
+    tagZh: "开发",
+    desc: "Create new skills, modify and improve existing skills, and measure skill performance. Supports eval testing, benchmark variance analysis, and description optimization for better triggering accuracy.",
+    descZh: "创建新 skill、修改和改进现有 skill、评估 skill 性能。支持评估测试、基准方差分析、描述优化以提高触发准确率。",
+    highlights: [
+      "Full skill creation workflow",
+      "Eval testing with blind A/B comparison",
+      "Benchmark variance analysis",
+      "Description optimization for trigger accuracy",
+    ],
+    highlightsZh: [
+      "完整的 skill 创建工作流",
+      "支持盲测 A/B 对比评估",
+      "基准方差分析",
+      "优化描述提升触发准确率",
+    ],
+    repo: "https://github.com/qkj91927/QQ_GenUI/tree/main/skills/skill-creator",
+    installCmd: "npx skills add qkj91927/QQ_GenUI/skill-creator",
+    official: true,
+  },
 ];
 
 const tagColor: Record<string, { bg: string; text: string }> = {
@@ -99,6 +151,10 @@ const tagColor: Record<string, { bg: string; text: string }> = {
   核心: { bg: "bg-[#edf6ff]", text: "text-[#0077cc]" },
   Style: { bg: "bg-[#fff4e6]", text: "text-[#b8700a]" },
   风格: { bg: "bg-[#fff4e6]", text: "text-[#b8700a]" },
+  Tool: { bg: "bg-[#f0fdf4]", text: "text-[#15803d]" },
+  工具: { bg: "bg-[#f0fdf4]", text: "text-[#15803d]" },
+  Dev: { bg: "bg-[#faf5ff]", text: "text-[#7c3aed]" },
+  开发: { bg: "bg-[#faf5ff]", text: "text-[#7c3aed]" },
   Community: { bg: "bg-[#f0fdf4]", text: "text-[#15803d]" },
   社区: { bg: "bg-[#f0fdf4]", text: "text-[#15803d]" },
 };
@@ -126,6 +182,7 @@ export function SkillsPage() {
   const [submitOpen, setSubmitOpen] = useState(false);
   const [submitUrl, setSubmitUrl] = useState("");
   const [submitDone, setSubmitDone] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const handleSubmit = () => {
     if (!submitUrl.trim()) return;
@@ -278,10 +335,26 @@ export function SkillsPage() {
                       </>) : skill.installCmd}</code>
                       <button
                         type="button"
-                        onClick={() => { navigator.clipboard?.writeText(skill.installCmd); }}
-                        className="shrink-0 rounded-md border border-[#e2e5ea] bg-white px-2.5 py-1 text-[0.78rem] font-medium text-[#7f8591] transition hover:border-[#0099ff] hover:text-[#0099ff]"
+                        onClick={() => {
+                          const text = skill.installCmd;
+                          const done = () => { setCopiedId(skill.id); setTimeout(() => setCopiedId(null), 2000); };
+                          if (navigator.clipboard?.writeText) {
+                            navigator.clipboard.writeText(text).then(done).catch(() => {
+                              const ta = document.createElement("textarea");
+                              ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+                              document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+                              document.body.removeChild(ta); done();
+                            });
+                          } else {
+                            const ta = document.createElement("textarea");
+                            ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
+                            document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+                            document.body.removeChild(ta); done();
+                          }
+                        }}
+                        className={`shrink-0 rounded-md border px-2.5 py-1 text-[0.78rem] font-medium transition ${copiedId === skill.id ? "border-[#0099ff] bg-[#0099ff] text-white" : "border-[#e2e5ea] bg-white text-[#7f8591] hover:border-[#0099ff] hover:text-[#0099ff]"}`}
                       >
-                        {isZh ? "复制" : "Copy"}
+                        {copiedId === skill.id ? (isZh ? "已复制" : "Copied") : (isZh ? "复制" : "Copy")}
                       </button>
                     </div>
                   </div>
