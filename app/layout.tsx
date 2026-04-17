@@ -18,7 +18,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased">
+    <html lang="zh-CN" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          const ro = window.onerror;
+          window.onerror = function(msg) {
+            if (typeof msg === 'string' && msg.includes('ResizeObserver')) return true;
+            return ro ? ro.apply(this, arguments) : false;
+          };
+        `}} />
+      </head>
       <body className="min-h-full bg-[var(--background)] text-[var(--foreground)]">{children}</body>
     </html>
   );

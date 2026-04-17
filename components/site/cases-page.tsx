@@ -41,30 +41,7 @@ function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; t
   }, [mode, code, url]);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]">
-      <div className="flex items-center justify-between border-b border-[#f0f1f4] bg-[#fafafc] px-5 py-3">
-        <div className="flex items-center gap-2.5">
-          <span className="size-2.5 rounded-full bg-[#ff5f57]" />
-          <span className="size-2.5 rounded-full bg-[#febc2e]" />
-          <span className="size-2.5 rounded-full bg-[#28c840]" />
-        </div>
-        <div className="flex items-center gap-1.5 rounded-lg border border-[#e4e7ec] bg-white p-0.5 text-[0.82rem] font-medium">
-          <button
-            type="button"
-            onClick={() => setMode("demo")}
-            className={`rounded-md px-3 py-1 transition ${mode === "demo" ? "bg-[#111318] text-white" : "text-[#7a808c] hover:bg-[#f3f4f6]"}`}
-          >
-            Demo
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode("code")}
-            className={`rounded-md px-3 py-1 transition ${mode === "code" ? "bg-[#111318] text-white" : "text-[#7a808c] hover:bg-[#f3f4f6]"}`}
-          >
-            Code
-          </button>
-        </div>
-      </div>
+    <div>
       {mode === "demo" ? (
         isWide ? (
           <div ref={containerRef} className="overflow-x-auto overflow-y-hidden bg-[var(--background)]" style={{ height: h * scale }}>
@@ -137,6 +114,7 @@ type CaseItem = {
   iframeHeight?: number;
   beforeUrl?: string;
   afterUrl?: string;
+  sideBySide?: boolean;
   tripleUrls?: [string, string, string];
   tripleLabels?: [string, string, string];
   tripleLabelsEn?: [string, string, string];
@@ -192,6 +170,7 @@ const cases: CaseItem[] = [
     video: "/videos/demo-convert.mp4",
     beforeUrl: "/demos/group-finding-original.html",
     afterUrl: "/demos/group-finding-standalone.html",
+    sideBySide: true,
     steps: [
       { prompt: "使用这个 HTML 文件，通过组件库重新生成符合规范的html，要求完整保留源文件的内容和交互流程", promptEn: "Regenerate spec-compliant HTML from this file using the component library, fully preserving the source content and interaction flow", desc: "Agent 分析原始 demo 的组成模块 → 确定需要替换的组件 → 重新生成 demo", descEn: "Agent analyzes original demo modules → determines components to replace → regenerates demo" },
       { prompt: "卡片内的标签使用符合规范吗", promptEn: "Are the tags inside the cards spec-compliant?", desc: "Agent 对比组件规范与实际界面 → 自动修改为正确版本", descEn: "Agent compares component spec with actual interface → auto-corrects to the right version" },
@@ -263,7 +242,7 @@ function CaseCompare({ beforeLabel, afterLabel }: { beforeLabel: string; afterLa
       ref={containerRef}
       onMouseMove={(e) => handleMove(e.clientX)}
       onTouchMove={(e) => { if (e.touches[0]) handleMove(e.touches[0].clientX); }}
-      className="relative cursor-col-resize select-none overflow-hidden rounded-[14px] border border-[#ececf1] bg-[#fafbfc]"
+      className="relative cursor-col-resize select-none overflow-hidden bg-[#fafbfc]"
       style={{ minHeight: 320 }}
     >
       <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(#edf6ff_1px,transparent_1px),linear-gradient(90deg,#edf6ff_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -309,6 +288,133 @@ function CaseCompare({ beforeLabel, afterLabel }: { beforeLabel: string; afterLa
       <svg className="pointer-events-none absolute inset-0 z-30" width="100%" height="100%" preserveAspectRatio="none" style={{ overflow: "visible" }}>
         <line x1={`${topPct}%`} y1="0%" x2={`${botPct}%`} y2="100%" stroke="#0099ff" strokeWidth="3" />
       </svg>
+    </div>
+  );
+}
+
+/* ─── Side-by-side iframe compare ─── */
+function SideBySideCompare({
+  beforeUrl,
+  afterUrl,
+  beforeLabel,
+  afterLabel,
+}: {
+  beforeUrl: string;
+  afterUrl: string;
+  beforeLabel: string;
+  afterLabel: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const cw = containerRef.current.clientWidth;
+      const availH = window.innerHeight * 0.78;
+      const twoPhoneW = 428 * 2 + 24;
+      const sw = cw / twoPhoneW;
+      const sh = availH / 926;
+      setScale(Math.min(1, sw, sh));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
+  const phoneW = 428 * scale;
+  const phoneH = 926 * scale;
+  const gap = 24 * scale;
+
+  return (
+    <div ref={containerRef} className="bg-[#fafbfc]">
+      <div className="flex justify-center" style={{ padding: `${20 * scale}px ${16 * scale}px`, gap }}>
+        <div className="flex flex-col items-center" style={{ width: phoneW }}>
+          <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
+            <iframe
+              src={beforeUrl}
+              title="Before"
+              className="border-0"
+              width={428}
+              height={926}
+              style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+            />
+          </div>
+          <span className="mt-3 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4]">
+            {beforeLabel}
+          </span>
+        </div>
+        <div className="flex flex-col items-center" style={{ width: phoneW }}>
+          <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
+            <iframe
+              src={afterUrl}
+              title="After"
+              className="border-0"
+              width={428}
+              height={926}
+              style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+            />
+          </div>
+          <span className="mt-3 rounded-md bg-[#0099ff] px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-white">
+            {afterLabel}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Triple side-by-side iframe compare ─── */
+function TripleSideBySideCompare({
+  urls,
+  labels,
+}: {
+  urls: [string, string, string];
+  labels: [string, string, string];
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const updateScale = () => {
+      if (!containerRef.current) return;
+      const cw = containerRef.current.clientWidth;
+      const availH = window.innerHeight * 0.78;
+      const threePhoneW = 428 * 3 + 24 * 2;
+      const sw = cw / threePhoneW;
+      const sh = availH / 926;
+      setScale(Math.min(1, sw, sh));
+    };
+    updateScale();
+    window.addEventListener("resize", updateScale);
+    return () => window.removeEventListener("resize", updateScale);
+  }, []);
+
+  const phoneW = 428 * scale;
+  const phoneH = 926 * scale;
+  const gap = 24 * scale;
+
+  return (
+    <div ref={containerRef} className="bg-[#fafbfc]">
+      <div className="flex justify-center" style={{ padding: `${20 * scale}px ${16 * scale}px`, gap }}>
+        {urls.map((url, i) => (
+          <div key={url} className="flex flex-col items-center" style={{ width: phoneW }}>
+            <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
+              <iframe
+                src={url}
+                title={labels[i]}
+                className="border-0"
+                width={428}
+                height={926}
+                style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+              />
+            </div>
+            <span className="mt-3 rounded-md border border-[#e0e3e8] bg-white px-3 py-1 text-[0.78rem] font-semibold tracking-[0.08em] text-[#9197a4]">
+              {labels[i]}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -375,7 +481,7 @@ function IframeCompare({
   const scaledW = 428 * scale;
 
   return (
-    <div ref={containerRef} className="overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#fafbfc]">
       <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
         <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
           {/* Before layer — full width */}
@@ -502,7 +608,7 @@ function TripleIframeCompare({
   const scaledW = 428 * scale;
 
   return (
-    <div ref={containerRef} className="overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#fafbfc]">
       <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
         <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
           {/* Layer 1 (left) — full background */}
@@ -599,6 +705,8 @@ export function CasesPage() {
   const [expandedCases, setExpandedCases] = useState<Set<string>>(new Set(cases.map((c) => c.id)));
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
   const [mobileNav, setMobileNav] = useState(false);
+  const [demoModes, setDemoModes] = useState<Record<string, "demo" | "code">>({});
+  const [demoCodes, setDemoCodes] = useState<Record<string, string>>({});
 
   const toggleCase = (id: string) => {
     setExpandedCases((prev) => {
@@ -740,121 +848,121 @@ export function CasesPage() {
                           {isZh ? c.desc : c.descEn}
                         </p>
 
-                        {/* Video */}
-                        {c.video ? (
-                          <video
-                            src={c.video}
-                            controls
-                            playsInline
-                            className="w-full rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]"
-                          />
-                        ) : (
-                          <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-[#cdd2da] bg-[#fafbfc]">
-                            <div className="text-center">
-                              <span className="text-[2.5rem] leading-none text-[#c4c9d2]">▶</span>
-                              <p className="mt-2 text-[0.92rem] text-[#9ea3ac]">{isZh ? "案例录屏视频（占位）" : "Case walkthrough video (placeholder)"}</p>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Steps — collapsible */}
-                        <div className="rounded-2xl border border-[#ececf1] bg-[#fcfcfd]">
-                          <button
-                            type="button"
-                            className="flex w-full items-center justify-between rounded-2xl px-6 py-5 text-left transition hover:bg-[#f7f8fa]"
-                            onClick={() => toggleSteps(c.id)}
-                          >
-                            <span className="text-[1.05rem] font-semibold text-[#1a1d24]">
-                              {isZh ? `操作步骤（${c.steps.length} 步）` : `Steps (${c.steps.length})`}
-                            </span>
-                            <motion.span
-                              animate={{ rotate: stepsOpen ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="text-[0.92rem] text-[#7f8591]"
-                            >
-                              ▼
-                            </motion.span>
-                          </button>
-
-                          <AnimatePresence initial={false} mode="wait">
-                            {stepsOpen && (
-                              <motion.div
-                                key={`steps-${c.id}`}
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ height: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }, opacity: { duration: 0.2 } }}
-                                className="overflow-hidden"
-                              >
-                                <ol className="space-y-1 border-t border-[#ececf1] px-6 pb-6 pt-5">
-                                  {c.steps.map((step, i) => (
-                                    <li key={i} className="flex gap-4 rounded-xl px-1 py-4">
-                                      <span className="mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-[#edf6ff] text-[0.85rem] font-semibold text-[#0099ff]">
-                                        {i + 1}
-                                      </span>
-                                      <div className="min-w-0 flex-1">
-                                        <p className="rounded-xl border border-[#e4e7ec] bg-[#f8f9fb] px-5 py-4 text-[0.95rem] leading-[1.75] text-[#2d3340]">
-                                          <span className="mr-1.5 font-serif text-[1.6rem] leading-none text-[#0077cc]">&ldquo;</span>
-                                          {isZh ? step.prompt : step.promptEn}
-                                          <span className="ml-1 font-serif text-[1.6rem] leading-none text-[#0077cc]">&rdquo;</span>
-                                        </p>
-                                        <p className="mt-2.5 flex items-center gap-2 text-[0.92rem] leading-[1.65] text-[#7f8591]">
-                                          <span className="inline-block size-1.5 shrink-0 rounded-full bg-[#c4c9d2]" />
-                                          {isZh ? step.desc : step.descEn}
-                                        </p>
-                                      </div>
-                                    </li>
-                                  ))}
-                                </ol>
-                              </motion.div>
+                        {/* Video + Steps side by side */}
+                        <div className="grid gap-5 lg:grid-cols-[2.4fr_1fr] lg:grid-rows-[1fr]">
+                          {/* Video */}
+                          <div>
+                            {c.video ? (
+                              <video
+                                src={c.video}
+                                controls
+                                playsInline
+                                className="w-full rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]"
+                              />
+                            ) : (
+                              <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-[#cdd2da] bg-[#fafbfc]">
+                                <div className="text-center">
+                                  <span className="text-[2.5rem] leading-none text-[#c4c9d2]">▶</span>
+                                  <p className="mt-2 text-[0.92rem] text-[#9ea3ac]">{isZh ? "案例录屏视频（占位）" : "Case walkthrough video (placeholder)"}</p>
+                                </div>
+                              </div>
                             )}
-                          </AnimatePresence>
+                          </div>
+
+                          {/* Steps — height locked to video height on desktop */}
+                          <div className="flex flex-col overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fcfcfd] lg:h-0 lg:min-h-full">
+                            <div className="shrink-0 px-5 py-4">
+                              <span className="text-[0.92rem] font-semibold text-[#1a1d24]">
+                                {isZh ? `操作步骤（${c.steps.length} 步）` : `Steps (${c.steps.length})`}
+                              </span>
+                            </div>
+                            <ol className="min-h-0 flex-1 space-y-0 overflow-y-auto border-t border-[#ececf1] px-2 pb-3 pt-2">
+                              {c.steps.map((step, i) => (
+                                <li key={i} className="flex gap-2 rounded-lg py-2">
+                                  <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-[#edf6ff] text-[0.6rem] font-semibold leading-none text-[#0099ff]">
+                                    {i + 1}
+                                  </span>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="rounded-lg border border-[#e4e7ec] bg-[#f8f9fb] px-3.5 py-2.5 text-[0.82rem] leading-[1.7] text-[#2d3340]">
+                                      <span className="mr-1 font-serif text-[1.2rem] leading-none text-[#0077cc]">&ldquo;</span>
+                                      {isZh ? step.prompt : step.promptEn}
+                                      <span className="ml-0.5 font-serif text-[1.2rem] leading-none text-[#0077cc]">&rdquo;</span>
+                                    </p>
+                                    <p className="mt-1.5 flex items-center gap-1.5 text-[0.78rem] leading-[1.6] text-[#7f8591]">
+                                      <span className="inline-block size-1 shrink-0 rounded-full bg-[#c4c9d2]" />
+                                      {isZh ? step.desc : step.descEn}
+                                    </p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
                         </div>
 
-                        {/* Demo preview or Before/After compare */}
-                        {c.tripleUrls ? (
-                          <TripleIframeCompare
-                            urls={c.tripleUrls}
-                            labels={isZh ? c.tripleLabels! : c.tripleLabelsEn!}
-                          />
-                        ) : c.beforeUrl && c.afterUrl ? (
-                          <IframeCompare
-                            beforeUrl={c.beforeUrl}
-                            afterUrl={c.afterUrl}
-                            beforeLabel={isZh ? c.beforeLabel : c.beforeLabelEn}
-                            afterLabel={isZh ? c.afterLabel : c.afterLabelEn}
-                          />
-                        ) : c.demoUrl ? (
-                          <DemoPreview url={c.demoUrl} title={isZh ? c.title : c.titleEn} iframeWidth={c.iframeWidth} iframeHeight={c.iframeHeight} />
-                        ) : (
-                          <CaseCompare
-                            beforeLabel={isZh ? c.beforeLabel : c.beforeLabelEn}
-                            afterLabel={isZh ? c.afterLabel : c.afterLabelEn}
-                          />
-                        )}
-
-                        {/* QR + Spec link — same level as compare */}
-                        <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-stretch sm:gap-6">
-                          <div className="flex w-full items-center gap-4 rounded-2xl border border-[#ececf1] bg-[#fcfcfd] px-5 py-4 sm:w-[280px]">
-                            <div className="flex size-[72px] shrink-0 items-center justify-center rounded-xl border border-[#e4e7ec] bg-white">
-                              <span className="text-[0.68rem] text-[#b4b8be]">QR Code</span>
+                        {/* Unified chrome bar + demo content */}
+                        <div className="overflow-hidden rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]">
+                          {/* Chrome bar */}
+                          <div className="flex items-center justify-between border-b border-[#f0f1f4] bg-[#fafafc] px-5 py-3">
+                            <div className="flex items-center gap-2.5">
+                              <span className="size-2.5 rounded-full bg-[#ff5f57]" />
+                              <span className="size-2.5 rounded-full bg-[#febc2e]" />
+                              <span className="size-2.5 rounded-full bg-[#28c840]" />
                             </div>
-                            <p className="text-[0.88rem] leading-[1.5] text-[#7f8591]">
-                              {isZh ? "扫码在手机上体验" : "Scan to preview on mobile"}
-                            </p>
+                            <div className="flex items-center gap-2">
+                              {/* QR icon */}
+                              <button type="button" className="group relative flex size-8 items-center justify-center rounded-md text-[#9ea3ac] transition hover:bg-[#f3f4f6] hover:text-[#0099ff]" title={isZh ? "用手机QQ扫码体验" : "Scan with QQ to preview"}>
+                                <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3z" /><path d="M20 14v3h-3" /><path d="M14 20h3" /><path d="M20 20h0" />
+                                </svg>
+                                <span className="pointer-events-none absolute top-10 right-0 z-50 whitespace-nowrap rounded-md bg-[#1a1d24] px-2.5 py-1 text-[0.7rem] text-white opacity-0 transition group-hover:opacity-100">{isZh ? "用手机QQ扫码体验" : "Scan with QQ to preview"}</span>
+                              </button>
+                              {/* Spec icon */}
+                              {c.specLink && (
+                                <Link href={c.specLink} className="group relative flex size-8 items-center justify-center rounded-md text-[#9ea3ac] transition hover:bg-[#f3f4f6] hover:text-[#0099ff]" title={isZh ? c.specLabel : c.specLabelEn}>
+                                  <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" /><path d="M14 2v6h6" /><path d="M16 13H8" /><path d="M16 17H8" /><path d="M10 9H8" />
+                                  </svg>
+                                  <span className="pointer-events-none absolute top-10 right-0 z-50 whitespace-nowrap rounded-md bg-[#1a1d24] px-2.5 py-1 text-[0.7rem] text-white opacity-0 transition group-hover:opacity-100">{isZh ? (c.specLabel ?? "查看规范") : (c.specLabelEn ?? "View spec")}</span>
+                                </Link>
+                              )}
+                              {/* Demo / Code toggle */}
+                              {c.demoUrl && (
+                                <div className="ml-1 flex items-center gap-1 rounded-lg border border-[#e4e7ec] bg-white p-0.5 text-[0.78rem] font-medium">
+                                  <button
+                                    type="button"
+                                    onClick={() => setDemoModes(prev => ({ ...prev, [c.id]: "demo" }))}
+                                    className={`rounded-md px-2.5 py-0.5 transition ${(demoModes[c.id] ?? "demo") === "demo" ? "bg-[#111318] text-white" : "text-[#7a808c] hover:bg-[#f3f4f6]"}`}
+                                  >Demo</button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setDemoModes(prev => ({ ...prev, [c.id]: "code" }));
+                                      if (!demoCodes[c.id] && c.demoUrl) {
+                                        fetch(c.demoUrl).then(r => r.text()).then(t => setDemoCodes(prev => ({ ...prev, [c.id]: t }))).catch(() => setDemoCodes(prev => ({ ...prev, [c.id]: "// Failed to load source" })));
+                                      }
+                                    }}
+                                    className={`rounded-md px-2.5 py-0.5 transition ${(demoModes[c.id] ?? "demo") === "code" ? "bg-[#111318] text-white" : "text-[#7a808c] hover:bg-[#f3f4f6]"}`}
+                                  >Code</button>
+                                </div>
+                              )}
+                            </div>
                           </div>
 
-                          {c.specLink && (
-                            <Link
-                              href={c.specLink}
-                              className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[#ececf1] bg-[#fcfcfd] px-5 py-4 transition hover:border-[#0099ff] hover:bg-[#f6fbff] sm:w-[280px]"
-                            >
-                              <div>
-                                <p className="text-[0.78rem] font-semibold uppercase tracking-[0.08em] text-[#96a0ae]">{isZh ? "相关规范" : "Related Spec"}</p>
-                                <p className="mt-1 text-[0.95rem] font-semibold text-[#1a1d24]">{isZh ? c.specLabel : c.specLabelEn}</p>
-                              </div>
-                              <span className="text-[1.1rem] text-[#0099ff]">→</span>
-                            </Link>
+                          {/* Demo content */}
+                          {c.demoUrl && (demoModes[c.id] ?? "demo") === "code" ? (
+                            <pre className="max-h-[600px] overflow-auto bg-[#1e1e2e] p-6 text-[0.82rem] leading-[1.6]">
+                              <code className="text-[#cdd6f4]">{demoCodes[c.id] || "Loading..."}</code>
+                            </pre>
+                          ) : c.tripleUrls ? (
+                            <TripleSideBySideCompare urls={c.tripleUrls} labels={isZh ? c.tripleLabels! : c.tripleLabelsEn!} />
+                          ) : c.beforeUrl && c.afterUrl && c.sideBySide ? (
+                            <SideBySideCompare beforeUrl={c.beforeUrl} afterUrl={c.afterUrl} beforeLabel={isZh ? c.beforeLabel : c.beforeLabelEn} afterLabel={isZh ? c.afterLabel : c.afterLabelEn} />
+                          ) : c.beforeUrl && c.afterUrl ? (
+                            <IframeCompare beforeUrl={c.beforeUrl} afterUrl={c.afterUrl} beforeLabel={isZh ? c.beforeLabel : c.beforeLabelEn} afterLabel={isZh ? c.afterLabel : c.afterLabelEn} />
+                          ) : c.demoUrl ? (
+                            <DemoPreview url={c.demoUrl} title={isZh ? c.title : c.titleEn} iframeWidth={c.iframeWidth} iframeHeight={c.iframeHeight} />
+                          ) : (
+                            <CaseCompare beforeLabel={isZh ? c.beforeLabel : c.beforeLabelEn} afterLabel={isZh ? c.afterLabel : c.afterLabelEn} />
                           )}
                         </div>
                       </div>
