@@ -787,7 +787,7 @@ export function CasesPage() {
       </header>
 
       {/* ── Main ── */}
-      <main className="mx-auto w-full max-w-[1140px] px-4 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
+      <main className="mx-auto w-full max-w-[1140px] px-2 pb-20 pt-10 sm:px-7 sm:pt-14 lg:px-10">
         <p className="text-[15px] leading-none tracking-[0.012em] text-[#949aa4]">{isZh ? "实战案例" : "Cases"}</p>
         <h1 className="mt-6 font-serif text-[clamp(2.6rem,5vw,4.2rem)] leading-[0.96] tracking-[-0.025em] text-[#0b0d13]">
           {isZh ? "真实场景，真实效果" : "Real scenarios, real results"}
@@ -906,7 +906,7 @@ export function CasesPage() {
                         </div>
 
                         {/* Unified chrome bar + demo content */}
-                        <div className="overflow-hidden rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]">
+                        <div className="-mx-2 overflow-hidden rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)] sm:mx-0">
                           {/* Chrome bar */}
                           <div className="flex items-center justify-between border-b border-[#f0f1f4] bg-[#fafafc] px-5 py-3">
                             <div className="flex min-w-0 items-center gap-2.5">
