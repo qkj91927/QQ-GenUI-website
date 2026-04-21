@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<!--
+  Standalone single-file build of AIgroupfinding.
+  所有图标已内联为 data: URI，无任何外部依赖。
+  推荐嵌入方式（避免样式/JS 污染宿主页面）：
+    <iframe
+      src="AIgroupfinding-standalone.html"
+      width="428" height="926"
+      frameborder="0" scrolling="no"
+      style="border:0; display:block;">
+    </iframe>
+-->
+<html lang="zh-CN" data-theme="qq-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>找群 · AI Group Finding (standalone)</title>
+<style>
+/* ========== QQ Color Tokens (qq-light) — 连字符命名 / QBasicToken ========== */
+[data-theme="qq-light"] {
+  --brand-standard: #0099FF;
+  --text-primary: rgba(0, 0, 0, 0.90);
+  --text-secondary: rgba(60, 60, 67, 0.6);
+  --text-tertiary: rgba(60, 60, 67, 0.3);
+  --text-white: #FFFFFF;
+  --icon-secondary: var(--text-secondary);
+  --bg-bottom: #FFFFFF;
+  --bg-secondary: #F0F0F2;
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+  --feedback-press: rgba(120, 120, 120, 0.2);
+  --border-weak: rgba(0, 0, 0, 0.12);
+  --accent-red: #E0462C;
+  --overlay-dialog: rgba(0, 0, 0, 0.40);
+}
+
+/* ========== 非颜色 Token ========== */
+:root {
+  --device-width: 428px;
+  --device-height: 926px;
+  --statusbar-height: 54px;
+  --navbar-height: 44px;
+  --homebar-height: 34px;
+  --device-font: 'PingFang SC', -apple-system, 'Helvetica Neue', sans-serif;
+  --spacing-b1: 4px;
+  --spacing-b2: 8px;
+  --spacing-b3: 12px;
+  --spacing-b4: 16px;
+  --spacing-b5: 24px;
+  --spacing-b6: 32px;
+  --typo-title-2xs: 17px;
+  --typo-body-l: 17px;
+  --typo-caption-l: 14px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { overflow-x: hidden; }
+body {
+  font-family: var(--device-font);
+  width: var(--device-width);
+  height: var(--device-height);
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ========== StatusBar ========== */
+.status-bar {
+  width: var(--device-width);
+  height: var(--statusbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-b4);
+  background: var(--bg-secondary);
+  position: relative;
+  z-index: 20;
+}
+.status-bar-time {
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-left: 12px;
+  padding-top: 12px;
+}
+.status-bar-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-top: 12px;
+  padding-right: 4px;
+}
+.status-bar-icons img { display: block; }
+
+/* ========== NavBar: L1 back + C5 segment + R1 lab ========== */
+.navbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-b4);
+  width: var(--device-width);
+  height: var(--navbar-height);
+  background: var(--bg-secondary);
+  position: relative;
+  z-index: 10;
+}
+.navbar-left, .navbar-right { min-width: 60px; display: flex; align-items: center; }
+.navbar-right { justify-content: flex-end; }
+.navbar-left img, .navbar-right img { width: 24px; height: 24px; cursor: pointer; }
+
+.navbar-center { position: absolute; left: 50%; transform: translateX(-50%); }
+.segment-control {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: var(--fill-tertiary);
+  border-radius: 8px;
+  position: relative;
+  padding: 2px;
+}
+.segment-item {
+  position: relative;
+  z-index: 1;
+  min-width: 60px;
+  height: 28px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 200ms ease-out;
+  white-space: nowrap;
+}
+.segment-item.active {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.segment-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  height: 28px;
+  background: var(--bg-bottom);
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  transition: transform 200ms ease-out;
+}
+.segment-control[data-active="1"] .segment-slider { transform: translateX(100%); }
+
+/* ========== DataFilter A4 ========== */
+.data-filter-a4 {
+  width: var(--device-width);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg-secondary);
+  -webkit-overflow-scrolling: touch;
+}
+.data-filter-a4::-webkit-scrollbar { display: none; }
+.data-filter-a4 .tab-item {
+  flex-shrink: 0;
+  padding: 0 var(--spacing-b4);
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+}
+.data-filter-a4 .tab-item.selected { font-weight: 500; color: var(--text-primary); }
+.data-filter-a4 .tab-item.selected::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background: var(--brand-standard);
+  border-radius: 2px;
+}
+
+/* ========== Content Area ========== */
+.content-area {
+  width: var(--device-width);
+  height: calc(var(--device-height) - var(--statusbar-height) - var(--navbar-height) - 48px - 60px - var(--homebar-height));
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.content-area::-webkit-scrollbar { display: none; }
+
+/* ========== Card C6 授权卡: 头像+大标题+大按钮 ========== */
+.card-c6 {
+  width: 396px;
+  margin: var(--spacing-b3) var(--spacing-b4) 0;
+  background: var(--bg-bottom);
+  border-radius: 24px; /* Card 全局统一圆角（SPEC 3.1） */
+  overflow: hidden;
+}
+/* 4.1 Card Header: 56px + 32×32 圆头像 + 标题 17px/400 + 右上角关闭 */
+.card-c6 .c6-head {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--spacing-b4);
+}
+.card-c6 .c6-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: rgba(0, 153, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: var(--spacing-b2);
+}
+.card-c6 .c6-avatar .icon-mask {
+  width: 18px;
+  height: 18px;
+  background-color: var(--brand-standard);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjgxMjY1IDIuNDMzNzVDOS4zMDc2OSAxLjQ2NDggMTAuNjkyMyAxLjQ2NDc5IDExLjE4NzMgMi40MzM3NUwxMy4wOTM1IDYuMTY0NzhMMTcuMjMzOSA2LjgyMjU0QzE4LjMwOTUgNi45OTM0MSAxOC43Mzc2IDguMzExOTIgMTcuOTY3NiA5LjA4MjA4TDE1LjAwNTkgMTIuMDQ0MkwxNS42NTkgMTYuMTgwMkMxNS44Mjg4IDE3LjI1NTMgMTQuNzA4MyAxOC4wNjk5IDEzLjczOCAxNy41NzY4TDEwIDE1LjY3NzRMNi4yNjIwNCAxNy41NzY4QzUuMjkxNjcgMTguMDY5OSA0LjE3MTIzIDE3LjI1NTMgNC4zNDEgMTYuMTgwMkw0Ljk5NDA4IDEyLjA0NDJMMi4wMzI0NSA5LjA4MjA5QzEuMjYyNDEgOC4zMTE5MiAxLjY5MDU0IDYuOTkzNDEgMi43NjYxNCA2LjgyMjU0TDYuOTA2NDYgNi4xNjQ3OEw4LjgxMjY1IDIuNDMzNzVaTTEwIDMuMjIzNTNMOC4wMDQxMyA3LjEzMDA5QzcuOTAxMTUgNy4zMzE2NiA3LjcwODA0IDcuNDcxODcgNy40ODQ0OSA3LjUwNzM5TDMuMTQ5ODMgOC4xOTYwMUw2LjI1MDkxIDExLjI5NzZDNi40MTExMyAxMS40NTc5IDYuNDg1MDEgMTEuNjg1MSA2LjQ0OTY2IDExLjkwODlMNS43NjU3OSAxNi4yMzk5TDkuNjc5MTEgMTQuMjUxM0M5Ljg4MDc3IDE0LjE0ODkgMTAuMTE5MiAxNC4xNDg5IDEwLjMyMDkgMTQuMjUxM0wxNC4yMzQyIDE2LjIzOTlMMTMuNTUwMyAxMS45MDg5QzEzLjUxNSAxMS42ODUxIDEzLjU4ODkgMTEuNDU3OSAxMy43NDkxIDExLjI5NzZMMTYuODUwMiA4LjE5NjAxTDEyLjUxNTUgNy41MDczOUMxMi4yOTIgNy40NzE4NyAxMi4wOTg4IDcuMzMxNjYgMTEuOTk1OSA3LjEzMDA5TDEwIDMuMjIzNTNaIiBmaWxsPSIjM0MzQzQzIiBmaWxsLW9wYWNpdHk9IjAuNzYiLz4KPC9zdmc+') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik04LjgxMjY1IDIuNDMzNzVDOS4zMDc2OSAxLjQ2NDggMTAuNjkyMyAxLjQ2NDc5IDExLjE4NzMgMi40MzM3NUwxMy4wOTM1IDYuMTY0NzhMMTcuMjMzOSA2LjgyMjU0QzE4LjMwOTUgNi45OTM0MSAxOC43Mzc2IDguMzExOTIgMTcuOTY3NiA5LjA4MjA4TDE1LjAwNTkgMTIuMDQ0MkwxNS42NTkgMTYuMTgwMkMxNS44Mjg4IDE3LjI1NTMgMTQuNzA4MyAxOC4wNjk5IDEzLjczOCAxNy41NzY4TDEwIDE1LjY3NzRMNi4yNjIwNCAxNy41NzY4QzUuMjkxNjcgMTguMDY5OSA0LjE3MTIzIDE3LjI1NTMgNC4zNDEgMTYuMTgwMkw0Ljk5NDA4IDEyLjA0NDJMMi4wMzI0NSA5LjA4MjA5QzEuMjYyNDEgOC4zMTE5MiAxLjY5MDU0IDYuOTkzNDEgMi43NjYxNCA2LjgyMjU0TDYuOTA2NDYgNi4xNjQ3OEw4LjgxMjY1IDIuNDMzNzVaTTEwIDMuMjIzNTNMOC4wMDQxMyA3LjEzMDA5QzcuOTAxMTUgNy4zMzE2NiA3LjcwODA0IDcuNDcxODcgNy40ODQ0OSA3LjUwNzM5TDMuMTQ5ODMgOC4xOTYwMUw2LjI1MDkxIDExLjI5NzZDNi40MTExMyAxMS40NTc5IDYuNDg1MDEgMTEuNjg1MSA2LjQ0OTY2IDExLjkwODlMNS43NjU3OSAxNi4yMzk5TDkuNjc5MTEgMTQuMjUxM0M5Ljg4MDc3IDE0LjE0ODkgMTAuMTE5MiAxNC4xNDg5IDEwLjMyMDkgMTQuMjUxM0wxNC4yMzQyIDE2LjIzOTlMMTMuNTUwMyAxMS45MDg5QzEzLjUxNSAxMS42ODUxIDEzLjU4ODkgMTEuNDU3OSAxMy43NDkxIDExLjI5NzZMMTYuODUwMiA4LjE5NjAxTDEyLjUxNTUgNy41MDczOUMxMi4yOTIgNy40NzE4NyAxMi4wOTg4IDcuMzMxNjYgMTEuOTk1OSA3LjEzMDA5TDEwIDMuMjIzNTNaIiBmaWxsPSIjM0MzQzQzIiBmaWxsLW9wYWNpdHk9IjAuNzYiLz4KPC9zdmc+') center / contain no-repeat;
+}
+.card-c6 .c6-head-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-c6 .c6-close {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjM5ODg2IDQuMzk4OTVDNC43MzA4MSA0LjA2NzAxIDUuMjY5IDQuMDY3MDEgNS42MDA5NCA0LjM5ODk1TDExLjk5OTkgMTAuNzk3OUwxOC4zOTg5IDQuMzk4OTVDMTguNzMwOCA0LjA2NzAxIDE5LjI2OSA0LjA2NzAxIDE5LjYwMDkgNC4zOTg5NUMxOS45MzI5IDQuNzMwOSAxOS45MzI5IDUuMjY5MDkgMTkuNjAwOSA1LjYwMTAzTDEzLjIwMiAxMkwxOS42MDA5IDE4LjM5OUMxOS45MzI5IDE4LjczMDkgMTkuOTMyOSAxOS4yNjkxIDE5LjYwMDkgMTkuNjAxQzE5LjI2OSAxOS45MzMgMTguNzMwOCAxOS45MzMgMTguMzk4OSAxOS42MDFMMTEuOTk5OSAxMy4yMDIxTDUuNjAwOTQgMTkuNjAxQzUuMjY5IDE5LjkzMyA0LjczMDgxIDE5LjkzMyA0LjM5ODg2IDE5LjYwMUM0LjA2NjkyIDE5LjI2OTEgNC4wNjY5MiAxOC43MzA5IDQuMzk4ODYgMTguMzk5TDEwLjc5NzggMTJMNC4zOTg4NiA1LjYwMTAzQzQuMDY2OTIgNS4yNjkwOSA0LjA2NjkyIDQuNzMwOSA0LjM5ODg2IDQuMzk4OTVaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjM5ODg2IDQuMzk4OTVDNC43MzA4MSA0LjA2NzAxIDUuMjY5IDQuMDY3MDEgNS42MDA5NCA0LjM5ODk1TDExLjk5OTkgMTAuNzk3OUwxOC4zOTg5IDQuMzk4OTVDMTguNzMwOCA0LjA2NzAxIDE5LjI2OSA0LjA2NzAxIDE5LjYwMDkgNC4zOTg5NUMxOS45MzI5IDQuNzMwOSAxOS45MzI5IDUuMjY5MDkgMTkuNjAwOSA1LjYwMTAzTDEzLjIwMiAxMkwxOS42MDA5IDE4LjM5OUMxOS45MzI5IDE4LjczMDkgMTkuOTMyOSAxOS4yNjkxIDE5LjYwMDkgMTkuNjAxQzE5LjI2OSAxOS45MzMgMTguNzMwOCAxOS45MzMgMTguMzk4OSAxOS42MDFMMTEuOTk5OSAxMy4yMDIxTDUuNjAwOTQgMTkuNjAxQzUuMjY5IDE5LjkzMyA0LjczMDgxIDE5LjkzMyA0LjM5ODg2IDE5LjYwMUM0LjA2NjkyIDE5LjI2OTEgNC4wNjY5MiAxOC43MzA5IDQuMzk4ODYgMTguMzk5TDEwLjc5NzggMTJMNC4zOTg4NiA1LjYwMTAzQzQuMDY2OTIgNS4yNjkwOSA0LjA2NjkyIDQuNzMwOSA0LjM5ODg2IDQuMzk4OTVaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==') center / contain no-repeat;
+  cursor: pointer;
+}
+/* 4.7 Card Big Title: 22px/600 + 副标题 17px/400，上内边距 20px */
+.card-c6 .c6-bigtitle {
+  padding: 20px var(--spacing-b4) 0;
+}
+.card-c6 .c6-title {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+  color: var(--text-primary);
+}
+.card-c6 .c6-desc {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+/* 4.8 Card Big Button: 364×52，圆角 999，17px/600，外部上下 16px */
+.card-c6 .c6-bigbtn-wrap {
+  padding: var(--spacing-b4);
+}
+.card-c6 .c6-bigbtn {
+  width: 364px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--fill-tertiary);
+  color: var(--text-primary);
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-family: var(--device-font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-c6 .c6-bigbtn:active { opacity: 0.85; }
+
+/* ========== Grouped List ========== */
+.form-group {
+  background: var(--bg-secondary);
+  padding: 0;
+  padding-bottom: var(--spacing-b3);
+  width: var(--device-width);
+  display: flex;
+  flex-direction: column;
+}
+.form-group:first-of-type { padding-top: var(--spacing-b3); }
+.form-group:last-of-type { padding-bottom: var(--spacing-b4); }
+.form-group-header {
+  padding: var(--spacing-b3) var(--spacing-b4) var(--spacing-b2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-group-header .header-title {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-b1);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.form-group-header .header-title .section-no {
+  color: var(--brand-standard);
+  font-weight: 600;
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+}
+.form-group-header .header-sub {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.form-group-header .header-link {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.form-group-header .header-link .chevron {
+  width: 12px;
+  height: 12px;
+  display: block;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+}
+.form-group-content {
+  background: var(--bg-bottom);
+  margin: 0 var(--spacing-b4);
+  border-radius: 12px;
+  overflow: hidden;
+  width: 396px;
+}
+.form-group-footer {
+  padding: var(--spacing-b2) var(--spacing-b4) var(--spacing-b1);
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+}
+
+/* ========== Grouped Row: L4(图标+双行) / L2(双行) + R1 ========== */
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-b4);
+  min-height: 72px;
+  cursor: pointer;
+  position: relative;
+}
+.form-row.row-single { min-height: 56px; }
+.form-row:active:not(.no-press) { background: var(--feedback-press); }
+.form-row .left-area { display: flex; align-items: center; gap: var(--spacing-b3); flex: 1; min-width: 0; }
+.form-row .left-area .icon { width: 24px; height: 24px; flex-shrink: 0; }
+.form-row .left-area .rank-num {
+  width: 24px;
+  flex-shrink: 0;
+  font-size: var(--typo-body-l);
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+  color: var(--text-primary);
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+}
+.form-row .left-area .rank-num.top1 { color: var(--accent-red); }
+
+.form-row .text-block { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 12px 0; }
+.form-row .title {
+  font-size: var(--typo-body-l);
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.form-row .desc {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form-row .right-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-left: var(--spacing-b3);
+  padding: 12px 0;
+  max-width: 140px;
+}
+.form-row .right-area .aux-top {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.form-row .right-area .aux-top .mini-icon {
+  width: 14px;
+  height: 14px;
+  background-color: var(--icon-secondary);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+.form-row .right-area .aux-bottom {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.form-row .right-area .chevron {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+  align-self: center;
+}
+
+.row-wrap-chev {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-b2);
+  flex-shrink: 0;
+}
+
+/* ========== Card C9: 头像+标题 + 列表行×2（带加入按钮） ========== */
+.card-c9 {
+  width: 396px;
+  margin: var(--spacing-b3) var(--spacing-b4) 0;
+  background: var(--bg-bottom);
+  border-radius: 24px; /* Card 全局统一圆角 24px（SPEC 3.1） */
+  overflow: hidden;
+}
+
+/* 4.1 Card Header：56px + 头像 32×32 圆 + 标题 17px/400 */
+.card-c9 .c9-header {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-b4);
+  position: relative;
+}
+.card-c9 .c9-header .c9-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: rgba(0, 153, 255, 0.12);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-standard);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+  margin-right: var(--spacing-b2);
+}
+.card-c9 .c9-header .c9-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-c9 .c9-header .c9-link {
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: var(--spacing-b2);
+}
+.card-c9 .c9-header .c9-link .chevron {
+  width: 12px;
+  height: 12px;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00LjkzMjgxIDEuNTk5MzJDNC43MTE1MSAxLjgyMDYyIDQuNzExNTEgMi4xNzk0MSA0LjkzMjgxIDIuNDAwNzFMMTAuMTc4NiA3LjY0NjQ2QzEwLjMxNzIgNy43ODUwOCAxMC4zOTY3IDcuODY1MjYgMTAuNDUwNSA3LjkyODU0QzEwLjQ3MjQgNy45NTQ0MiAxMC40ODMzIDcuOTY5OTIgMTAuNDg4IDcuOTc3MTJDMTAuNDkxNiA3Ljk5MjE4IDEwLjQ5MTYgOC4wMDc4NiAxMC40ODggOC4wMjI5MkMxMC40ODMzIDguMDMwMTEgMTAuNDcyNCA4LjA0NTYxIDEwLjQ1MDUgOC4wNzE0OUMxMC4zOTY3IDguMTM0NzggMTAuMzE3MiA4LjIxNDk1IDEwLjE3ODYgOC4zNTM1N0w0LjkzMjgxIDEzLjU5OTNDNC43MTE1MSAxMy44MjA2IDQuNzExNTEgMTQuMTc5NCA0LjkzMjgxIDE0LjQwMDdDNS4xNTQxIDE0LjYyMiA1LjUxMjkgMTQuNjIyIDUuNzM0MTkgMTQuNDAwN0wxMC45OTM0IDkuMTQxNDZDMTEuMTEzOCA5LjAyMTEgMTEuMjI3MSA4LjkwNzg5IDExLjMxNDQgOC44MDQ5NkMxMS40MDk0IDguNjkzMTIgMTEuNTA2NiA4LjU1NjczIDExLjU2MzcgOC4zODExNEMxMS42NDQxIDguMTMzNDMgMTEuNjQ0MSA3Ljg2NjYgMTEuNTYzNyA3LjYxODlDMTEuNTA2NiA3LjQ0MzMxIDExLjQwOTQgNy4zMDY5MSAxMS4zMTQ0IDcuMTk1MDhDMTEuMjI3MSA3LjA5MjE0IDExLjExMzggNi45Nzg5MiAxMC45OTM0IDYuODU4NTZMNS43MzQxOSAxLjU5OTMyQzUuNTEyOSAxLjM3ODAzIDUuMTU0MSAxLjM3ODAzIDQuOTMyODEgMS41OTkzMloiIGZpbGw9IiMzQzNDNDMiIGZpbGwtb3BhY2l0eT0iMC43NSIvPgo8L3N2Zz4=') center / contain no-repeat;
+}
+/* 4.1 底部分割线：宽 364px，左起 16px，0.5px border-weak */
+.card-c9 .c9-header-separator {
+  height: 0.5px;
+  background: var(--border-weak);
+  margin: 0 var(--spacing-b4);
+}
+
+/* 4.6 Card List Row：72px + 52×52 图标(12px 圆角) + 17px 标题/12px 描述 + 72×36 按钮 */
+.card-c9 .c9-row {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-b4);
+  gap: var(--spacing-b3);
+  cursor: pointer;
+}
+.card-c9 .c9-row:active { background: var(--feedback-press); }
+.card-c9 .c9-row .c9-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--fill-tertiary);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-c9 .c9-row .c9-icon img { width: 28px; height: 28px; }
+.card-c9 .c9-row .c9-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.card-c9 .c9-row .c9-name {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 22px;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-c9 .c9-row .c9-desc {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-b1);
+}
+.card-c9 .c9-row .c9-desc .mini-icon {
+  width: 12px;
+  height: 12px;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K') center / contain no-repeat;
+  flex-shrink: 0;
+}
+/* Card Join Button：72×36 胶囊，btn_bg = --fill-tertiary，14px/500 */
+.card-c9 .c9-row .c9-btn {
+  width: 72px;
+  height: 36px;
+  border-radius: 9999px;
+  background: var(--fill-tertiary);
+  color: var(--text-primary);
+  font-size: var(--typo-caption-l);
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: var(--device-font);
+}
+.card-c9 .c9-row .c9-btn.joined {
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.card-c9 .c9-row .c9-btn:active { opacity: 0.85; }
+/* 行之间分隔线 */
+.card-c9 .c9-row-separator {
+  height: 0.5px;
+  background: var(--border-weak);
+  margin: 0 var(--spacing-b4);
+}
+
+/* 群名后的标签 */
+.group-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-left: var(--spacing-b2);
+  vertical-align: middle;
+}
+.group-tag.t-friend { color: #C44A7A; background: rgba(196, 74, 122, 0.12); }
+.group-tag.t-welfare { color: #B7792B; background: rgba(183, 121, 43, 0.12); }
+.group-tag.t-trade { color: #2B8D5A; background: rgba(43, 141, 90, 0.12); }
+.group-tag.t-event { color: #6B4DFF; background: rgba(107, 77, 255, 0.12); }
+.group-tag.t-news { color: #0066CC; background: rgba(0, 102, 204, 0.12); }
+.group-tag.t-match { color: #1A9E9A; background: rgba(26, 158, 154, 0.12); }
+
+/* 分隔线 */
+.form-separator {
+  height: 0.5px;
+  background: var(--border-weak);
+  margin: 0 var(--spacing-b4);
+}
+
+/* Top10 ranking 描述行 */
+.rank-row .desc-inline { color: var(--text-secondary); font-weight: 400; }
+
+/* ========== 底部 Search 60px 容器 ========== */
+.search-container {
+  width: var(--device-width);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-b4);
+  gap: var(--spacing-b3);
+  background: var(--bg-secondary);
+  position: relative;
+  z-index: 10;
+}
+.search-box {
+  flex: 1;
+  height: 36px;
+  background: var(--fill-tertiary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: var(--spacing-b2);
+  cursor: pointer;
+  justify-content: center;
+}
+.search-box .search-icon {
+  width: 18px;
+  height: 18px;
+  background-color: var(--icon-secondary);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yLjg4NzMgNy44NzUyOUMyLjg4NzMgNS4xMjA3NyA1LjEyMDI4IDIuODg3NzkgNy44NzQ4IDIuODg3NzlDMTAuNjI5MyAyLjg4Nzc5IDEyLjg2MjMgNS4xMjA3NyAxMi44NjIzIDcuODc1MjlDMTIuODYyMyAxMC42Mjk4IDEwLjYyOTMgMTIuODYyOCA3Ljg3NDggMTIuODYyOEM1LjEyMDI4IDEyLjg2MjggMi44ODczIDEwLjYyOTggMi44ODczIDcuODc1MjlaTTcuODc0OCAxLjYxMjc5QzQuNDE2MTIgMS42MTI3OSAxLjYxMjMgNC40MTY2MSAxLjYxMjMgNy44NzUyOUMxLjYxMjMgMTEuMzM0IDQuNDE2MTIgMTQuMTM3OCA3Ljg3NDggMTQuMTM3OEM5LjE4MjEzIDE0LjEzNzggMTAuMzk1OSAxMy43MzcyIDExLjQgMTMuMDUyMUwxNC4xNzQgMTUuODI2MUMxNC40MjMgMTYuMDc1IDE0LjgyNjYgMTYuMDc1IDE1LjA3NTYgMTUuODI2MUMxNS4zMjQ1IDE1LjU3NzEgMTUuMzI0NSAxNS4xNzM1IDE1LjA3NTYgMTQuOTI0NUwxMi4zNzgyIDEyLjIyNzFDMTMuNDY3MyAxMS4xMDA0IDE0LjEzNzMgOS41NjYwOSAxNC4xMzczIDcuODc1MjlDMTQuMTM3MyA0LjQxNjYxIDExLjMzMzUgMS42MTI3OSA3Ljg3NDggMS42MTI3OVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+') center / contain no-repeat;
+}
+.search-box .search-placeholder { font-size: 17px; color: var(--text-secondary); }
+/* AI 按钮：Button S3 一级（T1） min-w:60 / h:32 / r:16 / 14px/400 / padding:0 16px */
+.ai-btn {
+  min-width: 60px;
+  height: 32px;
+  padding: 0 var(--spacing-b4);
+  border-radius: 16px;
+  background: var(--brand-standard);
+  color: var(--text-white);
+  font-size: var(--typo-caption-l);
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-b1);
+  flex-shrink: 0;
+  font-family: var(--device-font);
+  white-space: nowrap;
+}
+.ai-btn:active { opacity: 0.85; }
+.ai-btn .ai-icon {
+  width: 16px;
+  height: 16px;
+  background-color: var(--text-white);
+  -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5LjQ5OTUgMkMxOS42NDY2IDIgMTkuNzY3NiAyLjExMzIyIDE5Ljc5MjQgMi4yNTgyMUMyMC4wMDU2IDMuNTA3ODMgMjAuOTkxNyA0LjQ5MzkgMjIuMjQxMyA0LjcwNzEzQzIyLjM4NjMgNC43MzE4NyAyMi40OTk1IDQuODUyOTIgMjIuNDk5NSA1QzIyLjQ5OTUgNS4xNDcwOCAyMi4zODYzIDUuMjY4MTMgMjIuMjQxMyA1LjI5Mjg3QzIwLjk5MTcgNS41MDYxIDIwLjAwNTYgNi40OTIxNyAxOS43OTI0IDcuNzQxNzlDMTkuNzY3NiA3Ljg4Njc4IDE5LjY0NjYgOCAxOS40OTk1IDhDMTkuMzUyNCA4IDE5LjIzMTQgNy44ODY3OCAxOS4yMDY2IDcuNzQxNzlDMTguOTkzNCA2LjQ5MjE3IDE4LjAwNzMgNS41MDYxIDE2Ljc1NzcgNS4yOTI4N0MxNi42MTI3IDUuMjY4MTMgMTYuNDk5NSA1LjE0NzA4IDE2LjQ5OTUgNUMxNi40OTk1IDQuODUyOTIgMTYuNjEyNyA0LjczMTg3IDE2Ljc1NzcgNC43MDcxM0MxOC4wMDczIDQuNDkzOSAxOC45OTM0IDMuNTA3ODMgMTkuMjA2NiAyLjI1ODIxQzE5LjIzMTQgMi4xMTMyMiAxOS4zNTI0IDIgMTkuNDk5NSAyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjg0OTQgMy4wMDAwMkMxMi44NDk0IDIuNTMwNTggMTIuNDY4OSAyLjE1MDAyIDExLjk5OTQgMi4xNTAwMkMxMS41MyAyLjE1MDAyIDExLjE0OTQgMi41MzA1OCAxMS4xNDk0IDMuMDAwMDJDMTEuMTQ5NCA3LjUwMTE0IDcuNTAwNTMgMTEuMTUgMi45OTk0MSAxMS4xNUMyLjUyOTk3IDExLjE1IDIuMTQ5NDEgMTEuNTMwNiAyLjE0OTQxIDEyQzIuMTQ5NDEgMTIuNDY5NSAyLjUyOTk3IDEyLjg1IDIuOTk5NDEgMTIuODVDNy41MDA1MyAxMi44NSAxMS4xNDk0IDE2LjQ5ODkgMTEuMTQ5NCAyMUMxMS4xNDk0IDIxLjQ2OTUgMTEuNTMgMjEuODUgMTEuOTk5NCAyMS44NUMxMi40Njg5IDIxLjg1IDEyLjg0OTQgMjEuNDY5NSAxMi44NDk0IDIxQzEyLjg0OTQgMTYuNDk4OSAxNi40OTgzIDEyLjg1IDIwLjk5OTQgMTIuODVDMjEuNDY4OSAxMi44NSAyMS44NDk0IDEyLjQ2OTUgMjEuODQ5NCAxMkMyMS44NDk0IDExLjUzMDYgMjEuNDY4OSAxMS4xNSAyMC45OTk0IDExLjE1QzE2LjQ5ODMgMTEuMTUgMTIuODQ5NCA3LjUwMTE0IDEyLjg0OTQgMy4wMDAwMlpNNy4wMDgyNSAxMkM5LjIyNTY1IDExLjAxMDggMTEuMDEwMiA5LjIyNjI2IDExLjk5OTQgNy4wMDg4NkMxMi45ODg2IDkuMjI2MjYgMTQuNzczMiAxMS4wMTA4IDE2Ljk5MDYgMTJDMTQuNzczMiAxMi45ODkyIDEyLjk4ODYgMTQuNzczOCAxMS45OTk0IDE2Ljk5MTJDMTEuMDEwMiAxNC43NzM4IDkuMjI1NjUgMTIuOTg5MiA3LjAwODI1IDEyWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=') center / contain no-repeat;
+  mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE5LjQ5OTUgMkMxOS42NDY2IDIgMTkuNzY3NiAyLjExMzIyIDE5Ljc5MjQgMi4yNTgyMUMyMC4wMDU2IDMuNTA3ODMgMjAuOTkxNyA0LjQ5MzkgMjIuMjQxMyA0LjcwNzEzQzIyLjM4NjMgNC43MzE4NyAyMi40OTk1IDQuODUyOTIgMjIuNDk5NSA1QzIyLjQ5OTUgNS4xNDcwOCAyMi4zODYzIDUuMjY4MTMgMjIuMjQxMyA1LjI5Mjg3QzIwLjk5MTcgNS41MDYxIDIwLjAwNTYgNi40OTIxNyAxOS43OTI0IDcuNzQxNzlDMTkuNzY3NiA3Ljg4Njc4IDE5LjY0NjYgOCAxOS40OTk1IDhDMTkuMzUyNCA4IDE5LjIzMTQgNy44ODY3OCAxOS4yMDY2IDcuNzQxNzlDMTguOTkzNCA2LjQ5MjE3IDE4LjAwNzMgNS41MDYxIDE2Ljc1NzcgNS4yOTI4N0MxNi42MTI3IDUuMjY4MTMgMTYuNDk5NSA1LjE0NzA4IDE2LjQ5OTUgNUMxNi40OTk1IDQuODUyOTIgMTYuNjEyNyA0LjczMTg3IDE2Ljc1NzcgNC43MDcxM0MxOC4wMDczIDQuNDkzOSAxOC45OTM0IDMuNTA3ODMgMTkuMjA2NiAyLjI1ODIxQzE5LjIzMTQgMi4xMTMyMiAxOS4zNTI0IDIgMTkuNDk5NSAyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTEyLjg0OTQgMy4wMDAwMkMxMi44NDk0IDIuNTMwNTggMTIuNDY4OSAyLjE1MDAyIDExLjk5OTQgMi4xNTAwMkMxMS41MyAyLjE1MDAyIDExLjE0OTQgMi41MzA1OCAxMS4xNDk0IDMuMDAwMDJDMTEuMTQ5NCA3LjUwMTE0IDcuNTAwNTMgMTEuMTUgMi45OTk0MSAxMS4xNUMyLjUyOTk3IDExLjE1IDIuMTQ5NDEgMTEuNTMwNiAyLjE0OTQxIDEyQzIuMTQ5NDEgMTIuNDY5NSAyLjUyOTk3IDEyLjg1IDIuOTk5NDEgMTIuODVDNy41MDA1MyAxMi44NSAxMS4xNDk0IDE2LjQ5ODkgMTEuMTQ5NCAyMUMxMS4xNDk0IDIxLjQ2OTUgMTEuNTMgMjEuODUgMTEuOTk5NCAyMS44NUMxMi40Njg5IDIxLjg1IDEyLjg0OTQgMjEuNDY5NSAxMi44NDk0IDIxQzEyLjg0OTQgMTYuNDk4OSAxNi40OTgzIDEyLjg1IDIwLjk5OTQgMTIuODVDMjEuNDY4OSAxMi44NSAyMS44NDk0IDEyLjQ2OTUgMjEuODQ5NCAxMkMyMS44NDk0IDExLjUzMDYgMjEuNDY4OSAxMS4xNSAyMC45OTk0IDExLjE1QzE2LjQ5ODMgMTEuMTUgMTIuODQ5NCA3LjUwMTE0IDEyLjg0OTQgMy4wMDAwMlpNNy4wMDgyNSAxMkM5LjIyNTY1IDExLjAxMDggMTEuMDEwMiA5LjIyNjI2IDExLjk5OTQgNy4wMDg4NkMxMi45ODg2IDkuMjI2MjYgMTQuNzczMiAxMS4wMTA4IDE2Ljk5MDYgMTJDMTQuNzczMiAxMi45ODkyIDEyLjk4ODYgMTQuNzczOCAxMS45OTk0IDE2Ljk5MTJDMTEuMDEwMiAxNC43NzM4IDkuMjI1NjUgMTIuOTg5MiA3LjAwODI1IDEyWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=') center / contain no-repeat;
+}
+
+/* ========== Home Bar ========== */
+.home-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--device-width);
+  height: var(--homebar-height);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  z-index: 30;
+  background: var(--bg-secondary);
+}
+.home-bar-indicator {
+  width: 144px;
+  height: 5px;
+  border-radius: 2.5px;
+  background: rgba(0, 0, 0, 0.90);
+}
+
+/* ========== Dialog ========== */
+.dialog-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--overlay-dialog);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.dialog-overlay.show { display: flex; }
+.dialog-box {
+  width: 296px;
+  background: var(--bg-bottom);
+  border-radius: 14px;
+  overflow: hidden;
+  animation: dialogIn 250ms ease-out;
+}
+@keyframes dialogIn {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.dialog-content { padding: 20px 24px 16px; text-align: center; }
+.dialog-title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 23px;
+  color: var(--text-primary);
+}
+.dialog-body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.dialog-actions {
+  display: flex;
+  border-top: 0.5px solid var(--border-weak);
+}
+.dialog-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  background: none;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--brand-standard);
+  cursor: pointer;
+  font-family: var(--device-font);
+}
+.dialog-btn:first-child:not(:last-child) {
+  border-right: 0.5px solid var(--border-weak);
+}
+.dialog-btn.primary { font-weight: 600; }
+
+/* ========== Toast ========== */
+.toast {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--text-white);
+  font-size: 14px;
+  line-height: 20px;
+  padding: 10px var(--spacing-b4);
+  border-radius: 8px;
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.toast.show { opacity: 1; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- StatusBar -->
+<div class="status-bar">
+  <div class="status-bar-time">9:41</div>
+  <div class="status-bar-icons">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyMCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwNykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE5LjIgMS4xNDYyM0MxOS4yIDAuNTEzMTgzIDE4LjcyMjQgMCAxOC4xMzMzIDBIMTcuMDY2N0MxNi40Nzc2IDAgMTYgMC41MTMxODMgMTYgMS4xNDYyM1YxMS4wODAyQzE2IDExLjcxMzIgMTYuNDc3NiAxMi4yMjY0IDE3LjA2NjcgMTIuMjI2NEgxOC4xMzMzQzE4LjcyMjQgMTIuMjI2NCAxOS4yIDExLjcxMzIgMTkuMiAxMS4wODAyVjEuMTQ2MjNaTTExLjc2NTkgMi40NDUyOEgxMi44MzI2QzEzLjQyMTcgMi40NDUyOCAxMy44OTkyIDIuOTcwNzggMTMuODk5MiAzLjYxOTAyVjExLjA1MjdDMTMuODk5MiAxMS43MDA5IDEzLjQyMTcgMTIuMjI2NCAxMi44MzI2IDEyLjIyNjRIMTEuNzY1OUMxMS4xNzY4IDEyLjIyNjQgMTAuNjk5MiAxMS43MDA5IDEwLjY5OTIgMTEuMDUyN1YzLjYxOTAyQzEwLjY5OTIgMi45NzA3OCAxMS4xNzY4IDIuNDQ1MjggMTEuNzY1OSAyLjQ0NTI4Wk03LjQzNDExIDUuMDk0MzNINi4zNjc0NUM1Ljc3ODM0IDUuMDk0MzMgNS4zMDA3OCA1LjYyNjUyIDUuMzAwNzggNi4yODMwMVYxMS4wMzc3QzUuMzAwNzggMTEuNjk0MiA1Ljc3ODM0IDEyLjIyNjQgNi4zNjc0NSAxMi4yMjY0SDcuNDM0MTFDOC4wMjMyMiAxMi4yMjY0IDguNTAwNzggMTEuNjk0MiA4LjUwMDc4IDExLjAzNzdWNi4yODMwMUM4LjUwMDc4IDUuNjI2NTIgOC4wMjMyMiA1LjA5NDMzIDcuNDM0MTEgNS4wOTQzM1pNMi4xMzMzMyA3LjUzOTYySDEuMDY2NjdDMC40Nzc1NjMgNy41Mzk2MiAwIDguMDY0MjEgMCA4LjcxMTMyVjExLjA1NDdDMCAxMS43MDE4IDAuNDc3NTYzIDEyLjIyNjQgMS4wNjY2NyAxMi4yMjY0SDIuMTMzMzNDMi43MjI0NCAxMi4yMjY0IDMuMiAxMS43MDE4IDMuMiAxMS4wNTQ3VjguNzExMzJDMy4yIDguMDY0MjEgMi43MjI0NCA3LjUzOTYyIDIuMTMzMzMgNy41Mzk2MloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA3Ij4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" width="20" height="13" alt="network">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUxMykiPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTguNTcxMyAyLjQ2NjI4QzExLjA1ODQgMi40NjYzOSAxMy40NTA0IDMuMzg4NDcgMTUuMjUyOSA1LjA0MTk1QzE1LjM4ODcgNS4xNjk2IDE1LjYwNTYgNS4xNjc5OSAxNS43MzkzIDUuMDM4MzRMMTcuMDM2OCAzLjc3NDg3QzE3LjEwNDUgMy43MDkxMSAxNy4xNDIyIDMuNjIwMDQgMTcuMTQxNyAzLjUyNzM1QzE3LjE0MTEgMy40MzQ2NyAxNy4xMDIzIDMuMzQ2MDMgMTcuMDMzOCAzLjI4MTA0QzEyLjMwMjggLTEuMDkzNjggNC44MzkwNyAtMS4wOTM2OCAwLjEwODA1NiAzLjI4MTA0QzAuMDM5NTI0IDMuMzQ1OTggMC4wMDA2Mzk3NjYgMy40MzQ2IDcuODIzOThlLTA2IDMuNTI3MjhDLTAuMDAwNjI0MTE4IDMuNjE5OTYgMC4wMzcwNDgzIDMuNzA5MDYgMC4xMDQ2ODkgMy43NzQ4N0wxLjQwMjU1IDUuMDM4MzRDMS41MzYxNSA1LjE2ODE5IDEuNzUzMjcgNS4xNjk4IDEuODg4OTMgNS4wNDE5NUMzLjY5MTY3IDMuMzg4MzYgNi4wODM5NSAyLjQ2NjI4IDguNTcxMyAyLjQ2NjI4Wk04LjU2Nzk1IDYuNjg2NTZDOS45MjUyNyA2LjY4NjQ3IDExLjIzNDEgNy4xOTgyMSAxMi4yNDAzIDguMTIyMzRDMTIuMzc2MyA4LjI1MzUgMTIuNTkwNyA4LjI1MDY1IDEyLjcyMzQgOC4xMTU5M0wxNC4wMTA2IDYuNzk2NjNDMTQuMDc4NCA2LjcyNzQyIDE0LjExNjEgNi42MzM1NSAxNC4xMTUxIDYuNTM2QzE0LjExNDEgNi40Mzg0NCAxNC4wNzQ2IDYuMzQ1MzYgMTQuMDA1NCA2LjI3NzU3QzEwLjk0MTYgMy4zODY3MiA2LjE5Njg4IDMuMzg2NzIgMy4xMzMwNSA2LjI3NzU3QzMuMDYzODQgNi4zNDUzNiAzLjAyNDM1IDYuNDM4NDkgMy4wMjM0NSA2LjUzNjA3QzMuMDIyNTQgNi42MzM2NiAzLjA2MDI4IDYuNzI3NTIgMy4xMjgyMiA2Ljc5NjYzTDQuNDE1MTMgOC4xMTU5M0M0LjU0Nzc4IDguMjUwNjUgNC43NjIxNSA4LjI1MzUgNC44OTgyMyA4LjEyMjM0QzUuOTAzNjggNy4xOTg4MiA3LjIxMTUyIDYuNjg3MTMgOC41Njc5NSA2LjY4NjU2Wk0xMS4wOTI0IDkuNDgwMTFDMTEuMDk0MyA5LjU4NTQ2IDExLjA1NzIgOS42ODcwMyAxMC45ODk5IDkuNzYwODRMOC44MTMyNyAxMi4yMTU2QzguNzQ5NDYgMTIuMjg3NyA4LjY2MjQ3IDEyLjMyODMgOC41NzE3IDEyLjMyODNDOC40ODA5MyAxMi4zMjgzIDguMzkzOTQgMTIuMjg3NyA4LjMzMDEzIDEyLjIxNTZMNi4xNTMxIDkuNzYwODRDNi4wODU4NSA5LjY4Njk3IDYuMDQ4ODYgOS41ODUzNyA2LjA1MDg1IDkuNDgwMDJDNi4wNTI4NCA5LjM3NDY3IDYuMDkzNjUgOS4yNzQ5MSA2LjE2MzY0IDkuMjA0MjlDNy41NTM3NCA3Ljg5MDQgOS41ODk2NiA3Ljg5MDQgMTAuOTc5OCA5LjIwNDI5QzExLjA0OTcgOS4yNzQ5NyAxMS4wOTA0IDkuMzc0NzYgMTEuMDkyNCA5LjQ4MDExWiIgZmlsbD0iYmxhY2siLz4KPC9nPgo8ZGVmcz4KPGNsaXBQYXRoIGlkPSJjbGlwMF8zMTU3XzI1MTMiPgo8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTMiIGZpbGw9IndoaXRlIi8+CjwvY2xpcFBhdGg+CjwvZGVmcz4KPC9zdmc+" width="18" height="13" alt="wifi">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAyOCAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzMxNTdfMjUwOSkiPgo8cGF0aCBvcGFjaXR5PSIwLjM1IiBkPSJNMjAuNyAwLjVINC4zQzIuMjAxMzIgMC41IDAuNSAyLjIwMTMyIDAuNSA0LjNWOC43QzAuNSAxMC43OTg3IDIuMjAxMzIgMTIuNSA0LjMgMTIuNUgyMC43QzIyLjc5ODcgMTIuNSAyNC41IDEwLjc5ODcgMjQuNSA4LjdWNC4zQzI0LjUgMi4yMDEzMiAyMi43OTg3IDAuNSAyMC43IDAuNVoiIHN0cm9rZT0iYmxhY2siLz4KPHBhdGggb3BhY2l0eT0iMC40IiBkPSJNMjYgNC43ODEyNVY4Ljg1NjcyQzI2LjgwNDcgOC41MTE1NSAyNy4zMjggNy43MDg1OSAyNy4zMjggNi44MTg5OEMyNy4zMjggNS45MjkzOCAyNi44MDQ3IDUuMTI2NDIgMjYgNC43ODEyNVoiIGZpbGw9ImJsYWNrIi8+CjxwYXRoIGQ9Ik0yMC41IDJINC41QzMuMTE5MjkgMiAyIDMuMTE5MjkgMiA0LjVWOC41QzIgOS44ODA3MSAzLjExOTI5IDExIDQuNSAxMUgyMC41QzIxLjg4MDcgMTEgMjMgOS44ODA3MSAyMyA4LjVWNC41QzIzIDMuMTE5MjkgMjEuODgwNyAyIDIwLjUgMloiIGZpbGw9ImJsYWNrIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMzE1N18yNTA5Ij4KPHJlY3Qgd2lkdGg9IjI4IiBoZWlnaHQ9IjEzIiBmaWxsPSJ3aGl0ZSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPg==" width="28" height="13" alt="battery">
+  </div>
+</div>
+
+<!-- NavBar: L1 back + C5 segment + R1 lab -->
+<div class="navbar-row">
+  <div class="navbar-left">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS42MDEzIDIuMzk4ODZDMTUuOTMzMiAyLjczMDgxIDE1LjkzMzIgMy4yNjkgMTUuNjAxMyAzLjYwMDk0TDcuNzMyNjUgMTEuNDY5NkM3LjUyNDcyIDExLjY3NzUgNy40MDUzOSAxMS43OTc4IDcuMzI0ODEgMTEuODkyN0M3LjI5MTg2IDExLjkzMTUgNy4yNzU0NyAxMS45NTQ4IDcuMjY4NDQgMTEuOTY1NkM3LjI2MzEyIDExLjk4ODEgNy4yNjMxMiAxMi4wMTE3IDcuMjY4NDQgMTIuMDM0M0M3LjI3NTQ3IDEyLjA0NSA3LjI5MTg2IDEyLjA2ODMgNy4zMjQ4MSAxMi4xMDcxQzcuNDA1NCAxMi4yMDIgNy41MjQ3MyAxMi4zMjIzIDcuNzMyNjUgMTIuNTMwMkwxNS42MDEzIDIwLjM5ODlDMTUuOTMzMiAyMC43MzA4IDE1LjkzMzIgMjEuMjY5IDE1LjYwMTMgMjEuNjAwOUMxNS4yNjkzIDIxLjkzMjkgMTQuNzMxMSAyMS45MzI5IDE0LjM5OTIgMjEuNjAwOUw2LjUxMDMyIDEzLjcxMjFDNi4zMjk3NSAxMy41MzE1IDYuMTU5OTEgMTMuMzYxNyA2LjAyODgzIDEzLjIwNzNDNS44ODY0MiAxMy4wMzk2IDUuNzQwNTggMTIuODM1IDUuNjU1IDEyLjU3MTZDNS41MzQyNyAxMi4yIDUuNTM0MjcgMTEuNzk5OCA1LjY1NSAxMS40MjgyQzUuNzQwNTggMTEuMTY0OCA1Ljg4NjQyIDEwLjk2MDIgNi4wMjg4MyAxMC43OTI1QzYuMTU5OTEgMTAuNjM4MSA2LjMyOTc2IDEwLjQ2ODMgNi41MTAzMyAxMC4yODc3TDE0LjM5OTIgMi4zOTg4NkMxNC43MzExIDIuMDY2OTIgMTUuMjY5MyAyLjA2NjkyIDE1LjYwMTMgMi4zOTg4NloiIGZpbGw9ImJsYWNrIiBmaWxsLW9wYWNpdHk9IjAuOSIvPgo8L3N2Zz4=" alt="返回" onclick="history.back()">
+  </div>
+  <div class="navbar-center">
+    <div class="segment-control" id="navSegment" data-active="1">
+      <div class="segment-item" data-nav="people">找人</div>
+      <div class="segment-item active" data-nav="group">找群</div>
+      <div class="segment-slider"></div>
+    </div>
+  </div>
+  <div class="navbar-right">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTYuNSAxMkM2LjUgMTIuODI4NCA1LjgyODQzIDEzLjUgNSAxMy41QzQuMTcxNTcgMTMuNSAzLjUgMTIuODI4NCAzLjUgMTJDMy41IDExLjE3MTYgNC4xNzE1NyAxMC41IDUgMTAuNUM1LjgyODQzIDEwLjUgNi41IDExLjE3MTYgNi41IDEyWiIgZmlsbD0iIzFBMUExQSIvPgo8cGF0aCBkPSJNMTMuNSAxMkMxMy41IDEyLjgyODQgMTIuODI4NCAxMy41IDEyIDEzLjVDMTEuMTcxNiAxMy41IDEwLjUgMTIuODI4NCAxMC41IDEyQzEwLjUgMTEuMTcxNiAxMS4xNzE2IDEwLjUgMTIgMTAuNUMxMi44Mjg0IDEwLjUgMTMuNSAxMS4xNzE2IDEzLjUgMTJaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik0xOSAxMy41QzE5LjgyODQgMTMuNSAyMC41IDEyLjgyODQgMjAuNSAxMkMyMC41IDExLjE3MTYgMTkuODI4NCAxMC41IDE5IDEwLjVDMTguMTcxNiAxMC41IDE3LjUgMTEuMTcxNiAxNy41IDEyQzE3LjUgMTIuODI4NCAxOC4xNzE2IDEzLjUgMTkgMTMuNVoiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+Cg==" alt="更多" onclick="showToast('更多功能')">
+  </div>
+</div>
+
+<!-- DataFilter A4 -->
+<div class="data-filter-a4" id="filterTabs">
+  <div class="tab-item selected" data-tab="recommend">推荐</div>
+  <div class="tab-item" data-tab="game">游戏</div>
+  <div class="tab-item" data-tab="acg">二次元</div>
+  <div class="tab-item" data-tab="study">学习</div>
+  <div class="tab-item" data-tab="music">音乐</div>
+  <div class="tab-item" data-tab="movie">影视</div>
+  <div class="tab-item" data-tab="sports">运动</div>
+</div>
+
+<!-- 内容滚动区 -->
+<div class="content-area" id="contentArea">
+
+  <!-- 授权卡（Card C6：头像+大标题+大按钮） -->
+  <div class="card-c6" id="authCard">
+    <div class="c6-head">
+      <div class="c6-avatar">
+        <span class="icon-mask" aria-hidden="true"></span>
+      </div>
+      <div class="c6-head-title">兴趣偏好授权</div>
+      <span class="c6-close" id="authLaterBtn" aria-label="关闭"></span>
+    </div>
+    <div class="c6-bigtitle">
+      <div class="c6-title">授权近期兴趣偏好</div>
+      <div class="c6-desc">开启后将为你推荐更精准的群聊，仅用于推荐优化，不会泄露您的隐私信息</div>
+    </div>
+    <div class="c6-bigbtn-wrap">
+      <button class="c6-bigbtn" id="authNowBtn">立即授权</button>
+    </div>
+  </div>
+
+  <!-- 分组 1：峡谷开黑组队 — Card C9 -->
+  <div class="card-c9">
+    <div class="c9-header">
+      <div class="c9-avatar">01</div>
+      <div class="c9-title">峡谷开黑组队</div>
+      <div class="c9-link" onclick="showToast('查看更多：峡谷开黑组队')">查看更多<span class="chevron" aria-hidden="true"></span></div>
+    </div>
+    <div class="c9-header-separator"></div>
+    <div class="c9-row" onclick="openGroup('峡谷开黑组队')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMi44NTExIDEuNTAwMDNDMTIuODUxMiAxLjAzMDk4IDEyLjQ3MTMgMC42NTA1MzMgMTIuMDAyMiAwLjY0OTkwM0MxMS41MzMyIDAuNjQ5Mjc1IDExLjE1MjMgMS4wMjg3IDExLjE1MTEgMS40OTc3NUMxMS4xNDg5IDIuMzY1OTEgMTEuMTQ5OSAyLjgwODg3IDExLjE1MDggMy4yNTA3OEwxMS4xNTA4IDMuMjUyMDRMMTEuMTUwNyA0LjIyOTM2QzEwLjk0NzkgNC4yNzUyMSAxMC43NDc5IDQuMzM3NzEgMTAuNTUyOCA0LjQxNjg1TDguMTU1MjMgNS4zODkyM0w3LjI5MDg5IDMuMTg5MUM3LjExOTI0IDIuNzUyMTYgNi42MjU4OSAyLjUzNzExIDYuMTg4OTUgMi43MDg3NkM1Ljc1MjAyIDIuODgwNDIgNS41MzY5NiAzLjM3Mzc3IDUuNzA4NjIgMy44MTA3MUw2LjcwMjM1IDYuMzQwMkM2Ljk3NzA5IDcuMDM5NTQgNy43Njk5NiA3LjM3OTk5IDguNDY2MjUgNy4wOTc1OUwxMS4xOTE3IDUuOTkyMjFDMTEuNjgzMSA1Ljc5MjkgMTIuMzE0NSA1Ljc5MjEzIDEyLjgwNzggNS45OTIyMUwxNS41MzMzIDcuMDk3NTlDMTYuMjI5NiA3LjM3OTk5IDE3LjAyMjQgNy4wMzk1NCAxNy4yOTcyIDYuMzQwMkwxOC4yOTA5IDMuODEwNzFDMTguNDYyNSAzLjM3Mzc3IDE4LjI0NzUgMi44ODA0MiAxNy44MTA2IDIuNzA4NzZDMTcuMzczNiAyLjUzNzExIDE2Ljg4MDMgMi43NTIxNiAxNi43MDg2IDMuMTg5MUwxNS44NDQzIDUuMzg5MjNMMTMuNDQ2NyA0LjQxNjg1QzEzLjI1MjYgNC4zMzgxIDEzLjA1MzYgNC4yNzU4NCAxMi44NTE4IDQuMjMwMDVDMTIuODUyMSAzLjgyNDY1IDEyLjg1MTUgMy41MzY2MiAxMi44NTA4IDMuMjQ5MDNMMTIuODUwOCAzLjI0Nzc3TDEyLjg1MTEgMS41MDIwNkwxMi44NTExIDEuNTAwMDNaTTEyLjMyMzggOC43MzYzNkMxMi4xMTUzIDguNjU1ODkgMTEuODg0MyA4LjY1NTg5IDExLjY3NTcgOC43MzYzNkw2LjY5NzIxIDEwLjY1NzZDNi4yODQ4NyAxMC44MTY4IDYuMDQ5MDkgMTEuMjUxNyA2LjE0MDg0IDExLjY4NDFMNy40NDc3MyAxNy44NDI2QzcuNDkyMDYgMTguMDUxNSA3LjYwOTIgMTguMjM3OCA3Ljc3ODIzIDE4LjM2ODJMMTEuOTg0NSAyMS42MTQ3QzExLjk5MzUgMjEuNjIxNiAxMi4wMDYgMjEuNjIxNiAxMi4wMTUgMjEuNjE0N0wxNi4yMjEzIDE4LjM2ODJDMTYuMzkwMyAxOC4yMzc4IDE2LjUwNzUgMTguMDUxNSAxNi41NTE4IDE3Ljg0MjZMMTcuODU4NyAxMS42ODQxQzE3Ljk1MDQgMTEuMjUxNyAxNy43MTQ2IDEwLjgxNjggMTcuMzAyMyAxMC42NTc2TDEyLjMyMzggOC43MzYzNlpNMTEuMDYzNyA3LjE1MDM3QzExLjY2NjEgNi45MTc4OSAxMi4zMzM0IDYuOTE3ODkgMTIuOTM1OCA3LjE1MDM3TDE3LjkxNDQgOS4wNzE2M0MxOS4xMDU2IDkuNTMxMzMgMTkuNzg2NyAxMC43ODggMTkuNTIxNiAxMi4wMzdMMTguMjE0NyAxOC4xOTU1QzE4LjA4NjcgMTguNzk4OSAxNy43NDgzIDE5LjMzNzEgMTcuMjYgMTkuNzE0TDEzLjA1MzcgMjIuOTYwNUMxMi40MzI4IDIzLjQzOTcgMTEuNTY2NyAyMy40Mzk3IDEwLjk0NTggMjIuOTYwNUw2LjczOTUzIDE5LjcxNEM2LjI1MTIyIDE5LjMzNzEgNS45MTI4MSAxOC43OTg5IDUuNzg0NzcgMTguMTk1NUw0LjQ3Nzg4IDEyLjAzN0M0LjIxMjgyIDEwLjc4OCA0Ljg5Mzk0IDkuNTMxMzMgNi4wODUxNiA5LjA3MTYzTDExLjA2MzcgNy4xNTAzN1pNMjEuOTc1MyAxMC4zM0MyMS41MTc1IDEwLjIyNjUgMjEuMDYyNCAxMC41MTM4IDIwLjk1ODggMTAuOTcxN0wxOS4zNzkxIDE3Ljk2MDNDMTkuMjc1NiAxOC40MTgyIDE5LjU2MjkgMTguODczMyAyMC4wMjA4IDE4Ljk3NjhDMjAuNDc4NyAxOS4wODAzIDIwLjkzMzggMTguNzkzIDIxLjAzNzMgMTguMzM1MUwyMi42MTcgMTEuMzQ2NUMyMi43MjA1IDEwLjg4ODYgMjIuNDMzMiAxMC40MzM1IDIxLjk3NTMgMTAuMzNaTTMuMDM3NDIgMTAuOTcxN0MyLjkzMzkyIDEwLjUxMzggMi40Nzg4MiAxMC4yMjY1IDIuMDIwOTMgMTAuMzNDMS41NjMwNCAxMC40MzM1IDEuMjc1NzUgMTAuODg4NiAxLjM3OTI2IDExLjM0NjVMMi45NTkwMSAxOC4zMzUxQzMuMDYyNTIgMTguNzkzIDMuNTE3NjIgMTkuMDgwMyAzLjk3NTUxIDE4Ljk3NjhDNC40MzMzOSAxOC44NzMzIDQuNzIwNjggMTguNDE4MiA0LjYxNzE4IDE3Ljk2MDNMMy4wMzc0MiAxMC45NzE3WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">峡谷开黑组队<span class="group-tag t-friend">交友圈子</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2099 · 35人在线互动</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '峡谷开黑组队')">加入</button>
+    </div>
+    <div class="c9-row-separator"></div>
+    <div class="c9-row" onclick="openGroup('峡谷开黑·干货')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjkwNjYgMTIuNzg4NEw5Ljc1NzU2IDEzLjkwNjRDOS40OTg0MyAxNC4wNDEyIDkuMTk3MDYgMTMuODIwOCA5LjI0NjkyIDEzLjUzM0w5LjY1NjE2IDExLjE3MTFMNy45MjUzOCA5LjUwMDg5QzcuNzE0MTQgOS4yOTcwNCA3LjgyOTYxIDguOTM5NDEgOC4xMjAxOCA4Ljg5NzU4TDEwLjUxNjQgOC41NTI2NUwxMS41OTA5IDYuMzk3ODlDMTEuNzIwOCA2LjEzNzM1IDEyLjA5MjYgNi4xMzczIDEyLjIyMjUgNi4zOTc4MUwxMy4yOTc4IDguNTUyNjVMMTUuNjkzMSA4Ljg5NzU1QzE1Ljk4MzcgOC45MzkzOSAxNi4wOTkxIDkuMjk3MDEgMTUuODg3OSA5LjUwMDg2TDE0LjE1NzEgMTEuMTcxMUwxNC41NjU2IDEzLjUzMzFDMTQuNjE1NCAxMy44MjA5IDE0LjMxNCAxNC4wNDEyIDE0LjA1NDkgMTMuOTA2M0wxMS45MDY2IDEyLjc4ODRaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzc1NyAyMC45NTAyTDExLjkwNjggMTguMDg4OEw2LjQzNzkgMjAuOTUwMkM1LjI4NTkyIDIxLjU1MjkgNC4xNDc0NiAyMC41ODE3IDQuMTQ3NDYgMTkuNDY1NFY4LjQzNjdDNC4xNDc0NSA3LjQ0MzI5IDQuMTQ3NDUgNi42NTE0IDQuMTk5NjggNi4wMTIxMkM0LjI1MzIyIDUuMzU2ODggNC4zNjUzOCA0Ljc5NTM5IDQuNjI3ODEgNC4yODAzNUM1LjA1MDMzIDMuNDUxMSA1LjcyNDUzIDIuNzc2OSA2LjU1Mzc5IDIuMzU0MzdDNy4wNjg4MiAyLjA5MTk1IDcuNjMwMzIgMS45Nzk3OCA4LjI4NTU1IDEuOTI2MjRDOC45MjQ4MyAxLjg3NDAxIDkuNzE2NzIgMS44NzQwMiAxMC43MTAxIDEuODc0MDJIMTMuMTAzNUMxNC4wOTY5IDEuODc0MDIgMTQuODg4OCAxLjg3NDAxIDE1LjUyOCAxLjkyNjI0QzE2LjE4MzMgMS45Nzk3OCAxNi43NDQ4IDIuMDkxOTUgMTcuMjU5OCAyLjM1NDM3QzE4LjA4OTEgMi43NzY4OSAxOC43NjMzIDMuNDUxMSAxOS4xODU4IDQuMjgwMzVDMTkuNDQ4MiA0Ljc5NTM5IDE5LjU2MDQgNS4zNTY4OCAxOS42MTM5IDYuMDEyMTFDMTkuNjY2MSA2LjY1MTQgMTkuNjY2MSA3LjQ0MzI5IDE5LjY2NjEgOC40MzY3MVYxOS40NjU0QzE5LjY2NjEgMjAuNTgxNyAxOC41Mjc3IDIxLjU1MjkgMTcuMzc1NyAyMC45NTAyWk0xMy4wNzAzIDMuMzkyNjlDMTQuMTA0NCAzLjM5MjY5IDE0LjgzNDIgMy4zOTMyOCAxNS40MDQ0IDMuNDM5ODdDMTUuOTY1NyAzLjQ4NTczIDE2LjMwNTEgMy41NzIzNSAxNi41NzAzIDMuNzA3NTFDMTcuMTEzOCAzLjk4NDQ0IDE3LjU1NTcgNC40MjYzMSAxNy44MzI2IDQuOTY5ODFDMTcuOTY3OCA1LjIzNTA3IDE4LjA1NDQgNS41NzQ0NyAxOC4xMDAzIDYuMTM1NzhDMTguMTQ2OSA2LjcwNTk2IDE4LjE0NzUgNy40MzU4IDE4LjE0NzUgOC40Njk4VjE5LjQ2NTRDMTguMTQ3NSAxOS41NDg0IDE4LjExMDkgMTkuNTg4MyAxOC4wOTE2IDE5LjYwMTdDMTguMDg4MSAxOS42MDQgMTguMDg1NCAxOS42MDU1IDE4LjA4MzQgMTkuNjA2NEwxOC4wNzk3IDE5LjYwNDZMMTEuOTA2OCAxNi4zNzQ4TDUuNzMzODYgMTkuNjA0Nkw1LjczMDE1IDE5LjYwNjRDNS43MjgyMSAxOS42MDU1IDUuNzI1NDggMTkuNjA0IDUuNzIyMDIgMTkuNjAxNkM1LjcwMjY2IDE5LjU4ODMgNS42NjYxMyAxOS41NDg0IDUuNjY2MTMgMTkuNDY1NFY4LjQ2OTgxQzUuNjY2MTMgNy40MzU4IDUuNjY2NzIgNi43MDU5NyA1LjcxMzMgNi4xMzU3OEM1Ljc1OTE3IDUuNTc0NDcgNS44NDU3OSA1LjIzNTA3IDUuOTgwOTUgNC45Njk4MUM2LjI1Nzg3IDQuNDI2MzEgNi42OTk3NSAzLjk4NDQ0IDcuMjQzMjUgMy43MDc1MUM3LjUwODUxIDMuNTcyMzUgNy44NDc5IDMuNDg1NzMgOC40MDkyMiAzLjQzOTg3QzguOTc5NCAzLjM5MzI4IDkuNzA5MjQgMy4zOTI2OSAxMC43NDMyIDMuMzkyNjlMMTMuMDcwMyAzLjM5MjY5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">峡谷开黑·干货<span class="group-tag t-welfare">福利专区</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2449 · 8个精华合集</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '峡谷开黑·干货')">加入</button>
+    </div>
+  </div>
+
+  <!-- 分组 2：王者皮肤收藏 — Card C9 -->
+  <div class="card-c9">
+    <div class="c9-header">
+      <div class="c9-avatar">02</div>
+      <div class="c9-title">王者皮肤收藏</div>
+      <div class="c9-link" onclick="showToast('查看更多：王者皮肤收藏')">查看更多<span class="chevron" aria-hidden="true"></span></div>
+    </div>
+    <div class="c9-header-separator"></div>
+    <div class="c9-row" onclick="openGroup('王者皮肤·邻里')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">王者皮肤·邻里<span class="group-tag t-friend">交友圈子</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2095 · 日均238条消息</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '王者皮肤·邻里')">加入</button>
+    </div>
+    <div class="c9-row-separator"></div>
+    <div class="c9-row" onclick="openGroup('聚会大本营')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">聚会大本营<span class="group-tag t-event">活动聚集</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2974 · 本周4场活动</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '聚会大本营')">加入</button>
+    </div>
+  </div>
+
+  <!-- 分组 3：校园生活分享 — Card C9 -->
+  <div class="card-c9">
+    <div class="c9-header">
+      <div class="c9-avatar">03</div>
+      <div class="c9-title">校园生活分享</div>
+      <div class="c9-link" onclick="showToast('查看更多：校园生活分享')">查看更多<span class="chevron" aria-hidden="true"></span></div>
+    </div>
+    <div class="c9-header-separator"></div>
+    <div class="c9-row" onclick="openGroup('约局茶馆')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">约局茶馆<span class="group-tag t-event">活动聚集</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>1722 · 已举办66场活动</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '约局茶馆')">加入</button>
+    </div>
+    <div class="c9-row-separator"></div>
+    <div class="c9-row" onclick="openGroup('校园生活·速递')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTcuMDAwOSAxNS44NTQyTDExLjUwMDkgMTUuODUwMUMxMS45NzAzIDE1Ljg0OTcgMTIuMzUwNiAxNS40Njg4IDEyLjM1MDEgMTQuOTk5M0MxMi4zNDk3IDE0LjUyOTkgMTEuOTY4OCAxNC4xNDk3IDExLjQ5OTMgMTQuMTUwMUw2Ljk5OTM0IDE0LjE1NDJDNi41Mjk5IDE0LjE1NDcgNi4xNDk2OSAxNC41MzU2IDYuMTUwMTIgMTUuMDA1QzYuMTUwNTUgMTUuNDc0NSA2LjUzMTQ2IDE1Ljg1NDcgNy4wMDA5IDE1Ljg1NDJaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik02LjE1NDAyIDExLjAwNjNDNi4xNTM3MyAxMC41MzY5IDYuNTM0MDYgMTAuMTU2MSA3LjAwMzUgMTAuMTU1OEwxNC45OTkxIDEwLjE1MDlDMTUuNDY4NSAxMC4xNTA2IDE1Ljg0OTMgMTAuNTMwOSAxNS44NDk2IDExLjAwMDRDMTUuODQ5OSAxMS40Njk4IDE1LjQ2OTYgMTEuODUwNiAxNS4wMDAxIDExLjg1MDlMNy4wMDQ1NCAxMS44NTU4QzYuNTM1MSAxMS44NTYxIDYuMTU0MzEgMTEuNDc1NyA2LjE1NDAyIDExLjAwNjNaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzI2NiA2LjE1MDYzSDE3LjUzNDlDMTguMjA1MiA2LjE1MDYyIDE4Ljc1OTQgNi4xNTA2MSAxOS4yMTExIDYuMTg3NTJDMTkuNjgwNiA2LjIyNTg3IDIwLjExMzYgNi4zMDgyOSAyMC41MjA4IDYuNTE1NzZDMjEuMTUxMSA2LjgzNjk0IDIxLjY2MzYgNy4zNDk0MiAyMS45ODQ4IDcuOTc5NzdDMjIuMTkyMiA4LjM4Njk1IDIyLjI3NDcgOC44MTk5OCAyMi4zMTMgOS4yODk0MkMyMi4zNDk5IDkuNzQxMSAyMi4zNDk5IDEwLjI5NTMgMjIuMzQ5OSAxMC45NjU2VjE2LjAzNTdDMjIuMzQ5OSAxNi43MDYgMjIuMzQ5OSAxNy4yNjAyIDIyLjMxMyAxNy43MTE4QzIyLjI3NDcgMTguMTgxMyAyMi4xOTIyIDE4LjYxNDMgMjEuOTg0OCAxOS4wMjE1QzIxLjY2MzYgMTkuNjUxOCAyMS4xNTExIDIwLjE2NDMgMjAuNTIwOCAyMC40ODU1QzIwLjExMzYgMjAuNjkzIDE5LjY4MDYgMjAuNzc1NCAxOS4yMTExIDIwLjgxMzdDMTguNzU5NCAyMC44NTA3IDE4LjIwNTIgMjAuODUwNiAxNy41MzQ5IDIwLjg1MDZINi40NjQ5MUM1Ljc5NDYgMjAuODUwNiA1LjI0MDM4IDIwLjg1MDcgNC43ODg2OSAyMC44MTM3QzQuMzE5MjUgMjAuNzc1NCAzLjg4NjIyIDIwLjY5MyAzLjQ3OTA0IDIwLjQ4NTVDMi44NDg2OSAyMC4xNjQzIDIuMzM2MjEgMTkuNjUxOCAyLjAxNTAzIDE5LjAyMTVDMS44MDc1NiAxOC42MTQzIDEuNzI1MTQgMTguMTgxMyAxLjY4Njc5IDE3LjcxMThDMS42NDk4OCAxNy4yNjAyIDEuNjQ5ODkgMTYuNzA2IDEuNjQ5OSAxNi4wMzU3VjEwLjk2NTZDMS42NDk4OSAxMC4yOTUzIDEuNjQ5ODggOS43NDExIDEuNjg2NzkgOS4yODk0MkMxLjcyNTE0IDguODE5OTggMS44MDc1NiA4LjM4Njk1IDIuMDE1MDMgNy45Nzk3N0MyLjMzNjIxIDcuMzQ5NDIgMi44NDg2OSA2LjgzNjk0IDMuNDc5MDQgNi41MTU3NkMzLjg4NjIyIDYuMzA4MjkgNC4zMTkyNSA2LjIyNTg3IDQuNzg4NjkgNi4xODc1MkM1LjI0MDM3IDYuMTUwNjEgNS43OTQ1OCA2LjE1MDYyIDYuNDY0ODcgNi4xNTA2M0g2LjY3MzM1TDEwLjc2MjQgMi40NzA1MUMxMS40NjU5IDEuODM3MyAxMi41MzQgMS44MzczIDEzLjIzNzUgMi40NzA1MUwxNy4zMjY2IDYuMTUwNjNaTTkuMjE0NTkgNi4xNTA2M0gxNC43ODUzTDEyLjEwMDMgMy43MzQxMUMxMi4wNDMzIDMuNjgyNzcgMTEuOTU2NyAzLjY4Mjc3IDExLjg5OTYgMy43MzQxMUw5LjIxNDU5IDYuMTUwNjNaTTQuMjUwODIgOC4wMzA0N0M0LjM3ODQxIDcuOTY1NDYgNC41NjI4MSA3LjkxMTY0IDQuOTI3MTMgNy44ODE4N0M1LjMwMTM2IDcuODUxMyA1Ljc4NTgxIDcuODUwNjMgNi40OTk5IDcuODUwNjNIMTcuNDk5OUMxOC4yMTQgNy44NTA2MyAxOC42OTg0IDcuODUxMyAxOS4wNzI3IDcuODgxODdDMTkuNDM3IDcuOTExNjQgMTkuNjIxNCA3Ljk2NTQ2IDE5Ljc0OSA4LjAzMDQ3QzIwLjA1OTUgOC4xODg2NiAyMC4zMTE5IDguNDQxMDggMjAuNDcwMSA4Ljc1MTU1QzIwLjUzNTEgOC44NzkxNCAyMC41ODg5IDkuMDYzNTQgMjAuNjE4NyA5LjQyNzg2QzIwLjY0OTIgOS44MDIwOSAyMC42NDk5IDEwLjI4NjUgMjAuNjQ5OSAxMS4wMDA2VjE2LjAwMDZDMjAuNjQ5OSAxNi43MTQ3IDIwLjY0OTIgMTcuMTk5MiAyMC42MTg3IDE3LjU3MzRDMjAuNTg4OSAxNy45Mzc3IDIwLjUzNTEgMTguMTIyMSAyMC40NzAxIDE4LjI0OTdDMjAuMzExOSAxOC41NjAyIDIwLjA1OTUgMTguODEyNiAxOS43NDkgMTguOTcwOEMxOS42MjE0IDE5LjAzNTggMTkuNDM3IDE5LjA4OTYgMTkuMDcyNyAxOS4xMTk0QzE4LjY5ODQgMTkuMTUgMTguMjE0IDE5LjE1MDYgMTcuNDk5OSAxOS4xNTA2SDYuNDk5OUM1Ljc4NTgxIDE5LjE1MDYgNS4zMDEzNiAxOS4xNSA0LjkyNzEzIDE5LjExOTRDNC41NjI4MSAxOS4wODk2IDQuMzc4NDEgMTkuMDM1OCA0LjI1MDgyIDE4Ljk3MDhDMy45NDAzNSAxOC44MTI2IDMuNjg3OTMgMTguNTYwMiAzLjUyOTc0IDE4LjI0OTdDMy40NjQ3MyAxOC4xMjIxIDMuNDEwOTEgMTcuOTM3NyAzLjM4MTE0IDE3LjU3MzRDMy4zNTA1NiAxNy4xOTkyIDMuMzQ5OSAxNi43MTQ3IDMuMzQ5OSAxNi4wMDA2VjExLjAwMDZDMy4zNDk5IDEwLjI4NjUgMy4zNTA1NiA5LjgwMjA5IDMuMzgxMTQgOS40Mjc4NkMzLjQxMDkxIDkuMDYzNTQgMy40NjQ3MyA4Ljg3OTE0IDMuNTI5NzQgOC43NTE1NUMzLjY4NzkzIDguNDQxMDggMy45NDAzNSA4LjE4ODY2IDQuMjUwODIgOC4wMzA0N1oiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">校园生活·速递<span class="group-tag t-news">资讯前沿</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>691 · 覆盖7个信息渠道</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '校园生活·速递')">加入</button>
+    </div>
+  </div>
+
+  <!-- 分组 4：大学美食探店 — Card C9 -->
+  <div class="card-c9">
+    <div class="c9-header">
+      <div class="c9-avatar">04</div>
+      <div class="c9-title">大学美食探店</div>
+      <div class="c9-link" onclick="showToast('查看更多：大学美食探店')">查看更多<span class="chevron" aria-hidden="true"></span></div>
+    </div>
+    <div class="c9-header-separator"></div>
+    <div class="c9-row" onclick="openGroup('味蕾实验室')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjk5OTkgMi4xNTAzOUMxMC4wNTE4IDIuMTUwMzkgOC4xNDczNiAyLjcyODA4IDYuNTI3NTQgMy44MTA0MUM0LjkwNzcyIDQuODkyNzUgMy42NDUyMiA2LjQzMTExIDIuODk5NjkgOC4yMzA5NkMyLjE1NDE3IDEwLjAzMDggMS45NTkxMSAxMi4wMTEzIDIuMzM5MTcgMTMuOTIyQzIuNzE5MjQgMTUuODMyNyAzLjY1NzM2IDE3LjU4NzggNS4wMzQ5IDE4Ljk2NTRDNi40MTI0NSAyMC4zNDI5IDguMTY3NTUgMjEuMjgxMSAxMC4wNzgzIDIxLjY2MTFDMTEuOTg5IDIyLjA0MTIgMTMuOTY5NSAyMS44NDYxIDE1Ljc2OTMgMjEuMTAwNkMxNy41NjkyIDIwLjM1NTEgMTkuMTA3NSAxOS4wOTI2IDIwLjE4OTkgMTcuNDcyOEMyMS4yNzIyIDE1Ljg1MjkgMjEuODQ5OSAxMy45NDg1IDIxLjg0OTkgMTIuMDAwNEMyMS44NDk5IDExLjUzMDkgMjEuNDY5MyAxMS4xNTA0IDIwLjk5OTkgMTEuMTUwNEMyMC41MzA1IDExLjE1MDQgMjAuMTQ5OSAxMS41MzA5IDIwLjE0OTkgMTIuMDAwNEMyMC4xNDk5IDEzLjYxMjMgMTkuNjcxOSAxNS4xODggMTguNzc2NCAxNi41MjgzQzE3Ljg4MDkgMTcuODY4NSAxNi42MDggMTguOTEzMiAxNS4xMTg4IDE5LjUzQzEzLjYyOTYgMjAuMTQ2OSAxMS45OTA5IDIwLjMwODMgMTAuNDA5OSAxOS45OTM4QzguODI4OTggMTkuNjc5MyA3LjM3Njc4IDE4LjkwMzEgNi4yMzY5OSAxNy43NjMzQzUuMDk3MTkgMTYuNjIzNSA0LjMyMDk4IDE1LjE3MTMgNC4wMDY1MSAxMy41OTA0QzMuNjkyMDQgMTIuMDA5NCAzLjg1MzQzIDEwLjM3MDcgNC40NzAyOSA4Ljg4MTUyQzUuMDg3MTQgNy4zOTIzIDYuMTMxNzUgNi4xMTk0NSA3LjQ3MjAxIDUuMjIzOTFDOC44MTIyNyA0LjMyODM4IDEwLjM4OCAzLjg1MDM5IDExLjk5OTkgMy44NTAzOUMxMi40NjkzIDMuODUwMzkgMTIuODQ5OSAzLjQ2OTgzIDEyLjg0OTkgMy4wMDAzOUMxMi44NDk5IDIuNTMwOTUgMTIuNDY5MyAyLjE1MDM5IDExLjk5OTkgMi4xNTAzOVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZD0iTTE3Ljc5NjcgOC41MzMyMUwxNS42ODkyIDkuNDcwOTRDMTUuMjcwNiA5LjY1NzE2IDE0Ljg0MjkgOS4yMjkzNyAxNS4wMjkxIDguODEwODZMMTYuMDU3MiA2LjUwMDA3TDE1LjAyOTEgNC4xODkyOEMxNC44NDI5IDMuNzcwNzcgMTUuMjcwNiAzLjM0Mjk5IDE1LjY4OTIgMy41MjkyTDE4IDQuNTU3MzdMMjAuMzEwNyAzLjUyOTJDMjAuNzI5MyAzLjM0Mjk5IDIxLjE1NyAzLjc3MDc3IDIwLjk3MDggNC4xODkyOEwxOS45NDI3IDYuNTAwMDdMMjAuOTcwOCA4LjgxMDg2QzIxLjE1NyA5LjIyOTM3IDIwLjcyOTMgOS42NTcxNiAyMC4zMTA3IDkuNDcwOTRMMTguMjAzMiA4LjUzMzIxQzE4LjA3MzggOC40NzU2NCAxNy45MjYxIDguNDc1NjQgMTcuNzk2NyA4LjUzMzIxWiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4=" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">味蕾实验室<span class="group-tag t-event">活动聚集</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2033 · 36人已报名</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '味蕾实验室')">加入</button>
+    </div>
+    <div class="c9-row-separator"></div>
+    <div class="c9-row" onclick="openGroup('探店避坑针')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTcuMDAwOSAxNS44NTQyTDExLjUwMDkgMTUuODUwMUMxMS45NzAzIDE1Ljg0OTcgMTIuMzUwNiAxNS40Njg4IDEyLjM1MDEgMTQuOTk5M0MxMi4zNDk3IDE0LjUyOTkgMTEuOTY4OCAxNC4xNDk3IDExLjQ5OTMgMTQuMTUwMUw2Ljk5OTM0IDE0LjE1NDJDNi41Mjk5IDE0LjE1NDcgNi4xNDk2OSAxNC41MzU2IDYuMTUwMTIgMTUuMDA1QzYuMTUwNTUgMTUuNDc0NSA2LjUzMTQ2IDE1Ljg1NDcgNy4wMDA5IDE1Ljg1NDJaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGQ9Ik02LjE1NDAyIDExLjAwNjNDNi4xNTM3MyAxMC41MzY5IDYuNTM0MDYgMTAuMTU2MSA3LjAwMzUgMTAuMTU1OEwxNC45OTkxIDEwLjE1MDlDMTUuNDY4NSAxMC4xNTA2IDE1Ljg0OTMgMTAuNTMwOSAxNS44NDk2IDExLjAwMDRDMTUuODQ5OSAxMS40Njk4IDE1LjQ2OTYgMTEuODUwNiAxNS4wMDAxIDExLjg1MDlMNy4wMDQ1NCAxMS44NTU4QzYuNTM1MSAxMS44NTYxIDYuMTU0MzEgMTEuNDc1NyA2LjE1NDAyIDExLjAwNjNaIiBmaWxsPSIjMUExQTFBIi8+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTcuMzI2NiA2LjE1MDYzSDE3LjUzNDlDMTguMjA1MiA2LjE1MDYyIDE4Ljc1OTQgNi4xNTA2MSAxOS4yMTExIDYuMTg3NTJDMTkuNjgwNiA2LjIyNTg3IDIwLjExMzYgNi4zMDgyOSAyMC41MjA4IDYuNTE1NzZDMjEuMTUxMSA2LjgzNjk0IDIxLjY2MzYgNy4zNDk0MiAyMS45ODQ4IDcuOTc5NzdDMjIuMTkyMiA4LjM4Njk1IDIyLjI3NDcgOC44MTk5OCAyMi4zMTMgOS4yODk0MkMyMi4zNDk5IDkuNzQxMSAyMi4zNDk5IDEwLjI5NTMgMjIuMzQ5OSAxMC45NjU2VjE2LjAzNTdDMjIuMzQ5OSAxNi43MDYgMjIuMzQ5OSAxNy4yNjAyIDIyLjMxMyAxNy43MTE4QzIyLjI3NDcgMTguMTgxMyAyMi4xOTIyIDE4LjYxNDMgMjEuOTg0OCAxOS4wMjE1QzIxLjY2MzYgMTkuNjUxOCAyMS4xNTExIDIwLjE2NDMgMjAuNTIwOCAyMC40ODU1QzIwLjExMzYgMjAuNjkzIDE5LjY4MDYgMjAuNzc1NCAxOS4yMTExIDIwLjgxMzdDMTguNzU5NCAyMC44NTA3IDE4LjIwNTIgMjAuODUwNiAxNy41MzQ5IDIwLjg1MDZINi40NjQ5MUM1Ljc5NDYgMjAuODUwNiA1LjI0MDM4IDIwLjg1MDcgNC43ODg2OSAyMC44MTM3QzQuMzE5MjUgMjAuNzc1NCAzLjg4NjIyIDIwLjY5MyAzLjQ3OTA0IDIwLjQ4NTVDMi44NDg2OSAyMC4xNjQzIDIuMzM2MjEgMTkuNjUxOCAyLjAxNTAzIDE5LjAyMTVDMS44MDc1NiAxOC42MTQzIDEuNzI1MTQgMTguMTgxMyAxLjY4Njc5IDE3LjcxMThDMS42NDk4OCAxNy4yNjAyIDEuNjQ5ODkgMTYuNzA2IDEuNjQ5OSAxNi4wMzU3VjEwLjk2NTZDMS42NDk4OSAxMC4yOTUzIDEuNjQ5ODggOS43NDExIDEuNjg2NzkgOS4yODk0MkMxLjcyNTE0IDguODE5OTggMS44MDc1NiA4LjM4Njk1IDIuMDE1MDMgNy45Nzk3N0MyLjMzNjIxIDcuMzQ5NDIgMi44NDg2OSA2LjgzNjk0IDMuNDc5MDQgNi41MTU3NkMzLjg4NjIyIDYuMzA4MjkgNC4zMTkyNSA2LjIyNTg3IDQuNzg4NjkgNi4xODc1MkM1LjI0MDM3IDYuMTUwNjEgNS43OTQ1OCA2LjE1MDYyIDYuNDY0ODcgNi4xNTA2M0g2LjY3MzM1TDEwLjc2MjQgMi40NzA1MUMxMS40NjU5IDEuODM3MyAxMi41MzQgMS44MzczIDEzLjIzNzUgMi40NzA1MUwxNy4zMjY2IDYuMTUwNjNaTTkuMjE0NTkgNi4xNTA2M0gxNC43ODUzTDEyLjEwMDMgMy43MzQxMUMxMi4wNDMzIDMuNjgyNzcgMTEuOTU2NyAzLjY4Mjc3IDExLjg5OTYgMy43MzQxMUw5LjIxNDU5IDYuMTUwNjNaTTQuMjUwODIgOC4wMzA0N0M0LjM3ODQxIDcuOTY1NDYgNC41NjI4MSA3LjkxMTY0IDQuOTI3MTMgNy44ODE4N0M1LjMwMTM2IDcuODUxMyA1Ljc4NTgxIDcuODUwNjMgNi40OTk5IDcuODUwNjNIMTcuNDk5OUMxOC4yMTQgNy44NTA2MyAxOC42OTg0IDcuODUxMyAxOS4wNzI3IDcuODgxODdDMTkuNDM3IDcuOTExNjQgMTkuNjIxNCA3Ljk2NTQ2IDE5Ljc0OSA4LjAzMDQ3QzIwLjA1OTUgOC4xODg2NiAyMC4zMTE5IDguNDQxMDggMjAuNDcwMSA4Ljc1MTU1QzIwLjUzNTEgOC44NzkxNCAyMC41ODg5IDkuMDYzNTQgMjAuNjE4NyA5LjQyNzg2QzIwLjY0OTIgOS44MDIwOSAyMC42NDk5IDEwLjI4NjUgMjAuNjQ5OSAxMS4wMDA2VjE2LjAwMDZDMjAuNjQ5OSAxNi43MTQ3IDIwLjY0OTIgMTcuMTk5MiAyMC42MTg3IDE3LjU3MzRDMjAuNTg4OSAxNy45Mzc3IDIwLjUzNTEgMTguMTIyMSAyMC40NzAxIDE4LjI0OTdDMjAuMzExOSAxOC41NjAyIDIwLjA1OTUgMTguODEyNiAxOS43NDkgMTguOTcwOEMxOS42MjE0IDE5LjAzNTggMTkuNDM3IDE5LjA4OTYgMTkuMDcyNyAxOS4xMTk0QzE4LjY5ODQgMTkuMTUgMTguMjE0IDE5LjE1MDYgMTcuNDk5OSAxOS4xNTA2SDYuNDk5OUM1Ljc4NTgxIDE5LjE1MDYgNS4zMDEzNiAxOS4xNSA0LjkyNzEzIDE5LjExOTRDNC41NjI4MSAxOS4wODk2IDQuMzc4NDEgMTkuMDM1OCA0LjI1MDgyIDE4Ljk3MDhDMy45NDAzNSAxOC44MTI2IDMuNjg3OTMgMTguNTYwMiAzLjUyOTc0IDE4LjI0OTdDMy40NjQ3MyAxOC4xMjIxIDMuNDEwOTEgMTcuOTM3NyAzLjM4MTE0IDE3LjU3MzRDMy4zNTA1NiAxNy4xOTkyIDMuMzQ5OSAxNi43MTQ3IDMuMzQ5OSAxNi4wMDA2VjExLjAwMDZDMy4zNDk5IDEwLjI4NjUgMy4zNTA1NiA5LjgwMjA5IDMuMzgxMTQgOS40Mjc4NkMzLjQxMDkxIDkuMDYzNTQgMy40NjQ3MyA4Ljg3OTE0IDMuNTI5NzQgOC43NTE1NUMzLjY4NzkzIDguNDQxMDggMy45NDAzNSA4LjE4ODY2IDQuMjUwODIgOC4wMzA0N1oiIGZpbGw9IiMxQTFBMUEiLz4KPC9zdmc+" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">探店避坑针<span class="group-tag t-news">资讯前沿</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>790 · 9个情报源</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '探店避坑针')">加入</button>
+    </div>
+  </div>
+
+  <!-- 分组 5：租房经验分享 — Card C9 -->
+  <div class="card-c9">
+    <div class="c9-header">
+      <div class="c9-avatar">05</div>
+      <div class="c9-title">租房经验分享</div>
+      <div class="c9-link" onclick="showToast('查看更多：租房经验分享')">查看更多<span class="chevron" aria-hidden="true"></span></div>
+    </div>
+    <div class="c9-header-separator"></div>
+    <div class="c9-row" onclick="openGroup('租房经验组队大本营')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xNS4wMzQ5IDIuMTUwMzlIOC45NjQ5SDguOTY0ODlDOC4yOTQ1OSAyLjE1MDM4IDcuNzQwMzcgMi4xNTAzNyA3LjI4ODY5IDIuMTg3MjhDNi44MTkyNSAyLjIyNTYzIDYuMzg2MjIgMi4zMDgwNSA1Ljk3OTAzIDIuNTE1NTJDNS4zNDg2OSAyLjgzNjcgNC44MzYyMSAzLjM0OTE4IDQuNTE1MDMgMy45Nzk1MkM0LjMwNzU2IDQuMzg2NzEgNC4yMjUxNCA0LjgxOTczIDQuMTg2NzkgNS4yODkxOEM0LjE2NjA0IDUuNTQzMDYgNC4xNTY5NiA1LjgyOTMyIDQuMTUyOTkgNi4xNTAzOUgyLjk5OTlDMi41MzA0NiA2LjE1MDM5IDIuMTQ5OSA2LjUzMDk1IDIuMTQ5OSA3LjAwMDM5QzIuMTQ5OSA3LjQ2OTgzIDIuNTMwNDYgNy44NTAzOSAyLjk5OTkgNy44NTAzOUg0LjE0OTlWMTYuMTVIMi45OTk5QzIuNTMwNDYgMTYuMTUgMi4xNDk5IDE2LjUzMDYgMi4xNDk5IDE3QzIuMTQ5OSAxNy40Njk0IDIuNTMwNDYgMTcuODUgMi45OTk5IDE3Ljg1SDQuMTUyOThDNC4xNTY5NiAxOC4xNzEyIDQuMTY2MDQgMTguNDU3NiA0LjE4Njc5IDE4LjcxMTZDNC4yMjUxNCAxOS4xODEgNC4zMDc1NiAxOS42MTQxIDQuNTE1MDMgMjAuMDIxM0M0LjgzNjIxIDIwLjY1MTYgNS4zNDg2OSAyMS4xNjQxIDUuOTc5MDMgMjEuNDg1M0M2LjM4NjIyIDIxLjY5MjcgNi44MTkyNSAyMS43NzUyIDcuMjg4NjkgMjEuODEzNUM3Ljc0MDM5IDIxLjg1MDQgOC4yOTQ2MyAyMS44NTA0IDguOTY0OTUgMjEuODUwNEgxNS4wMzQ5QzE1LjcwNTIgMjEuODUwNCAxNi4yNTk0IDIxLjg1MDQgMTYuNzExMSAyMS44MTM1QzE3LjE4MDYgMjEuNzc1MiAxNy42MTM2IDIxLjY5MjcgMTguMDIwOCAyMS40ODUzQzE4LjY1MTEgMjEuMTY0MSAxOS4xNjM2IDIwLjY1MTYgMTkuNDg0OCAyMC4wMjEzQzE5LjY5MjIgMTkuNjE0MSAxOS43NzQ3IDE5LjE4MSAxOS44MTMgMTguNzExNkMxOS44NDk5IDE4LjI1OTkgMTkuODQ5OSAxNy43MDU3IDE5Ljg0OTkgMTcuMDM1NFY2Ljk2NTRDMTkuODQ5OSA2LjI5NTA5IDE5Ljg0OTkgNS43NDA4NiAxOS44MTMgNS4yODkxOEMxOS43NzQ3IDQuODE5NzMgMTkuNjkyMiA0LjM4NjcxIDE5LjQ4NDggMy45Nzk1MkMxOS4xNjM2IDMuMzQ5MTggMTguNjUxMSAyLjgzNjcgMTguMDIwOCAyLjUxNTUyQzE3LjYxMzYgMi4zMDgwNSAxNy4xODA2IDIuMjI1NjMgMTYuNzExMSAyLjE4NzI4QzE2LjI1OTQgMi4xNTAzNyAxNS43MDUyIDIuMTUwMzggMTUuMDM0OSAyLjE1MDM5Wk01Ljg1MzE1IDE3Ljg1QzUuODU2ODEgMTguMTM1OSA1Ljg2NDYgMTguMzcwNyA1Ljg4MTE0IDE4LjU3MzJDNS45MTA5MSAxOC45Mzc1IDUuOTY0NzMgMTkuMTIxOSA2LjAyOTc0IDE5LjI0OTVDNi4xODc5MyAxOS41NTk5IDYuNDQwMzUgMTkuODEyNCA2Ljc1MDgyIDE5Ljk3MDZDNi44Nzg0MSAyMC4wMzU2IDcuMDYyODEgMjAuMDg5NCA3LjQyNzEyIDIwLjExOTJDNy44MDEzNiAyMC4xNDk3IDguMjg1ODEgMjAuMTUwNCA4Ljk5OTkgMjAuMTUwNEgxNC45OTk5QzE1LjcxNCAyMC4xNTA0IDE2LjE5ODQgMjAuMTQ5NyAxNi41NzI3IDIwLjExOTJDMTYuOTM3IDIwLjA4OTQgMTcuMTIxNCAyMC4wMzU2IDE3LjI0OSAxOS45NzA2QzE3LjU1OTUgMTkuODEyNCAxNy44MTE5IDE5LjU1OTkgMTcuOTcwMSAxOS4yNDk1QzE4LjAzNTEgMTkuMTIxOSAxOC4wODg5IDE4LjkzNzUgMTguMTE4NyAxOC41NzMyQzE4LjE0OTIgMTguMTk4OSAxOC4xNDk5IDE3LjcxNDUgMTguMTQ5OSAxNy4wMDA0VjcuMDAwMzlDMTguMTQ5OSA2LjI4NjMgMTguMTQ5MiA1LjgwMTg1IDE4LjExODcgNS40Mjc2MUMxOC4wODg5IDUuMDYzMyAxOC4wMzUxIDQuODc4OSAxNy45NzAxIDQuNzUxMzFDMTcuODExOSA0LjQ0MDg0IDE3LjU1OTUgNC4xODg0MiAxNy4yNDkgNC4wMzAyM0MxNy4xMjE0IDMuOTY1MjIgMTYuOTM3IDMuOTExNCAxNi41NzI3IDMuODgxNjNDMTYuMTk4NCAzLjg1MTA1IDE1LjcxNCAzLjg1MDM5IDE0Ljk5OTkgMy44NTAzOUg4Ljk5OTlDOC4yODU4MSAzLjg1MDM5IDcuODAxMzYgMy44NTEwNSA3LjQyNzEyIDMuODgxNjNDNy4wNjI4MSAzLjkxMTQgNi44Nzg0MSAzLjk2NTIyIDYuNzUwODIgNC4wMzAyM0M2LjQ0MDM1IDQuMTg4NDIgNi4xODc5MyA0LjQ0MDg0IDYuMDI5NzQgNC43NTEzMUM1Ljk2NDczIDQuODc4OSA1LjkxMDkxIDUuMDYzMyA1Ljg4MTE0IDUuNDI3NjFDNS44NjQ2IDUuNjMwMDEgNS44NTY4MiA1Ljg2NDY0IDUuODUzMTUgNi4xNTAzOUg2Ljk5OTlDNy40NjkzNCA2LjE1MDM5IDcuODQ5OSA2LjUzMDk1IDcuODQ5OSA3LjAwMDM5QzcuODQ5OSA3LjQ2OTgzIDcuNDY5MzQgNy44NTAzOSA2Ljk5OTkgNy44NTAzOUg1Ljg0OTlWMTYuMTVINi45OTk5QzcuNDY5MzQgMTYuMTUgNy44NDk5IDE2LjUzMDYgNy44NDk5IDE3QzcuODQ5OSAxNy40Njk0IDcuNDY5MzQgMTcuODUgNi45OTk5IDE3Ljg1SDUuODUzMTVaTTE1Ljg0OTkgNy4wMDAzOUMxNS44NDk5IDYuNTMwOTUgMTUuNDY5MyA2LjE1MDM5IDE0Ljk5OTkgNi4xNTAzOUMxNC41MzA1IDYuMTUwMzkgMTQuMTQ5OSA2LjUzMDk1IDE0LjE0OTkgNy4wMDAzOVYxNy4wMDA0QzE0LjE0OTkgMTcuNDY5OCAxNC41MzA1IDE3Ljg1MDQgMTQuOTk5OSAxNy44NTA0QzE1LjQ2OTMgMTcuODUwNCAxNS44NDk5IDE3LjQ2OTggMTUuODQ5OSAxNy4wMDA0VjcuMDAwMzlaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">租房经验组队大本营<span class="group-tag t-match">搭子速配</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>964 · 60% 同龄人</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '租房经验组队大本营')">加入</button>
+    </div>
+    <div class="c9-row-separator"></div>
+    <div class="c9-row" onclick="openGroup('租房经验·同城')">
+      <div class="c9-icon"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xOS42NDg3IDE1Ljg4NTZDMTkuNjAwNCAxNS41ODczIDE5LjYzMjYgMTUuMjgxNSAxOS43NDE5IDE0Ljk5OTdDMjAuMTAxOCAxNC4wNzE2IDIwLjMgMTMuMDYxIDIwLjMgMTJDMjAuMyA3LjQxNjA0IDE2LjU4NCAzLjcgMTIgMy43QzcuNDE2MDQgMy43IDMuNyA3LjQxNjA0IDMuNyAxMkMzLjcgMTYuNTg0IDcuNDE2MDQgMjAuMyAxMiAyMC4zQzEzLjY5NDEgMjAuMyAxNS4yNjQ4IDE5Ljc5NDMgMTYuNTc1OSAxOC45MjZDMTYuOTMyMSAxOC42OTAxIDE3LjM2NDEgMTguNTk2OSAxNy43ODU5IDE4LjY2NTFMMjAuMTYgMTkuMDQ4OUwxOS42NDg3IDE1Ljg4NTZaTTE3LjUxNDYgMjAuMzQzM0MxNS45MzM4IDIxLjM5MDMgMTQuMDM4MSAyMiAxMiAyMkM2LjQ3NzE1IDIyIDIgMTcuNTIyOCAyIDEyQzIgNi40NzcxNSA2LjQ3NzE1IDIgMTIgMkMxNy41MjI4IDIgMjIgNi40NzcxNSAyMiAxMkMyMiAxMy4yNzQ1IDIxLjc2MTYgMTQuNDkzNCAyMS4zMjY5IDE1LjYxNDNMMjEuOTU2MSAxOS41MDcxQzIyLjA4MzEgMjAuMjkyNiAyMS40MDM4IDIwLjk3MiAyMC42MTgyIDIwLjg0NUwxNy41MTQ2IDIwLjM0MzNaIiBmaWxsPSIjMUExQTFBIi8+Cjwvc3ZnPg==" alt=""></div>
+      <div class="c9-text">
+        <div class="c9-name">租房经验·同城<span class="group-tag t-friend">交友圈子</span></div>
+        <div class="c9-desc"><span class="mini-icon" aria-hidden="true"></span>2398 · 已建立95个友谊</div>
+      </div>
+      <button class="c9-btn" onclick="event.stopPropagation(); joinGroup(this, '租房经验·同城')">加入</button>
+    </div>
+  </div>
+
+  <!-- 热门 Top10 榜 -->
+  <div class="form-group">
+    <div class="form-group-header">
+      <span class="header-title">平台热门群 Top10<span class="header-sub"> · 综合群活跃度排序</span></span>
+    </div>
+    <div class="form-group-content">
+      <div class="form-row rank-row" onclick="openGroup('王者荣耀开黑大厅')">
+        <div class="left-area">
+          <span class="rank-num top1">1</span>
+          <div class="text-block">
+            <div class="title">王者荣耀开黑大厅<span class="group-tag t-friend">游戏</span></div>
+            <div class="desc">每日千人在线组队，赛季冲分必备</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>4872</div>
+            <div class="aux-bottom">2461人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('考研互助打卡营')">
+        <div class="left-area">
+          <span class="rank-num top1">2</span>
+          <div class="text-block">
+            <div class="title">考研互助打卡营<span class="group-tag t-news">学习</span></div>
+            <div class="desc">25/26考研er每日打卡，资料共享</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>3956</div>
+            <div class="aux-bottom">1893人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('原神旅行者联盟')">
+        <div class="left-area">
+          <span class="rank-num top1">3</span>
+          <div class="text-block">
+            <div class="title">原神旅行者联盟<span class="group-tag t-friend">游戏</span></div>
+            <div class="desc">攻略分享·组队副本·抽卡交流</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>3641</div>
+            <div class="aux-bottom">1672人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('追番交流总部')">
+        <div class="left-area">
+          <span class="rank-num">4</span>
+          <div class="text-block">
+            <div class="title">追番交流总部<span class="group-tag t-event">二次元</span></div>
+            <div class="desc">新番速递·番剧讨论·同好推荐</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>3218</div>
+            <div class="aux-bottom">1534人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('健身减脂互助群')">
+        <div class="left-area">
+          <span class="rank-num">5</span>
+          <div class="text-block">
+            <div class="title">健身减脂互助群<span class="group-tag t-match">运动</span></div>
+            <div class="desc">每日打卡·饮食分享·科学减脂</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>2897</div>
+            <div class="aux-bottom">1287人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('独立音乐分享站')">
+        <div class="left-area">
+          <span class="rank-num">6</span>
+          <div class="text-block">
+            <div class="title">独立音乐分享站<span class="group-tag t-welfare">音乐</span></div>
+            <div class="desc">发现小众好音乐·原创歌曲推荐</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>2654</div>
+            <div class="aux-bottom">1156人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('英雄联盟赛事前瞻')">
+        <div class="left-area">
+          <span class="rank-num">7</span>
+          <div class="text-block">
+            <div class="title">英雄联盟赛事前瞻<span class="group-tag t-friend">游戏</span></div>
+            <div class="desc">LPL/全球赛事·选手动态·战术分析</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>2489</div>
+            <div class="aux-bottom">1098人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('追剧姐妹茶话会')">
+        <div class="left-area">
+          <span class="rank-num">8</span>
+          <div class="text-block">
+            <div class="title">追剧姐妹茶话会<span class="group-tag t-event">影视</span></div>
+            <div class="desc">热播剧讨论·韩剧美剧·剧荒推荐</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>2341</div>
+            <div class="aux-bottom">987人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('编程技术交流圈')">
+        <div class="left-area">
+          <span class="rank-num">9</span>
+          <div class="text-block">
+            <div class="title">编程技术交流圈<span class="group-tag t-news">学习</span></div>
+            <div class="desc">前端后端·算法刷题·面经分享</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>2156</div>
+            <div class="aux-bottom">876人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-row rank-row" onclick="openGroup('篮球实战训练营')">
+        <div class="left-area">
+          <span class="rank-num">10</span>
+          <div class="text-block">
+            <div class="title">篮球实战训练营<span class="group-tag t-match">运动</span></div>
+            <div class="desc">约球·技术教学·NBA讨论</div>
+          </div>
+        </div>
+        <div class="row-wrap-chev">
+          <div class="right-area">
+            <div class="aux-top"><span class="mini-icon" style="-webkit-mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K');mask-image:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMiAyLjY0OTlDOS4zMjE0NCAyLjY0OTkgNy4xNTAwMiA0LjgyMTMyIDcuMTUwMDIgNy40OTk5QzcuMTUwMDIgMTAuMTc4NSA5LjMyMTQ0IDEyLjM0OTkgMTIgMTIuMzQ5OUMxNC42Nzg2IDEyLjM0OTkgMTYuODUgMTAuMTc4NSAxNi44NSA3LjQ5OTlDMTYuODUgNC44MjEzMiAxNC42Nzg2IDIuNjQ5OSAxMiAyLjY0OTlaTTguODUwMDIgNy40OTk5QzguODUwMDIgNS43NjAyMSAxMC4yNjAzIDQuMzQ5OSAxMiA0LjM0OTlDMTMuNzM5NyA0LjM0OTkgMTUuMTUgNS43NjAyMSAxNS4xNSA3LjQ5OTlDMTUuMTUgOS4yMzk2IDEzLjczOTcgMTAuNjQ5OSAxMiAxMC42NDk5QzEwLjI2MDMgMTAuNjQ5OSA4Ljg1MDAyIDkuMjM5NiA4Ljg1MDAyIDcuNDk5OVoiIGZpbGw9IiMxQTFBMUEiLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05LjAwMDAyIDEzLjY0OTlDNS43NjkxNiAxMy42NDk5IDMuMTUwMDIgMTYuMjY5IDMuMTUwMDIgMTkuNDk5OUMzLjE1MDAyIDIwLjUyMTYgMy45NzgzIDIxLjM0OTkgNS4wMDAwMiAyMS4zNDk5SDE5QzIwLjAyMTggMjEuMzQ5OSAyMC44NSAyMC41MjE2IDIwLjg1IDE5LjQ5OTlDMjAuODUgMTYuMjY5IDE4LjIzMDkgMTMuNjQ5OSAxNSAxMy42NDk5SDkuMDAwMDJaTTQuODUwMDIgMTkuNDk5OUM0Ljg1MDAyIDE3LjIwNzkgNi43MDgwNCAxNS4zNDk5IDkuMDAwMDIgMTUuMzQ5OUgxNUMxNy4yOTIgMTUuMzQ5OSAxOS4xNSAxNy4yMDc5IDE5LjE1IDE5LjQ5OTlDMTkuMTUgMTkuNTgyNyAxOS4wODI5IDE5LjY0OTkgMTkgMTkuNjQ5OUg1LjAwMDAyQzQuOTE3MTggMTkuNjQ5OSA0Ljg1MDAyIDE5LjU4MjcgNC44NTAwMiAxOS40OTk5WiIgZmlsbD0iIzFBMUExQSIvPgo8L3N2Zz4K')"></span>1987</div>
+            <div class="aux-bottom">765人正在聊天</div>
+          </div>
+          <span class="chevron" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group-footer">综合群活跃度排序，每日更新</div>
+  </div>
+
+</div>
+
+<!-- 底部 Search 容器 + AI 按钮 -->
+<div class="search-container">
+  <div class="search-box" id="searchBox" onclick="showToast('进入搜索')">
+    <span class="search-icon" aria-hidden="true"></span>
+    <span class="search-placeholder">搜索群聊，已挂载智能大脑</span>
+  </div>
+  <button class="ai-btn" id="aiBtn" onclick="showToast('AI 找群助手')">
+    <span class="ai-icon" aria-hidden="true"></span>
+    AI找群助手
+  </button>
+</div>
+
+<!-- Home Bar -->
+<div class="home-bar">
+  <div class="home-bar-indicator"></div>
+</div>
+
+<!-- Dialog: 加入 / 授权确认 -->
+<div class="dialog-overlay" id="dialogOverlay">
+  <div class="dialog-box">
+    <div class="dialog-content">
+      <div class="dialog-title" id="dialogTitle">授权兴趣偏好</div>
+      <div class="dialog-body" id="dialogBody">授权后可获得更精准的群聊推荐，授权后可随时关闭。</div>
+    </div>
+    <div class="dialog-actions">
+      <button class="dialog-btn" id="dialogCancel">取消</button>
+      <button class="dialog-btn primary" id="dialogConfirm">确认</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  // NavBar 分段（找人/找群）
+  var navSegment = document.getElementById('navSegment');
+  navSegment.querySelectorAll('.segment-item').forEach(function(item, index) {
+    item.addEventListener('click', function() {
+      navSegment.querySelectorAll('.segment-item').forEach(function(i) { i.classList.remove('active'); });
+      this.classList.add('active');
+      navSegment.setAttribute('data-active', String(index));
+    });
+  });
+
+  // DataFilter 页签切换
+  var filterTabs = document.getElementById('filterTabs');
+  filterTabs.addEventListener('click', function(e) {
+    var tab = e.target.closest('.tab-item');
+    if (!tab) return;
+    filterTabs.querySelectorAll('.tab-item').forEach(function(t) { t.classList.remove('selected'); });
+    tab.classList.add('selected');
+  });
+
+  // 授权卡 — 立即授权 / 暂不开启
+  var authCard = document.getElementById('authCard');
+  var dialogOverlay = document.getElementById('dialogOverlay');
+  var dialogTitle = document.getElementById('dialogTitle');
+  var dialogBody = document.getElementById('dialogBody');
+  var pendingAction = null;
+
+  document.getElementById('authNowBtn').addEventListener('click', function() {
+    dialogTitle.textContent = '授权兴趣偏好';
+    dialogBody.textContent = '授权后可获得更精准的群聊推荐，授权后可随时关闭。';
+    pendingAction = function() {
+      authCard.classList.add('hidden');
+      showToast('已完成授权');
+    };
+    dialogOverlay.classList.add('show');
+  });
+  document.getElementById('authLaterBtn').addEventListener('click', function() {
+    authCard.classList.add('hidden');
+  });
+
+  document.getElementById('dialogCancel').addEventListener('click', function() {
+    dialogOverlay.classList.remove('show');
+    pendingAction = null;
+  });
+  document.getElementById('dialogConfirm').addEventListener('click', function() {
+    dialogOverlay.classList.remove('show');
+    if (pendingAction) { pendingAction(); pendingAction = null; }
+  });
+
+  // Toast
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  window.showToast = function(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { toast.classList.remove('show'); }, 1600);
+  };
+
+  // 群行点击 → 进入群（此处用 Toast 代替跳转）
+  window.openGroup = function(name) {
+    showToast('进入：' + name);
+  };
+
+  // C9 加入按钮 → 二次确认 → 变"已加入"态
+  window.joinGroup = function(btn, name) {
+    if (btn.classList.contains('joined')) {
+      showToast('已在群聊：' + name);
+      return;
+    }
+    dialogTitle.textContent = '加入群聊';
+    dialogBody.textContent = '确认加入「' + name + '」？';
+    pendingAction = function() {
+      btn.classList.add('joined');
+      btn.textContent = '已加入';
+      showToast('已加入：' + name);
+    };
+    dialogOverlay.classList.add('show');
+  };
+})();
+</script>
+
+</body>
+</html>
