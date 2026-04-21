@@ -3711,11 +3711,124 @@
             gap: 8px;
         }
 
+        /* ========================================================
+           Responsive: narrow viewports (embedded in iframe, tablet)
+           ======================================================== */
+        /* 断点 1400px：grid 3 列 * 428px + 280 侧栏 padding 就会开始溢出 */
+        @media (max-width: 1400px) {
+            .matrix-container,
+            .matrix-container.is-token,
+            .matrix-container.is-token.is-token-6col {
+                width: 100% !important;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+            }
+            .matrix-container .component-card,
+            .matrix-container.is-token .component-card {
+                width: auto !important;
+                min-width: 0 !important;
+                max-width: 100% !important;
+            }
+            .hero-header,
+            .view-seg-wrap {
+                max-width: 100% !important;
+            }
+        }
+
+        /* 断点 960px：侧边栏切换为抽屉式（默认隐藏，通过按钮展开） */
+        @media (max-width: 960px) {
+            body {
+                padding: 56px 16px 40px !important;
+            }
+            body.mother-demo-mode {
+                padding: 0 !important;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+                box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            }
+            .sidebar.is-open {
+                transform: translateX(0);
+                box-shadow: 8px 0 32px rgba(15, 20, 30, 0.18);
+            }
+            /* 顶部浮动按钮：开/关抽屉 */
+            #sidebarToggle {
+                display: inline-flex !important;
+            }
+            /* 抽屉展开时的遮罩 */
+            #sidebarBackdrop {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 20, 30, 0.32);
+                z-index: 1000;
+            }
+            #sidebarBackdrop.is-visible {
+                display: block;
+            }
+            /* 窄屏下 grid 更紧凑 */
+            .matrix-container,
+            .matrix-container.is-token,
+            .matrix-container.is-token.is-token-6col {
+                grid-template-columns: 1fr !important;
+                gap: 16px !important;
+            }
+            .hero-header {
+                padding: 24px 0 16px !important;
+            }
+            .hero-title {
+                font-size: 32px !important;
+            }
+            .hero-stats {
+                gap: 20px !important;
+            }
+            .hero-stat-num {
+                font-size: 24px !important;
+            }
+        }
+
+        /* 桌面宽屏下隐藏抽屉开关按钮与遮罩 */
+        #sidebarToggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1002;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid var(--border-weak);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            color: var(--text-primary);
+            box-shadow: 0 4px 16px rgba(15, 20, 30, 0.08);
+        }
+        #sidebarToggle:active {
+            transform: scale(0.96);
+        }
+        #sidebarToggle svg {
+            width: 20px;
+            height: 20px;
+        }
     </style>
 <body>
 
+    <!-- Sidebar toggle (shown only on narrow screens via CSS) -->
+    <button type="button" id="sidebarToggle" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <div id="sidebarBackdrop"></div>
+
     <!-- Left Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <nav class="sidebar-nav" id="sidebarNav">
             <div class="sidebar-group-label">总览</div>
             <div class="sidebar-nav-item" data-value="overview">Qdesign System</div>
@@ -9352,6 +9465,47 @@
             }
         });
 
+    </script>
+
+    <!-- Sidebar drawer toggle (narrow screens only) -->
+    <script>
+        (function () {
+            var toggleBtn = document.getElementById('sidebarToggle');
+            var sidebar = document.getElementById('sidebar');
+            var backdrop = document.getElementById('sidebarBackdrop');
+            if (!toggleBtn || !sidebar || !backdrop) return;
+
+            function openSidebar() {
+                sidebar.classList.add('is-open');
+                backdrop.classList.add('is-visible');
+            }
+            function closeSidebar() {
+                sidebar.classList.remove('is-open');
+                backdrop.classList.remove('is-visible');
+            }
+
+            toggleBtn.addEventListener('click', function () {
+                if (sidebar.classList.contains('is-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+            backdrop.addEventListener('click', closeSidebar);
+
+            // 点击 sidebar 内的导航项后自动关闭（移动端交互）
+            sidebar.addEventListener('click', function (e) {
+                var target = e.target.closest('.sidebar-nav-item, .sidebar-nav a, .sidebar-nav button');
+                if (target && window.matchMedia('(max-width: 960px)').matches) {
+                    setTimeout(closeSidebar, 120);
+                }
+            });
+
+            // 窗口 resize 到宽屏时自动关闭抽屉
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 960) closeSidebar();
+            });
+        })();
     </script>
 </body>
 </html>
