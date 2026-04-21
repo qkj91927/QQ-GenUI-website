@@ -119,6 +119,7 @@ type CaseItem = {
   tripleLabels?: [string, string, string];
   tripleLabelsEn?: [string, string, string];
   chromeTitle?: string;
+  explainImage?: string;
 };
 
 const cases: CaseItem[] = [
@@ -130,6 +131,7 @@ const cases: CaseItem[] = [
     descEn: "Generate a mobile settings page with QQ GenUI. Add setting components as needed — each comes with complete interaction logic.",
     video: "/videos/settings-demo.mp4",
     demoUrl: "/demos/setting-standalone.html",
+    explainImage: "/case-explains/settings.png",
     steps: [
       { prompt: "参考这个页面的内容（可使用截图或直接生成），生成一个移动端设置页，命名为 setting.html", promptEn: "Based on this page's content (using screenshots or generating directly), create a mobile settings page named setting.html", desc: "Agent 自动调用 skill → 确定界面中使用哪些组件 → 读取组件库规范开始生成 → 自动检查还原问题", descEn: "Agent auto-invokes skill → determines which components to use → reads component library spec to generate → auto-checks rendering issues" },
       { prompt: "在单群管理增加一个设置项分组，叫\u201cAI管理\u201d，包含父子级功能，群AI管理开关打开来以后下方展开四个子级：修改Agent资料，读取频率，聊天记录范围，聊天记录时间周期。点击修改Agent资料以后，进入Agent资料设置页，可以在设置页输入Agent的昵称，描述、人设提示词。在agent资料设置，导航栏右侧需要有一个确认按钮，用来保存用户修改的内容。点击确认保存修改并返回上一页，返修改完资料回上一页后，群AI管理的开关要记录开关状态，修改完设置点击确认后，修改Agent资料入口要变成已设置状态", promptEn: "Add a setting group called 'AI Management' in group management with parent-child functionality. When the AI management toggle is on, expand four sub-items: Edit Agent Profile, Read Frequency, Chat History Range, Chat History Period. Tapping Edit Agent Profile enters the profile settings page with nickname, description, and persona prompt inputs. Add a confirm button in the nav bar to save changes and return to the previous page with toggle state preserved.", desc: "Agent 自动调用 skill → 确定要使用的组件 → 根据规范实现父子级 → 根据规范实现界面跳转和输入框", descEn: "Agent auto-invokes skill → determines components → implements parent-child hierarchy per spec → implements navigation and input fields per spec" },
@@ -145,26 +147,6 @@ const cases: CaseItem[] = [
     chromeTitle: "群管理.html",
   },
   {
-    id: "halfscreen",
-    title: "半屏",
-    titleEn: "Half-screen",
-    desc: "根据截图等资料，检查现有设计是否符合半屏组件规范。设计师可借助 QQ GenUI 获取精准且可直接使用的组件建议并进行修正。",
-    descEn: "Check whether existing designs meet the half-screen component spec. Designers can leverage QQ GenUI for precise, ready-to-use component recommendations and corrections.",
-    steps: [
-      { prompt: "评估这个截图是否符合半屏规范", promptEn: "Evaluate whether this screenshot meets the half-screen spec", desc: "上传截图进行规范检查", descEn: "Upload screenshot for spec check" },
-      { prompt: "列出不符合规范的问题", promptEn: "List non-compliant issues", desc: "获取详细问题清单", descEn: "Get detailed issue list" },
-      { prompt: "根据规范修正这些问题", promptEn: "Fix these issues according to spec", desc: "自动修正并生成合规设计", descEn: "Auto-fix and generate compliant design" },
-    ],
-    beforeLabel: "不符合规范的半屏",
-    beforeLabelEn: "Non-compliant half-screen",
-    afterLabel: "修正后的半屏",
-    afterLabelEn: "Corrected half-screen",
-    specLink: "/assets",
-    specLabel: "查看半屏组件规范",
-    specLabelEn: "View half-screen component spec",
-    chromeTitle: "半屏弹窗.html",
-  },
-  {
     id: "demo-convert",
     title: "Demo 转化",
     titleEn: "Demo Conversion",
@@ -174,6 +156,7 @@ const cases: CaseItem[] = [
     beforeUrl: "/demos/group-finding-original.html",
     afterUrl: "/demos/group-finding-standalone.html",
     sideBySide: true,
+    explainImage: "/case-explains/demo-convert.png",
     steps: [
       { prompt: "使用这个 HTML 文件，通过组件库重新生成符合规范的html，要求完整保留源文件的内容和交互流程", promptEn: "Regenerate spec-compliant HTML from this file using the component library, fully preserving the source content and interaction flow", desc: "Agent 分析原始 demo 的组成模块 → 确定需要替换的组件 → 重新生成 demo", descEn: "Agent analyzes original demo modules → determines components to replace → regenerates demo" },
       { prompt: "卡片内的标签使用符合规范吗", promptEn: "Are the tags inside the cards spec-compliant?", desc: "Agent 对比组件规范与实际界面 → 自动修改为正确版本", descEn: "Agent compares component spec with actual interface → auto-corrects to the right version" },
@@ -191,18 +174,19 @@ const cases: CaseItem[] = [
     desc: "通过 QQ GenUI 一次生成应用的多个关键界面或流程界面。",
     descEn: "Generate multiple key screens or flow screens for an application in one go with QQ GenUI.",
     video: "/videos/batch-produce.mp4",
-    demoUrl: "/demos/social-app-standalone.html",
-    iframeWidth: 2320,
+    demoUrl: "/demos/settings-templates-standalone.html",
+    iframeWidth: 2380,
     iframeHeight: 1020,
+    explainImage: "/case-explains/batch-produce.png",
     steps: [
-      { prompt: "我要做一个陌生人兴趣社交应用，生成应用的5个关键页面，分别是聊天列表，聊天界面，发现，好友列表，我的账户。目标用户是20岁以下的年轻群体。把生成的界面横向平铺展示。", promptEn: "I want to build a stranger interest-based social app. Generate 5 key pages: chat list, chat screen, discover, friend list, and my account. Target users are young people under 20. Display the generated screens side by side horizontally.", desc: "Agent 规划页面内容 → 选取组件 → 查找对应组件规范 → 批量生成界面", descEn: "Agent plans page content → selects components → looks up component specs → batch generates screens" },
+      { prompt: "严格使用basic 1.0的设计系统中的各类组件与Token，禁止想象或自行修改组件结构、组件UI。帮我生成5个设置页的模版案例，要求在单个页面可交互。前2个页面分别使用开关展示父子关系的交互逻辑：情况一：子列表 < 3 个、情况二：子列表 ≥ 3 个。第3、4个页面分别展示互斥关系的交互逻辑：定义 A — 右侧勾选互斥（R5）、定义 B — 左侧 tick 互斥。第5个页面展示卡片式列表和输入框A/B/C类一起在一个页面组合的场景，且输入框需要支持基于交互切换状态。这5个页面你需要找到准确合适的用户场景，详细交互规则与约束条件可见组合式列表的md。请你先列出详细的行动计划以及这5个页面的用户场景与设置项。我确认后写入一个html，横向排列，可左右滚动查看、交互。", promptEn: "Strictly use all components and tokens from the Basic 1.0 design system — no imagining or modifying component structures or UI. Generate 5 settings page template cases, each interactive on a single page. Pages 1–2 demonstrate parent-child toggle logic (case 1: sub-list < 3 items; case 2: sub-list ≥ 3 items). Pages 3–4 demonstrate mutual exclusion logic (Definition A: right-side check exclusion R5; Definition B: left-side tick exclusion). Page 5 showcases card-style lists combined with input fields A/B/C on one page, with inputs supporting state switching via interaction. Find realistic user scenarios for each page. Output as a single horizontally scrollable, interactive HTML.", desc: "Agent 规划页面内容 → 选取组件 → 查找对应组件规范 → 批量生成界面", descEn: "Agent plans page content → selects components → looks up component specs → batch generates screens" },
       { prompt: "检查生成的界面是否符合组件规范", promptEn: "Check whether the generated screens comply with component specs", desc: "Agent 对比实际界面与组件规范 → 获取差异 → 自动修复", descEn: "Agent compares actual screens with component specs → identifies differences → auto-fixes" },
     ],
     beforeLabel: "单一界面",
     beforeLabelEn: "Single screen",
     afterLabel: "完整流程界面",
     afterLabelEn: "Complete flow screens",
-    chromeTitle: "陌生人社交.html",
+    chromeTitle: "设置页模板.html",
   },
   {
     id: "style-eval",
@@ -214,6 +198,7 @@ const cases: CaseItem[] = [
     tripleUrls: ["/demos/setting-standalone.html", "/demos/setting-claude-standalone.html", "/demos/setting-notion-standalone.html"],
     tripleLabels: ["原始风格", "Claude 风格", "Notion 风格"],
     tripleLabelsEn: ["Original", "Claude Style", "Notion Style"],
+    explainImage: "/case-explains/style-eval.png",
     steps: [
       { prompt: "切换这个界面的风格为Claude", promptEn: "Switch this interface's style to Claude", desc: "Agent 读取当前界面使用的 token → 读取 Claude 风格的 design.md → 创建 token 映射 → 替换 token 值", descEn: "Agent reads current tokens → reads Claude design.md → creates token mapping → replaces token values" },
       { prompt: "再切换这个界面的风格为Notion", promptEn: "Now switch this interface's style to Notion", desc: "Agent 读取 Notion 风格的 design.md → 创建 token 映射 → 替换 token 值", descEn: "Agent reads Notion design.md → creates token mapping → replaces token values" },
@@ -318,7 +303,7 @@ function SideBySideCompare({
       if (!containerRef.current) return;
       const cw = containerRef.current.clientWidth;
       const availH = window.innerHeight * 0.78;
-      const twoPhoneW = 428 * 2 + 24;
+      const twoPhoneW = 428 * 2 + 48;
       const sw = cw / twoPhoneW;
       const sh = availH / 926;
       setScale(Math.min(1, sw, sh));
@@ -330,10 +315,10 @@ function SideBySideCompare({
 
   const phoneW = 428 * scale;
   const phoneH = 926 * scale;
-  const gap = 24 * scale;
+  const gap = 48 * scale;
 
   return (
-    <div ref={containerRef} className="bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#eef0f4]">
       <div className="flex justify-center" style={{ padding: `${20 * scale}px ${16 * scale}px`, gap }}>
         <div className="flex flex-col items-center" style={{ width: phoneW }}>
           <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
@@ -387,7 +372,7 @@ function TripleSideBySideCompare({
       const cw = containerRef.current.clientWidth;
       const availH = window.innerHeight * 0.78;
       const threePhoneW = 428 * 3 + 24 * 2;
-      const sw = cw / threePhoneW;
+      const sw = (cw - 64) / threePhoneW;
       const sh = availH / 926;
       setScale(Math.min(1, sw, sh));
     };
@@ -402,7 +387,7 @@ function TripleSideBySideCompare({
 
   return (
     <div ref={containerRef} className="bg-[#fafbfc]">
-      <div className="flex justify-center" style={{ padding: `${20 * scale}px ${16 * scale}px`, gap }}>
+      <div className="flex justify-center" style={{ padding: `${20 * scale}px 32px`, gap }}>
         {urls.map((url, i) => (
           <div key={url} className="flex flex-col items-center" style={{ width: phoneW }}>
             <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
@@ -854,55 +839,76 @@ export function CasesPage() {
                           {isZh ? c.desc : c.descEn}
                         </p>
 
-                        {/* Video + Steps side by side */}
-                        <div className="grid gap-5 lg:grid-cols-[2.4fr_1fr] lg:grid-rows-[1fr]">
-                          {/* Video */}
-                          <div>
-                            {c.video ? (
-                              <video
-                                src={c.video}
-                                controls
-                                playsInline
-                                className="w-full rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]"
-                              />
-                            ) : (
-                              <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-[#cdd2da] bg-[#fafbfc]">
-                                <div className="text-center">
-                                  <span className="text-[2.5rem] leading-none text-[#c4c9d2]">▶</span>
-                                  <p className="mt-2 text-[0.92rem] text-[#9ea3ac]">{isZh ? "案例录屏视频（占位）" : "Case walkthrough video (placeholder)"}</p>
-                                </div>
+                        {/* Explain image — placeholder when no image provided */}
+                        <div className="overflow-hidden rounded-2xl border border-dashed border-[#d4d8e0] bg-[#f6f7f9]">
+                          {c.explainImage ? (
+                            <img
+                              src={c.explainImage}
+                              alt={isZh ? c.title : c.titleEn}
+                              className="block h-auto w-full"
+                            />
+                          ) : (
+                            <div className="flex aspect-[16/9] items-center justify-center">
+                              <div className="flex flex-col items-center gap-2 text-[#9197a4]">
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                                  <circle cx="9" cy="9" r="1.6" />
+                                  <path d="m21 15-5-5L5 21" />
+                                </svg>
+                                <span className="text-[0.82rem] tracking-[0.05em]">
+                                  {isZh ? "案例解释图 · 待上传" : "Explain image · Placeholder"}
+                                </span>
                               </div>
-                            )}
-                          </div>
-
-                          {/* Steps — height locked to video height on desktop */}
-                          <div className="flex flex-col overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fcfcfd] lg:h-0 lg:min-h-full">
-                            <div className="shrink-0 px-5 py-4">
-                              <span className="text-[0.92rem] font-semibold text-[#1a1d24]">
-                                {isZh ? `操作步骤（${c.steps.length} 步）` : `Steps (${c.steps.length})`}
-                              </span>
                             </div>
-                            <ol className="min-h-0 flex-1 space-y-0 overflow-y-auto border-t border-[#ececf1] px-2 pb-3 pt-2">
-                              {c.steps.map((step, i) => (
-                                <li key={i} className="flex gap-2 rounded-lg py-2">
-                                  <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-[#edf6ff] text-[0.6rem] font-semibold leading-none text-[#0099ff]">
-                                    {i + 1}
-                                  </span>
-                                  <div className="min-w-0 flex-1">
-                                    <p className="rounded-lg border border-[#e4e7ec] bg-[#f8f9fb] px-3.5 py-2.5 text-[0.82rem] leading-[1.7] text-[#2d3340]">
-                                      <span className="mr-1 font-serif text-[1.2rem] leading-none text-[#0077cc]">&ldquo;</span>
-                                      {isZh ? step.prompt : step.promptEn}
-                                      <span className="ml-0.5 font-serif text-[1.2rem] leading-none text-[#0077cc]">&rdquo;</span>
-                                    </p>
-                                    <p className="mt-1.5 flex items-center gap-1.5 text-[0.78rem] leading-[1.6] text-[#7f8591]">
-                                      <span className="inline-block size-1 shrink-0 rounded-full bg-[#c4c9d2]" />
-                                      {isZh ? step.desc : step.descEn}
-                                    </p>
-                                  </div>
-                                </li>
-                              ))}
-                            </ol>
+                          )}
+                        </div>
+
+                        {/* Video (full width) */}
+                        <div>
+                          {c.video ? (
+                            <video
+                              src={c.video}
+                              controls
+                              playsInline
+                              className="w-full rounded-2xl border border-[#ececf1] shadow-[0_20px_50px_-28px_rgba(21,24,34,0.18)]"
+                            />
+                          ) : (
+                            <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-dashed border-[#cdd2da] bg-[#fafbfc]">
+                              <div className="text-center">
+                                <span className="text-[2.5rem] leading-none text-[#c4c9d2]">▶</span>
+                                <p className="mt-2 text-[0.92rem] text-[#9ea3ac]">{isZh ? "案例录屏视频（占位）" : "Case walkthrough video (placeholder)"}</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Steps (full width, below video) */}
+                        <div className="overflow-hidden rounded-2xl border border-[#ececf1] bg-[#fcfcfd]">
+                          <div className="px-5 py-4">
+                            <span className="text-[0.92rem] font-semibold text-[#1a1d24]">
+                              {isZh ? `操作步骤（${c.steps.length} 步）` : `Steps (${c.steps.length})`}
+                            </span>
                           </div>
+                          <ol className="space-y-0 border-t border-[#ececf1] px-2 pb-3 pt-2">
+                            {c.steps.map((step, i) => (
+                              <li key={i} className="flex gap-2 rounded-lg py-2">
+                                <span className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-[#edf6ff] text-[0.6rem] font-semibold leading-none text-[#0099ff]">
+                                  {i + 1}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="rounded-lg border border-[#e4e7ec] bg-[#f8f9fb] px-3.5 py-2.5 text-[0.82rem] leading-[1.7] text-[#2d3340]">
+                                    <span className="mr-1 font-serif text-[1.2rem] leading-none text-[#0077cc]">&ldquo;</span>
+                                    {isZh ? step.prompt : step.promptEn}
+                                    <span className="ml-0.5 font-serif text-[1.2rem] leading-none text-[#0077cc]">&rdquo;</span>
+                                  </p>
+                                  <p className="mt-1.5 flex items-center gap-1.5 text-[0.78rem] leading-[1.6] text-[#7f8591]">
+                                    <span className="inline-block size-1 shrink-0 rounded-full bg-[#c4c9d2]" />
+                                    {isZh ? step.desc : step.descEn}
+                                  </p>
+                                </div>
+                              </li>
+                            ))}
+                          </ol>
                         </div>
 
                         {/* Unified chrome bar + demo content */}

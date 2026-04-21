@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="qq-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设置页模板 · QUI Basic 1.0</title>
+<style>
+/* Inlined from: Basic 1.0/css/Qdesign Tokens.css */
+/*
+ * ============================================================
+ *  Qdesign Tokens (CSS Custom Properties)
+ *  Source: json/index.json
+ *  Updated: 2026-04-17
+ * ============================================================
+ *
+ *  本文件定义设备参数、字体、间距、圆角、动效等非颜色 Token。
+ *  颜色 Token 已独立拆分至主题文件，按需引入：
+ *    - css/Qdesign Color Tokens.css       （默认且唯一可用，data-theme="qq-light" / "qq-dark"）
+ *    ⚠️ iOS / Material 主题文件暂未提供，未来版本可能新增
+ *
+ *  使用方法：
+ *    1. 在 HTML 中引入 Qdesign Tokens.css + 一套颜色主题文件
+ *    2. 在 <html> 标签上设置 data-theme 属性激活颜色（默认使用 "qq-light"）
+ *    3. 通过 var(--token-name) 使用所有样式变量
+ */
+
+/* ————————————————————————————————————
+   0. 设备与基础
+   ———————————————————————————————————— */
+:root {
+  /* 设备参数 (iPhone 14 Pro Max) */
+  --device-width: 428px;
+  --device-screen-height: 926px;
+  --device-status-bar-height: 54px;
+  --device-home-bar-height: 34px;
+  --device-home-bar-indicator-width: 144px;
+  --device-home-bar-indicator-height: 5px;
+  --device-home-bar-indicator-radius: 2.5px;
+  --device-platform: "iOS";
+  --device-font: "PingFang SC", -apple-system, "Helvetica Neue", sans-serif;
+}
+
+/* ————————————————————————————————————
+   1. 字体 Token (Typography)
+   ————————————————————————————————————
+ *
+ * 4 类 × 多级的语义化字体体系，覆盖从品牌超大标题到极小免责文案的所有场景。
+ * 每个 Token 定义 font-size 一个维度；font-weight / line-height 由各组件按需指定。
+ *
+ * ══════════════════════════════════════════════════════════
+ * 使用原则
+ * ══════════════════════════════════════════════════════════
+ *
+ * 【原则 1】语义优先，而非尺寸优先
+ *   根据文本的功能角色选择 Token（标题 / 正文 / 标签 / 注释），
+ *   而非直接按 px 值匹配。同一 px 值在不同语义下使用不同 Token。
+ *
+ * 【原则 2】同一层级文本使用同一 Token
+ *   同一页面内相同语义层级的文字（如多张卡片标题）必须使用同一 Token。
+ *
+ * 【原则 3】层级递减清晰
+ *   标题 > 正文 > 标签 > 注释，字号逐级递减，保持信息层次可读。
+ *
+ * 【原则 4】font-weight 由组件语境决定
+ *   Token 仅锁定 font-size，weight 根据场景选择：
+ *     强调（标题/按钮）→ 500~600
+ *     常规（正文/描述）→ 400
+ *     弱化（注释/提示）→ 400
+ *
+ * ══════════════════════════════════════════════════════════
+ * Token 列表（4 类 17 级）
+ * ══════════════════════════════════════════════════════════
+ *
+ * ── 标题 Title ──
+ *   --typo-title-xxl  34px  品牌页首屏、营销超大标题
+ *   --typo-title-xl   28px  首页焦点区、运营主视觉标题
+ *   --typo-title-l    26px  页面超大主标题（TextBlock H1）
+ *   --typo-title-m    22px  页面主标题、头部大标题（Card 大标题、TextBlock H2、Markdown H2）
+ *   --typo-title-s    20px  模块标题、卡片标题、分组标题（List 金额）
+ *   --typo-title-xs   18px  段落小标题、强分组标题（TextBlock 辅助标题、Markdown H3）
+ *   --typo-title-2xs  17px  详情页主标题、内容块主标题（NavBar 标题、HS_NavBar 标题、Card 标题行）
+ *
+ * ── 正文 Body ──
+ *   --typo-body-l     17px  主要正文、长文本、表单主文本（List 标题行、气泡文字、输入框、Markdown 正文）
+ *   --typo-body-m     16px  次级正文、解释说明（DataFilter 页签标签）
+ *   --typo-body-s     14px  辅助正文、状态、副标题、弱分组标题（List 描述行、Card 描述、摘要）
+ *
+ * ── 标签 Label ──
+ *   --typo-label-l    17px  主按钮文本、Tab、导航等强交互文本（ActionCombo 按钮、Menu 选项、ActionSheet 操作项）
+ *   --typo-label-m    14px  普通按钮、Tag/Chip、次要操作（小按钮、分段选择、下拉筛选、面包屑、NavBar 按钮）
+ *   --typo-label-s    12px  角标、小字链接、迷你标签（分组头部、卡片辅助行、HS_NavBar 副标题）
+ *
+ * ── 注释 Caption ──
+ *   --typo-caption-l   14px  次要注释、提示文字、弹窗注释、协议小字（ActionSheet 标题提示、Grouped List 页脚）
+ *   --typo-caption-m   12px  次要注释、气泡辅助信息、Message 辅助行
+ *   --typo-caption-s   10px  极小注释、版权、免责等最低优先级信息（NavBar 描述组、mini 按钮文字）
+ *
+ * ══════════════════════════════════════════════════════════
+ * 场景举例
+ * ══════════════════════════════════════════════════════════
+ *
+ *   | 场景                           | 推荐 Token         | 值     |
+ *   |-------------------------------|-------------------|--------|
+ *   | 品牌首屏超大标题               | typo-title-xxl    | 34px   |
+ *   | 运营主视觉标题                 | typo-title-xl     | 28px   |
+ *   | TextBlock H1 页面大标题        | typo-title-l      | 26px   |
+ *   | Card 大标题、Markdown H2       | typo-title-m      | 22px   |
+ *   | 列表金额、模块标题              | typo-title-s      | 20px   |
+ *   | 段落小标题、Markdown H3         | typo-title-xs     | 18px   |
+ *   | NavBar 标题、Card 标题行        | typo-title-2xs    | 17px   |
+ *   | 气泡正文、表单标题              | typo-body-l       | 17px   |
+ *   | DataFilter 页签                | typo-body-m       | 16px   |
+ *   | 描述行、摘要文字                | typo-body-s       | 14px   |
+ *   | 大按钮文字、Menu 选项文字       | typo-label-l      | 17px   |
+ *   | 小按钮、分段选择标签            | typo-label-m      | 14px   |
+ *   | 分组头部、辅助信息              | typo-label-s      | 12px   |
+ *   | ActionSheet 提示文字            | typo-caption-l    | 14px   |
+ *   | Message 辅助行文字              | typo-caption-m    | 12px   |
+ *   | NavBar 描述、mini 按钮          | typo-caption-s    | 10px   |
+ *
+ */
+:root {
+  --font-family: "PingFang SC", -apple-system, "Helvetica Neue", sans-serif;
+
+  /* ── 标题 Title ── */
+  --typo-title-xxl:  34px;   /* 品牌页首屏、营销超大标题 */
+  --typo-title-xl:   28px;   /* 首页焦点区、运营主视觉标题 */
+  --typo-title-l:    26px;   /* 页面超大主标题 */
+  --typo-title-m:    22px;   /* 页面主标题、头部大标题 */
+  --typo-title-s:    20px;   /* 模块标题、卡片标题、分组标题 */
+  --typo-title-xs:   18px;   /* 段落小标题、强分组标题 */
+  --typo-title-2xs:  17px;   /* 详情页主标题、内容块主标题 */
+
+  /* ── 正文 Body ── */
+  --typo-body-l:     17px;   /* 主要正文、长文本、表单主文本 */
+  --typo-body-m:     16px;   /* 次级正文、解释说明 */
+  --typo-body-s:     14px;   /* 辅助正文、状态、副标题 */
+
+  /* ── 标签 Label ── */
+  --typo-label-l:    17px;   /* 主按钮文本、Tab、导航等强交互文本 */
+  --typo-label-m:    14px;   /* 普通按钮、Tag/Chip、次要操作 */
+  --typo-label-s:    12px;   /* 角标、小字链接、迷你标签 */
+
+  /* ── 注释 Caption ── */
+  --typo-caption-l:  14px;   /* 次要注释、提示文字、弹窗注释、协议小字 */
+  --typo-caption-m:  12px;   /* 次要注释、气泡辅助信息 */
+  --typo-caption-s:  10px;   /* 极小注释、版权、免责（仅短文案） */
+}
+
+/* ————————————————————————————————————
+   2. 间距 Token (Spacing)
+   ———————————————————————————————————— */
+:root {
+  --spacing-page-padding:      16px;    /* 页面左右内边距 */
+  --spacing-icon-gap:          12px;    /* 图标与文字间距 */
+  --spacing-section-gap:       8px;     /* 区块间距 */
+  --spacing-grid-unit:         4px;     /* 4px 网格基准单位 */
+
+  /* 组件间距梯度（详见 DIVIDER_SPACING_COMPONENT_SPEC.md） */
+  --spacing-b1:                4px;     /* 组件内部：紧凑排列的辅助信息之间 */
+  --spacing-b2:                8px;     /* 组件内部：同组内容块之间、标签与内容之间 */
+  --spacing-b3:                12px;    /* 组件间：同类组件相邻 */
+  --spacing-b4:                16px;    /* 组件间：不同组件相邻（默认） */
+  --spacing-b5:                24px;    /* 组件间：不同功能模块之间 */
+  --spacing-b6:                32px;    /* 组件与页面：页面底部留白（可滑动场景除外） */
+
+  /* 组件内部间距 Token（基于 4px 网格）
+   *   --spacing-xs   4px   极小间距：标题↔副标题、右侧元素小 gap
+   *   --spacing-s    8px   小间距：键值行间距、头像↔信息 gap
+   *   --spacing-m   12px   中间距：区域间 gap、图标↔内容、分割线上间距
+   *   --spacing-l   16px   大间距：容器左右 padding、大区域四边 padding
+   *   --spacing-xl  24px   超大间距：章节前间距、大模块间距
+   *   --spacing-xxl 32px   最大间距：分组头尾左右 padding
+   */
+  --spacing-xs:  4px;
+  --spacing-s:   8px;
+  --spacing-m:  12px;
+  --spacing-l:  16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+}
+
+/* ————————————————————————————————————
+   3. 圆角 Token (Radius)
+   ————————————————————————————————————
+ *
+ * 基于 4px 递增的 7 级圆角体系，覆盖从细边框到全圆的所有场景。
+ *
+ * ══════════════════════════════════════════════════════════
+ * 使用原则
+ * ══════════════════════════════════════════════════════════
+ *
+ * 【原则 1】尺寸越大，圆角越大
+ *   组件/容器视觉面积越大，应使用越大的圆角档位，
+ *   保持"大面柔和、小面精致"的视觉节奏。
+ *
+ * 【原则 2】同层级组件使用相同圆角
+ *   同一页面内相同层级的容器（如多张卡片、多个输入框）
+ *   必须使用同一圆角 Token，禁止混用。
+ *
+ * 【原则 3】内外层级递减
+ *   嵌套容器的内层圆角应 ≤ 外层圆角：
+ *     外层卡片 radius-l(16px) → 内层缩略图 radius-m(12px) → 内层标签 radius-s(8px)
+ *
+ * 【原则 4】全圆角仅用于等宽高元素
+ *   radius-full 仅适用于 width === height 的元素（头像、圆形按钮）。
+ *   非等宽高元素使用 radius-full 会变为椭圆，禁止这样做。
+ *
+ * 【原则 5】圆角平滑度 (Corner Smoothing)
+ *   Figma 设计稿中所有圆角均设置 corner-smoothing: 100%（超椭圆/Squircle），
+ *   使圆角过渡更加平滑自然，避免标准 border-radius 的"突变感"。
+ *   各平台实现方式：
+ *     - iOS:     CALayer.cornerCurve = .continuous（UIKit/SwiftUI 原生支持）
+ *     - Android: ShapeAppearance + CornerFamily.ROUNDED（Material 3）
+ *     - Web/CSS: 标准 CSS 暂无原生支持，使用 border-radius 近似；
+ *                如需精确还原可用 figma-squircle 等 JS 库生成 SVG 路径
+ *   HTML 预览文件中使用标准 border-radius，开发实现时请按平台加上平滑属性。
+ *
+ * ══════════════════════════════════════════════════════════
+ * Token 列表（共 7 级）
+ * ══════════════════════════════════════════════════════════
+ *
+ *   --radius-xs    4px   超小圆角：细边框、小尺寸组件、缩略图小圆角
+ *   --radius-s     8px   小圆角：搜索栏、标签 Tag、小卡片内元素
+ *   --radius-m    12px   中圆角：输入框、菜单、分段选择器、宫格缩略图、App 图标
+ *   --radius-l    16px   大圆角：按钮（大/中）、对话框、操作面板、Toast
+ *   --radius-xl   20px   超大圆角：半屏浮层顶部、分段选择器外框
+ *   --radius-xxl  24px   超超大圆角：Card 卡片容器、AIOInput 输入栏
+ *   --radius-full 1000px 全圆角：头像、胶囊按钮
+ *
+ * ══════════════════════════════════════════════════════════
+ * 场景举例
+ * ══════════════════════════════════════════════════════════
+ *
+ *   | 场景                           | 推荐 Token     | 值     |
+ *   |-------------------------------|---------------|--------|
+ *   | 列表行内小缩略图               | radius-xs     | 4px    |
+ *   | 搜索栏、标签 Tag               | radius-s      | 8px    |
+ *   | 输入框、菜单、宫格缩略图        | radius-m      | 12px   |
+ *   | 大按钮、对话框、操作面板         | radius-l      | 16px   |
+ *   | 半屏浮层顶部圆角               | radius-xl     | 20px   |
+ *   | Card 卡片容器、AIOInput 输入栏  | radius-xxl    | 24px   |
+ *   | 头像、胶囊按钮                  | radius-full   | 1000px |
+ *
+ */
+:root {
+  --radius-xs:    4px;     /* 超小圆角：细边框、小缩略图 */
+  --radius-s:     8px;     /* 小圆角：搜索栏、标签 Tag */
+  --radius-m:    12px;     /* 中圆角：输入框、菜单、宫格缩略图、App 图标 */
+  --radius-l:    16px;     /* 大圆角：按钮(大/中)、对话框、操作面板、Toast */
+  --radius-xl:   20px;     /* 超大圆角：半屏浮层顶部 */
+  --radius-xxl:  28px;     /* 超超大圆角：Card 卡片容器 */
+  --radius-full: 1000px;   /* 全圆角：头像、胶囊按钮 */
+}
+
+/* ————————————————————————————————————
+   4. 动效 Token (Animation)
+   ———————————————————————————————————— */
+:root {
+  /* 按压 */
+  --anim-press-in-duration:    100ms;
+  --anim-press-in-easing:      ease-out;
+  --anim-press-out-duration:   150ms;
+  --anim-press-out-easing:     ease-out;
+
+  /* 开关切换 */
+  --anim-switch-duration:      200ms;
+  --anim-switch-easing:        ease-out;
+
+  /* 子行展开/收起 */
+  --anim-expand-duration:      250ms;
+  --anim-expand-easing:        ease-in-out;
+  --anim-collapse-duration:    200ms;
+  --anim-collapse-easing:      ease-in;
+
+  /* 半屏浮层 */
+  --anim-halfscreen-in-duration:  420ms;
+  --anim-halfscreen-in-easing:    cubic-bezier(0.32, 0.72, 0.35, 1);
+  --anim-halfscreen-out-duration: 300ms;
+  --anim-halfscreen-out-easing:   cubic-bezier(0.32, 0.72, 0.35, 1);
+
+  /* 菜单 */
+  --anim-menu-in-duration:     200ms;
+  --anim-menu-in-easing:       ease-out;
+  --anim-menu-in-transform:    scale(0.9);   /* → scale(1) */
+  --anim-menu-out-duration:    150ms;
+  --anim-menu-out-easing:      ease-in;
+  --anim-menu-out-transform:   scale(1);     /* → scale(0.9) */
+
+  /* 操作面板 ActionSheet（底部弹出） */
+  --anim-actionsheet-in-duration:  420ms;
+  --anim-actionsheet-in-easing:    cubic-bezier(0.32, 0.72, 0.35, 1);
+  --anim-actionsheet-out-duration: 300ms;
+  --anim-actionsheet-out-easing:   cubic-bezier(0.32, 0.72, 0.35, 1);
+
+  /* 对话框 Dialog（居中缩放淡入） */
+  --anim-dialog-in-duration:   250ms;
+  --anim-dialog-in-easing:     ease-out;
+  --anim-dialog-out-duration:  200ms;
+  --anim-dialog-out-easing:    ease-in;
+
+  /* 蒙层 Overlay */
+  --anim-overlay-in-duration:  250ms;
+  --anim-overlay-in-easing:    ease-out;
+  --anim-overlay-out-duration: 200ms;
+  --anim-overlay-out-easing:   ease-in;
+}
+
+</style>
+<style>
+/* Inlined from: Basic 1.0/css/Qdesign Color Tokens.css */
+/*
+ * Qdesign Color Tokens (CSS Custom Properties)
+ * Source: Qdesign-tokens映射表.csv
+ * Updated: 2026-04-15
+ *
+ * 命名规范：Qdesign-Token，连字符分隔（如 --brand-standard、--text-primary）
+ *
+ * 使用方法:
+ *   <link rel="stylesheet" href="css/Qdesign Color Tokens.css">
+ *   默认为 Light 主题，切换主题请在 <html> 上设置:
+ *     data-theme="qq-light" | "qq-dark"
+ *
+ * Token 分类（共 39 个）：
+ *   品牌色        brand-standard / brand-light
+ *   反馈语义色     accent-green / accent-orange / accent-red
+ *   文本色        text-primary / text-secondary / text-tertiary / text-quaternary /
+ *                text-white / text-allwhite-secondary / text-allwhite-tertiary /
+ *                text-link / text-link-dark
+ *   图标色        icon-primary / icon-secondary / icon-tertiary /
+ *                icon-white / icon-blue
+ *   背景色        bg-bottom / bg-secondary / bg-top /
+ *                bg-bottom-brand / bg-select / fill-gray-primary
+ *   填充色        fill-tertiary / fill-secondary /
+ *                fill-primary / fill-quaternary /
+ *                fill-destructive-strong / fill-destructive-weak
+ *   交互叠加      feedback-press / feedback-hover
+ *   遮罩          overlay-modal / overlay-toast
+ *   描边/分割线    border-default / border-weak /
+ *                border-invert / border-white
+ *
+ * ══════════════════════════════════════════════════════════
+ * 交互状态着色规则（全局约束，所有组件统一遵守）
+ * ══════════════════════════════════════════════════════════
+ *
+ * 【规则 1】Hover 态 — 叠加遮罩，不改变前景色
+ *   所有可交互元素的 hover 态，禁止直接修改 color / background 色值，
+ *   而是在元素上叠加 --feedback-hover 遮罩背景。
+ *   文字色、图标色、边框色等前景属性保持默认态不变。
+ *
+ *   实现方式 A（推荐 — 伪元素叠加，不影响原背景）：
+ *     .element         → position: relative
+ *     .element:hover::after → content:''; position:absolute; inset:0;
+ *                             background: var(--feedback-hover);
+ *                             border-radius: inherit; pointer-events: none;
+ *
+ *   实现方式 B（元素无背景色时可简写）：
+ *     .element:hover   → background: var(--feedback-hover)
+ *
+ * 【规则 2】Pressed 态 — 叠加遮罩，不改变前景色
+ *   同 hover 态规则，使用 --feedback-press 替代 --feedback-hover。
+ *     .element:active::after → background: var(--feedback-press)
+ *
+ * 【规则 3】Disabled 态 — 保持正常色值 + opacity: 0.3
+ *   所有 disabled 态禁止单独定义新色值或硬编码半透明颜色。
+ *   直接复用该元素默认态的全部颜色 token，仅在最外层添加 opacity: 0.3。
+ *
+ *   示例（一级按钮）：
+ *     默认态  → background: var(--brand-standard); color: var(--text-white)
+ *     禁用态  → 颜色属性不变，仅追加 opacity: 0.3; pointer-events: none
+ *
+ *   示例（error 按钮）：
+ *     默认态  → border: 1px solid var(--border-default); color: var(--accent-red)
+ *     禁用态  → 颜色属性不变，仅追加 opacity: 0.3; pointer-events: none
+ *
+ *   此规则适用于所有组件类型（按钮、输入框、开关、选项卡等），
+ *   确保 disabled 视觉效果与正常态颜色完全关联，
+ *   修改 token 色值时 disabled 态自动跟随，无需额外维护。
+ *
+ * 【规则 4】禁止事项
+ *   ✗ 禁止为 hover/pressed/disabled 单独硬编码 rgba() 色值
+ *   ✗ 禁止为 disabled 态定义独立的颜色变量或 token
+ *   ✗ 禁止在 hover 态直接修改 color 属性值
+ *   ✓ hover/pressed 一律用 feedback-hover / feedback-press 叠加
+ *   ✓ disabled 一律用 opacity: 0.3 + pointer-events: none
+ *
+ * ══════════════════════════════════════════════════════════
+ */
+
+/* ————— QUI Basic Light (39 tokens) ————— */
+[data-theme="qq-light"] {
+
+  /* ── 品牌色 ── */
+  /* 主品牌色：主题主视觉、核心强调与关键操作 */
+  --brand-standard: #0099ff;
+  /* 浅品牌色：品牌氛围增强、轻强调背景与高亮提示 */
+  --brand-light: rgba(0, 153, 255, 0.2);
+
+  /* ── 反馈语义色 ── */
+  /* 成功态：成功状态的文字、图标与正向结果提示 */
+  --accent-green: #15d173;
+  /* 警示态：风险提醒、注意事项与可恢复异常提示 */
+  --accent-orange: #ffb300;
+  /* 错误态：错误状态、失败结果与危险操作提示 */
+  --accent-red: #e0462c;
+
+  /* ── 文本色 ── */
+  /* 一级文本：页面大标题、主标题、核心正文 */
+  --text-primary: #000000;
+  /* 二级文本：副标题与次要说明，区分于一级文本 */
+  --text-secondary: rgba(60, 60, 67, 0.6);
+  /* 三级文本：辅助描述与补充信息 */
+  --text-tertiary: rgba(60, 60, 67, 0.3);
+  /* 四级文本：提示语、占位文案、禁用状态 */
+  --text-quaternary: rgba(60, 60, 67, 0.18);
+  /* 白色静态一级文本：任意模式固定白色显示 */
+  --text-white: #ffffff;
+  /* 白色静态二级文本：任意主题保持白色 */
+  --text-allwhite-secondary: rgba(255, 255, 255, 0.8);
+  /* 白色静态三级文本：任意主题保持白色 */
+  --text-allwhite-tertiary: rgba(255, 255, 255, 0.549);
+  /* 链接文本：可跳转文本与可点击文字入口 */
+  --text-link: #214ca5;
+  /* 空间链接文本：QZone 场景链接文字 */
+  --text-link-dark: rgba(6, 32, 90, 0.8);
+
+  /* ── 图标色 ── */
+  /* 主图标：一级功能图标，通常与一级文本搭配 */
+  --icon-primary: #000000;
+  /* 次级图标：常规辅助图标，通常与二级文本搭配 */
+  --icon-secondary: rgba(60, 60, 67, 0.6);
+  /* 弱辅助图标：低优先级提示图标，与三/四级文本搭配 */
+  --icon-tertiary: rgba(60, 60, 67, 0.3);
+  /* 白色图标：任意模式固定白色，如按钮上的图标 */
+  --icon-white: #ffffff;
+  /* AIO 工具栏激活图标 */
+  --icon-blue: #0099ff;
+
+  /* ── 背景色 ── */
+  /* 页面底背景：页面默认底色与全局画布承载 */
+  --bg-bottom: #ffffff;
+  /* 次级承载背景：卡片、列表、内容区等常规承载面 */
+  --bg-secondary: #f2f2f7;
+  /* 顶层浮层背景：弹窗、Drawer、Sheet 等浮层容器 */
+  --bg-top: #ffffff;
+  /* 品牌背景：带品牌色调的页面背景 */
+  --bg-bottom-brand: #eff4ff;
+  /* AIO 指定背景色 */
+  --bg-select: #f0f0f2;
+  /* Toast 背景（毛玻璃降级）：Toast、轻提示等 */
+  --fill-gray-primary: rgba(0, 0, 0, 0.64);
+
+  /* ── 填充色 ── */
+  /* 弱填充：输入框、搜索框填充 */
+  --fill-tertiary: rgba(118, 118, 128, 0.12);
+  /* 次容器填充：卡片容器与非通栏内容区 */
+  --fill-secondary: rgba(120, 120, 128, 0.16);
+  /* 主容器填充：通栏列表与基础承载容器 */
+  --fill-primary: rgba(120, 120, 128, 0.2);
+  /* 极弱填充：次级卡片/弱分组背景 */
+  --fill-quaternary: rgba(118, 118, 128, 0.08);
+  /* 强警示填充：警示按钮填充色 */
+  --fill-destructive-strong: rgba(247, 76, 48, 0.2);
+  /* 弱警示填充：警示 tips 填充色 */
+  --fill-destructive-weak: #ffeff1;
+
+  /* ── 交互叠加 ── */
+  /* 按下态叠加：常规按下、选中、重点态高强调反馈 */
+  --feedback-press: rgba(120, 120, 120, 0.2);
+  /* 悬停态叠加：一般点击、悬停态的交互反馈 */
+  --feedback-hover: rgba(120, 120, 128, 0.16);
+
+  /* ── 遮罩 ── */
+  /* 弹窗遮罩：弹窗、对话框等需聚焦前景内容的遮罩 */
+  --overlay-modal: rgba(0, 0, 0, 0.48);
+  /* 轻提示遮罩：Toast、轻提示等低干扰遮罩 */
+  --overlay-toast: rgba(0, 0, 0, 0.04);
+
+  /* ── 描边 / 分割线 ── */
+  /* 标准描边：常规分割线与基础边界 */
+  --border-default: #c6c6c8;
+  /* 弱描边：列表分隔、次级描边、卡片内部轻分隔 */
+  --border-weak: rgba(0, 0, 0, 0.12);
+  /* 反色描边：沉浸式场景的弱分割线/描边 */
+  --border-invert: rgba(255, 255, 255, 0.2);
+  /* 纯白描边：通用纯白色分割线 */
+  --border-white: #ffffff;
+
+  /* ── 阴影 ── */
+  /* 菜单阴影：伴随式非模态浮层 */
+  --shadow-menu: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+/* ————— QUI Basic Dark (39 tokens) ————— */
+/*
+ * 推导依据说明：
+ *   🔵 算法推导 — 透明度反转类（黑→白/白→黑）、静态色不变
+ *   🟡 旧版保留 — 沿用旧 Qdesign Color Tokens.css dark 值，视觉已验证
+ *   🔴 新推导    — 无旧版参考，按反色逻辑推导
+ */
+[data-theme="qq-dark"] {
+
+  /* ── 品牌色 ── */
+  /* 🟡 暗背景品牌色降亮约 8%，防止刺眼 */
+  --brand-standard: #0082db;
+  /* 🟡 品牌底色暗化，透明度保持 */
+  --brand-light: rgba(0, 102, 204, 0.2);
+
+  /* ── 反馈语义色（静态，永不随主题变化）── */
+  --accent-green: #15d173;  /* 🔵 静态 */
+  --accent-orange: #ffb300;  /* 🔵 静态 */
+  --accent-red: #e0462c;    /* 🔵 静态 */
+
+  /* ── 文本色（底色反转，透明度与 light 同步）── */
+  /* 🔵 黑→白，100% 透明度同步 */
+  --text-primary: rgba(255, 255, 255, 1.0);
+  /* 🔵 深灰→浅灰，60% 透明度同步 */
+  --text-secondary: rgba(235, 235, 245, 0.6);
+  /* 🔵 深灰→浅灰，30% 透明度同步 */
+  --text-tertiary: rgba(235, 235, 245, 0.3);
+  /* 🔵 深灰→浅灰，18% 透明度同步 */
+  --text-quaternary: rgba(235, 235, 245, 0.18);
+  --text-white: #ffffff;                    /* 🔵 静态白色 */
+  --text-allwhite-secondary: rgba(255, 255, 255, 0.8); /* 🔵 静态 */
+  --text-allwhite-tertiary: rgba(255, 255, 255, 0.549);/* 🔵 静态 */
+  /* 🟡 深蓝→浅蓝，暗背景提亮约 40% 保证对比度 */
+  --text-link: #7a95cc;
+  /* 🟡 深蓝→浅蓝半透明 */
+  --text-link-dark: rgba(192, 209, 255, 0.6);
+
+  /* ── 图标色 ── */
+  /* 🔵 黑→白，对称反转 */
+  --icon-primary: #ffffff;
+  /* 🔵 基色反转+透明度同步 60% */
+  --icon-secondary: rgba(235, 235, 245, 0.6);
+  /* 🔵 基色反转+透明度同步 30% */
+  --icon-tertiary: rgba(235, 235, 245, 0.3);
+  --icon-white: #ffffff;  /* 🔵 静态 */
+  /* 🟡 品牌激活色暗化 */
+  --icon-blue: #0073bf;
+
+  /* ── 背景色（层级由深到浅）── */
+  /* 🟡 页面底背景：近黑深灰 */
+  --bg-bottom: #1a1c1e;
+  /* 🔵 次级承载背景：iOS 标准暗色 secondary */
+  --bg-secondary: #1c1c1e;
+  /* 🟡 顶层浮层背景：比底背景浅，弹窗浮出感 */
+  --bg-top: #2f3033;
+  /* 🟡 品牌背景暗化 */
+  --bg-bottom-brand: #0f1113;
+  /* 🔵 AIO 指定背景：同 dark secondary */
+  --bg-select: #1c1c1e;
+  /* 🔵 暗背景 Toast，透明度同步提升 */
+  --fill-gray-primary: rgba(190, 190, 190, 0.36);
+
+  /* ── 填充色（基色保持灰色系，暗色透明度提升）── */
+  /* 🔵 暗色透明度 ×2，保持视觉感知 */
+  --fill-tertiary: rgba(118, 118, 128, 0.24);
+  /* 🔵 暗色透明度 ×2 */
+  --fill-secondary: rgba(120, 120, 128, 0.32);
+  /* 🔵 暗色透明度 ×~1.8 */
+  --fill-primary: rgba(120, 120, 128, 0.36);
+  /* 🔵 暗色透明度提升至可感知 */
+  --fill-quaternary: rgba(118, 118, 128, 0.18);
+  --fill-destructive-strong: rgba(247, 76, 48, 0.25); /* 🔵 透明度同步调低 */
+  /* 🔴 无旧版，按反色逻辑推导暗红深色 */
+  --fill-destructive-weak: #3d1a18;
+
+  /* ── 交互叠加（暗色透明度提升）── */
+  --feedback-press: rgba(120, 120, 120, 0.36); /* 🔵 暗色透明度提升 */
+  --feedback-hover: rgba(120, 120, 128, 0.28); /* 🔵 暗色透明度提升 */
+
+  /* ── 遮罩（暗色略加深）── */
+  --overlay-modal: rgba(0, 0, 0, 0.56);          /* 🔵 暗色遮罩加深 */
+  --overlay-toast: rgba(0, 0, 0, 0.08);          /* 🔵 暗色略加深 */
+
+  /* ── 描边 / 分割线（与 light 对称）── */
+  /* 🔵 实色→iOS 标准暗色分隔线 */
+  --border-default: #38383a;
+  /* 🔵 黑→白，透明度同步 12% */
+  --border-weak: rgba(255, 255, 255, 0.12);
+  --border-invert: rgba(255, 255, 255, 0.2); /* 🔵 静态 */
+  /* 🟡 纯白→半透明白，暗背景避免过于刺眼 */
+  --border-white: rgba(255, 255, 255, 0.8);
+
+  /* ── 阴影（暗色加深投影） ── */
+  /* ── 阴影（暗色加深投影） ── */
+  --shadow-menu:   0 8px 32px rgba(0, 0, 0, 0.28);  /* 🔵 暗色投影加深 */
+}
+
+</style>
+<style>
+/* =========================================================
+   全局基础
+   ========================================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+    font-family: var(--font-family);
+    background: var(--bg-top);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+body {
+    padding: var(--spacing-xl);
+    min-height: 100vh;
+}
+
+/* 外层横向滚动容器（支持横向滚动，但隐藏滚动条） */
+.stage {
+    display: flex;
+    gap: 48px;
+    width: max-content;
+    overflow: visible;
+    padding: var(--spacing-m) 0 var(--spacing-l);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;      /* IE 10+ */
+}
+.stage::-webkit-scrollbar { display: none; } /* Chrome / Safari / Edge */
+
+/* 每个设备屏（iPhone 15/16 mockup，外框圆角参考 Apple iOS 设备实际弧度 55px） */
+.device {
+    flex-shrink: 0;
+    width: 428px;
+    height: 926px;
+    background: var(--bg-select);
+    border-radius: 55px;
+    overflow: hidden;
+    position: relative;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+}
+.device-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   StatusBar (54px)
+   ========================================================= */
+.status-bar {
+    width: 428px;
+    height: 54px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-xl);
+    background: transparent;
+    position: relative;
+    z-index: 5;
+}
+.status-bar .time {
+    font-family: -apple-system, "SF Pro", "Helvetica Neue", sans-serif;
+    font-size: var(--typo-body-l);
+    font-weight: 600;
+    color: var(--text-primary);
+    width: 80px;
+    text-align: center;
+    padding-top: 14px;
+}
+.status-bar .dynamic-island {
+    position: absolute;
+    left: 50%;
+    top: 11px;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 37px;
+    background: var(--text-primary);
+    border-radius: var(--radius-full);
+}
+.status-bar .sys-icons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding-top: 14px;
+}
+.status-bar .sys-icons .sig,
+.status-bar .sys-icons .wifi,
+.status-bar .sys-icons .bat {
+    width: 18px; height: 12px;
+    display: inline-block;
+    color: var(--icon-primary);
+}
+/* 用简单 SVG 内联渲染三图标（占位，符合满格视觉） */
+.status-bar .sys-icons svg { display: block; }
+
+/* =========================================================
+   NavBar (44px)
+   ========================================================= */
+.navbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-l);
+    width: 428px;
+    height: 44px;
+    flex-shrink: 0;
+    background: transparent;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.navbar-row .left-area,
+.navbar-row .right-area {
+    min-width: 60px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+.navbar-row .right-area { justify-content: flex-end; }
+.navbar-row .middle-area {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+}
+.navbar-row .middle-area > * { pointer-events: auto; }
+.navbar-row .title {
+    font-size: var(--typo-title-2xs);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.navbar-row .icon-back {
+    width: 24px; height: 24px;
+    color: var(--icon-primary);
+    cursor: pointer;
+}
+.navbar-row .icon-back svg { width: 24px; height: 24px; display: block; }
+
+/* =========================================================
+   页面内容滚动区
+   ========================================================= */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 50px; /* Home Bar 避让 */
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* =========================================================
+   Home Bar (34px)
+   ========================================================= */
+.home-bar {
+    width: 428px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    pointer-events: none;
+}
+.home-bar-indicator {
+    width: 144px;
+    height: 5px;
+    background: var(--text-primary);
+    border-radius: 2.5px;
+}
+
+/* =========================================================
+   Grouped List (卡片式列表)
+   ========================================================= */
+.form-group {
+    width: 428px;
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--spacing-m);
+}
+.form-group-header {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    color: var(--text-secondary);
+    font-size: var(--typo-body-m);
+    font-weight: 500;
+    line-height: 22px;
+}
+.form-group-content {
+    background: var(--bg-bottom);
+    margin: 0 var(--spacing-l);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    width: 396px;
+}
+.form-group-footer {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--typo-body-s);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* 单独卡片（无分组头尾） */
+.form-standalone {
+    width: 396px;
+    margin: var(--spacing-m) var(--spacing-l) 0;
+    background: var(--bg-bottom);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+}
+
+/* 行 */
+.form-row {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-l);
+    width: 100%;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+    transition: background var(--anim-press-in-duration) var(--anim-press-in-easing);
+}
+.form-row.single-line { height: 56px; }
+.form-row.double-line { height: 72px; }
+.form-row:active { background: var(--feedback-press); }
+
+/* 左侧区域 */
+.form-row .left-area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    overflow: hidden;
+}
+.form-row .icon-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--icon-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-row .icon-left svg { width: 24px; height: 24px; display: block; }
+.form-row .icon-secondary-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--icon-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* secondary.svg 官方图标使用 filter 实现 --icon-secondary 颜色 */
+.form-row .icon-secondary-left svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+    filter: opacity(0.6);
+}
+.form-row .tick-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--brand-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* tick.svg 自带品牌色，无需 filter */
+.form-row .tick-left svg { width: 24px; height: 24px; display: block; }
+.form-row .tick-placeholder {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.form-row .avatar-left {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--fill-tertiary);
+}
+.form-row .text-group {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.form-row .title {
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.form-row .subtitle {
+    font-size: var(--typo-body-s);
+    color: var(--text-secondary);
+    line-height: 1.2;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 右侧区域 */
+.form-row .right-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+    margin-left: var(--spacing-m);
+}
+.form-row .helper-text {
+    font-size: var(--typo-body-s);
+    line-height: 20px;
+    color: var(--text-secondary);
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.form-row .icon-arrow,
+.form-row .icon-expand {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--icon-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* chevron_right.svg / expand_list.svg 官方图标：16×16，颜色对应 --icon-tertiary */
+.form-row .icon-arrow svg,
+.form-row .icon-expand svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    filter: opacity(0.3);
+}
+.form-row .checkbox {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--brand-standard);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* R5 选中态：显示 tick.svg（iOS 风格）；未选中态：空 */
+.form-row .checkbox svg { width: 22px; height: 22px; display: block; }
+
+/* Switch */
+.form-switch {
+    width: 44px;
+    height: 26px;
+    background: var(--brand-standard);
+    border-radius: var(--radius-full);
+    position: relative;
+    cursor: pointer;
+    transition: background var(--anim-switch-duration) var(--anim-switch-easing);
+    flex-shrink: 0;
+}
+.form-switch.off { background: var(--fill-secondary); }
+.form-switch::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 22px;
+    height: 22px;
+    background: var(--bg-bottom);
+    border-radius: var(--radius-full);
+    transition: right var(--anim-switch-duration) var(--anim-switch-easing),
+                left var(--anim-switch-duration) var(--anim-switch-easing);
+    box-shadow: 0 2px 4px var(--border-weak);
+}
+.form-switch.off::after { right: auto; left: 2px; }
+
+/* 分割线 */
+.form-separator {
+    height: 0.5px;
+    background: var(--border-weak);
+    margin-left: var(--spacing-l);
+    margin-right: var(--spacing-l);
+}
+.form-separator.inset-icon { margin-left: 52px; }
+.form-separator.inset-avatar { margin-left: 68px; }
+
+/* =========================================================
+   父子折叠容器（iOS 17 丝滑展开/收起动画）
+   • 高度：JS 测量真实高度并写入 --h，transition height 至精确目标
+   • 曲线：展开/收起统一 cubic-bezier(0.32, 0.72, 0, 1)
+     —— Apple Design Resources “Standard”缓动，等价 SwiftUI .smooth / UIKit spring
+   • 内层：transform + opacity 走 GPU 合成层（will-change / translateZ）
+   • 方向：translateY +4→0，符合“从父行下方展开 / 收回父行下方”的直觉
+   ========================================================= */
+.child-wrap {
+    height: var(--h, auto);
+    overflow: hidden;
+    will-change: height;
+    transition: height var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap.collapsed {
+    height: 0;
+    transition: height var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap > .child-inner {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    will-change: transform, opacity;
+    transition: transform var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1),
+                opacity   var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap.collapsed > .child-inner {
+    transform: translate3d(0, 4px, 0);
+    opacity: 0;
+    transition: transform var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1),
+                opacity   var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* 父行右侧 chevron 同步旋转（只在标记 data-parent-icon-rotate 的行上生效） */
+[data-parent-icon-rotate] .icon-expand svg {
+    transition: transform var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-parent-icon-rotate].is-collapsed .icon-expand svg {
+    transform: rotate(-90deg);
+}
+
+/* =========================================================
+   Textfield
+   ========================================================= */
+/* A/B/C 嵌入在 Grouped List 的行内 */
+.tf-row {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-l);
+    width: 100%;
+    height: 56px;
+    background: transparent;
+    cursor: text;
+}
+.tf-row .tf-title {
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    width: 90px;
+    flex-shrink: 0;
+    padding-right: var(--spacing-xl);
+}
+.tf-row .tf-prefix {
+    font-size: var(--typo-body-l);
+    color: var(--text-link);
+    flex-shrink: 0;
+    margin-right: var(--spacing-s);
+}
+.tf-row .tf-input {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    height: 100%;
+    font-family: var(--font-family);
+    caret-color: var(--brand-standard);
+}
+.tf-row .tf-input::placeholder { color: var(--text-quaternary); }
+.tf-row .tf-input:disabled {
+    color: var(--text-primary);
+    opacity: 0.3;
+}
+.tf-row .tf-clear {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-left: var(--spacing-s);
+    color: var(--icon-secondary);
+    cursor: pointer;
+    display: none;
+}
+.tf-row .tf-clear svg { width: 20px; height: 20px; display: block; }
+.tf-row.tf-typing .tf-clear { display: block; }
+
+/* 底部附加说明行（含字数统计）—— 视觉对齐 .form-group-footer */
+.tf-footer {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-m);
+    color: var(--text-secondary);
+    font-size: var(--typo-body-s);
+    line-height: 1.4;
+}
+.tf-footer .count {
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+}
+.tf-footer .count.error { color: var(--accent-red); }
+
+/* =========================================================
+   通用 SVG 图标样式
+   ========================================================= */
+.icon-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+<!-- ========================================================= -->
+<!-- 页面 1：父子关系 · 子列表 < 3 个 · 通知设置                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-1">
+
+    <!-- StatusBar -->
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <!-- NavBar L1+C1+R0 -->
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.6013 2.39886C15.9332 2.73081 15.9332 3.269 15.6013 3.60094L7.73265 11.4696C7.52472 11.6775 7.40539 11.7978 7.32481 11.8927C7.29186 11.9315 7.27547 11.9548 7.26844 11.9656C7.26312 11.9881 7.26312 12.0117 7.26844 12.0343C7.27547 12.045 7.29186 12.0683 7.32481 12.1071C7.4054 12.202 7.52473 12.3223 7.73265 12.5302L15.6013 20.3989C15.9332 20.7308 15.9332 21.269 15.6013 21.6009C15.2693 21.9329 14.7311 21.9329 14.3992 21.6009L6.51032 13.7121C6.32975 13.5315 6.15991 13.3617 6.02883 13.2073C5.88642 13.0396 5.74058 12.835 5.655 12.5716C5.53427 12.2 5.53427 11.7998 5.655 11.4282C5.74058 11.1648 5.88642 10.9602 6.02883 10.7925C6.15991 10.6381 6.32976 10.4683 6.51033 10.2877L14.3992 2.39886C14.7311 2.06692 15.2693 2.06692 15.6013 2.39886Z" fill="currentColor"/>
+</svg>
+            </div>
+        </div>
+        <div class="middle-area">
+            <div class="title">消息与通知</div>
+        </div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 A · 消息提醒（父子 < 3，同卡片嵌套） -->
+        <div class="form-group">
+            <div class="form-group-header">消息提醒</div>
+            <div class="form-group-content">
+
+                <!-- 父行 L3+R4：新消息通知（加 remind.svg 图标，使分割线与子行 52px 一致） -->
+                <div class="form-row single-line" data-parent="p1-msg">
+                    <div class="left-area">
+                        <div class="icon-left">
+                            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.891 3.40838C10.891 2.79624 11.3872 2.3 11.9994 2.3C12.6115 2.3 13.1077 2.79624 13.1077 3.40838V3.82747C13.1077 3.85052 13.107 3.8734 13.1056 3.8961C16.3623 4.43151 18.4877 7.3116 18.4877 10.6554V13.9694L20.4999 16.5892C20.5397 16.641 20.5734 16.6972 20.6003 16.7568C21.1025 17.8675 20.2807 19.107 19.0766 19.107H4.92111C3.71698 19.107 2.89516 17.8675 3.39735 16.7568C3.42429 16.6972 3.45801 16.6409 3.49784 16.5891L5.50886 13.9717V10.6553C5.50886 7.3107 7.63461 4.42964 10.893 3.89558C10.8917 3.87305 10.891 3.85034 10.891 3.82747V3.40838ZM11.9977 5.50703C9.20179 5.50703 7.20886 7.73903 7.20886 10.6553V14.2606C7.20886 14.4479 7.14699 14.6299 7.03288 14.7784L5.01324 17.407H18.9845L16.9636 14.7759C16.8495 14.6274 16.7877 14.4454 16.7877 14.2582V10.6554C16.7877 7.73926 14.7939 5.50703 11.9977 5.50703Z" fill="currentColor"/>
+<path d="M8.88269 20.2277C8.82057 20.0884 8.92901 19.94 9.08161 19.94H14.9224C15.075 19.94 15.1834 20.0884 15.1213 20.2277C14.6349 21.3193 13.4217 22.0927 12.002 22.0927C10.5824 22.0927 9.36914 21.3193 8.88269 20.2277Z" fill="currentColor"/>
+</svg>
+                        </div>
+                        <div class="text-group"><div class="title">新消息通知</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p1-msg"></div>
+                    </div>
+                </div>
+
+                <!-- 子行容器（父 ON 时显示） -->
+                <div class="child-wrap" data-child-of="p1-msg">
+                    <div class="form-separator inset-icon"></div>
+                    <!-- 子行 L5+R1：通知铃声 -->
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.65381 12.0004C6.65381 11.5309 7.03437 11.1504 7.50381 11.1504H16.5038C16.9733 11.1504 17.3538 11.5309 17.3538 12.0004C17.3538 12.4698 16.9733 12.8504 16.5038 12.8504H7.50381C7.03437 12.8504 6.65381 12.4698 6.65381 12.0004Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">通知铃声</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">叮咚</div>
+                            <div class="icon-arrow">
+                                <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+                    <!-- 子行 L5+R4：震动 -->
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.65381 12.0004C6.65381 11.5309 7.03437 11.1504 7.50381 11.1504H16.5038C16.9733 11.1504 17.3538 11.5309 17.3538 12.0004C17.3538 12.4698 16.9733 12.8504 16.5038 12.8504H7.50381C7.03437 12.8504 6.65381 12.4698 6.65381 12.0004Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">震动</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="form-switch"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 卡片 B · 群消息（独立卡片，另一组父子） -->
+        <div class="form-group">
+            <div class="form-group-header">群消息</div>
+            <div class="form-group-content">
+                <div class="form-row single-line" data-parent="p1-grp">
+                    <div class="left-area">
+                        <div class="icon-left">
+                            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.7237 18.7347C15.7151 18.826 15.698 18.9147 15.6731 19C15.5857 19.2995 15.4026 19.557 15.16 19.7357C14.9342 19.902 14.6568 20 14.357 20H3.373C2.61471 20 2 19.3732 2 18.6C2 15.8962 3.87926 13.6399 6.37859 13.1151C6.73814 13.0397 7.11052 13 7.49199 13H10.238C10.6194 13 10.9918 13.0397 11.3514 13.1151C11.7902 13.2073 12.2099 13.3528 12.6037 13.5447C12.8603 13.6698 13.1058 13.8146 13.3385 13.9771C13.4467 14.0527 13.5521 14.1321 13.6545 14.2152C13.9084 14.0456 14.182 13.9042 14.4711 13.7952C14.9117 13.629 15.388 13.5383 15.8852 13.5383H17.9237C18.4208 13.5383 18.8972 13.629 19.3378 13.7952C19.3846 13.8128 19.431 13.8313 19.477 13.8507C19.7416 13.9619 19.9922 14.1008 20.2254 14.2637C20.6327 14.5483 20.9868 14.9063 21.2693 15.319C21.3565 15.4464 21.4368 15.579 21.5098 15.7162C21.5709 15.831 21.6267 15.949 21.6772 16.0699C21.7364 16.2119 21.7881 16.3581 21.8318 16.5077C21.9417 16.884 22.0007 17.2827 22.0007 17.6954C22.0007 17.7986 21.9859 17.8983 21.9584 17.9924C21.8629 18.3197 21.6135 18.5795 21.2957 18.6844C21.1967 18.7171 21.0911 18.7347 20.9814 18.7347H15.7237ZM15.5025 17C15.4222 16.7246 15.3215 16.458 15.2025 16.2021C15.1923 16.1803 15.182 16.1585 15.1715 16.1367C15.0657 15.9169 14.9462 15.7051 14.8141 15.5026C15.1387 15.333 15.5037 15.2383 15.8852 15.2383H17.9237C18.9929 15.2383 19.9324 15.9821 20.2145 17.0347H15.5126C15.5093 17.0231 15.5059 17.0116 15.5025 17ZM10.238 14.7C12.2058 14.7 13.8694 16.2598 14.019 18.3H3.71095C3.86059 16.2598 5.52419 14.7 7.49199 14.7H10.238Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.49199 11.7482C7.21492 11.6426 6.95271 11.506 6.70939 11.3425C5.64476 10.6272 4.94214 9.39728 4.94214 8C4.94214 5.79086 6.69845 4 8.86498 4C11.0315 4 12.7878 5.79086 12.7878 8C12.7878 9.39728 12.0852 10.6272 11.0206 11.3425C10.7773 11.506 10.515 11.6426 10.238 11.7482C9.81065 11.911 9.34801 12 8.86498 12C8.38196 12 7.91932 11.911 7.49199 11.7482ZM11.0878 8C11.0878 9.30162 10.0616 10.3 8.86498 10.3C7.6684 10.3 6.64214 9.30162 6.64214 8C6.64214 6.69838 7.6684 5.7 8.86498 5.7C10.0616 5.7 11.0878 6.69838 11.0878 8Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M14.8504 11.9315C15.1415 12.2268 15.4933 12.4597 15.8852 12.609C16.2024 12.7299 16.5459 12.796 16.9044 12.796C17.263 12.796 17.6065 12.7299 17.9237 12.609C18.3155 12.4597 18.6674 12.2268 18.9584 11.9315C19.4885 11.3938 19.8166 10.6492 19.8166 9.82657C19.8166 8.18662 18.5128 6.85718 16.9044 6.85718C15.2961 6.85718 13.9923 8.18662 13.9923 9.82657C13.9923 10.6492 14.3204 11.3938 14.8504 11.9315ZM16.9044 11.096C17.5428 11.096 18.1166 10.559 18.1166 9.82657C18.1166 9.09414 17.5428 8.55718 16.9044 8.55718C16.2661 8.55718 15.6923 9.09414 15.6923 9.82657C15.6923 10.559 16.2661 11.096 16.9044 11.096Z" fill="currentColor"/>
+</svg>
+                        </div>
+                        <div class="text-group"><div class="title">群消息提醒</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p1-grp"></div>
+                    </div>
+                </div>
+                <div class="child-wrap" data-child-of="p1-grp">
+                    <div class="form-separator inset-icon"></div>
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.65381 12.0004C6.65381 11.5309 7.03437 11.1504 7.50381 11.1504H16.5038C16.9733 11.1504 17.3538 11.5309 17.3538 12.0004C17.3538 12.4698 16.9733 12.8504 16.5038 12.8504H7.50381C7.03437 12.8504 6.65381 12.4698 6.65381 12.0004Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">@我时提醒</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="form-switch"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-footer">关闭总开关后，将不再接收任何消息通知。</div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 2：父子关系 · 子列表 ≥ 3 个 · 好友权限                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-2">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.6013 2.39886C15.9332 2.73081 15.9332 3.269 15.6013 3.60094L7.73265 11.4696C7.52472 11.6775 7.40539 11.7978 7.32481 11.8927C7.29186 11.9315 7.27547 11.9548 7.26844 11.9656C7.26312 11.9881 7.26312 12.0117 7.26844 12.0343C7.27547 12.045 7.29186 12.0683 7.32481 12.1071C7.4054 12.202 7.52473 12.3223 7.73265 12.5302L15.6013 20.3989C15.9332 20.7308 15.9332 21.269 15.6013 21.6009C15.2693 21.9329 14.7311 21.9329 14.3992 21.6009L6.51032 13.7121C6.32975 13.5315 6.15991 13.3617 6.02883 13.2073C5.88642 13.0396 5.74058 12.835 5.655 12.5716C5.53427 12.2 5.53427 11.7998 5.655 11.4282C5.74058 11.1648 5.88642 10.9602 6.02883 10.7925C6.15991 10.6381 6.32976 10.4683 6.51033 10.2877L14.3992 2.39886C14.7311 2.06692 15.2693 2.06692 15.6013 2.39886Z" fill="currentColor"/>
+</svg>
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">好友权限</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 父卡片 -->
+        <div class="form-group">
+            <div class="form-group-header">添加好友</div>
+            <div class="form-group-content">
+                <div class="form-row single-line" data-parent="p2-friend">
+                    <div class="left-area">
+                        <div class="text-group"><div class="title">允许陌生人添加我为好友</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p2-friend"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 子卡片（≥3 行，独立成卡） -->
+        <div class="child-wrap" data-child-of="p2-friend">
+            <div class="form-group">
+                <div class="form-group-header">添加方式</div>
+                <div class="form-group-content">
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3.8499 10.5004C3.8499 6.8277 6.82721 3.85039 10.4999 3.85039C14.1726 3.85039 17.1499 6.8277 17.1499 10.5004C17.1499 14.1731 14.1726 17.1504 10.4999 17.1504C6.82721 17.1504 3.8499 14.1731 3.8499 10.5004ZM10.4999 2.15039C5.88832 2.15039 2.1499 5.88881 2.1499 10.5004C2.1499 15.112 5.88832 18.8504 10.4999 18.8504C12.243 18.8504 13.8613 18.3163 15.2002 17.4028L18.8989 21.1014C19.2308 21.4334 19.769 21.4334 20.1009 21.1014C20.4329 20.7695 20.4329 20.2313 20.1009 19.8993L16.5044 16.3028C17.9565 14.8005 18.8499 12.7548 18.8499 10.5004C18.8499 5.88881 15.1115 2.15039 10.4999 2.15039Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">通过搜索 QQ 号</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">需要验证</div>
+                            <div class="icon-expand">
+                                <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3711 9.79928C11.5924 9.5783 11.9507 9.57814 12.1719 9.79928C12.3931 10.0205 12.3929 10.3787 12.1719 10.6001L8.40044 14.3715L8.35747 14.4106C8.1349 14.5921 7.80711 14.579 7.59966 14.3715L3.82817 10.6001L3.78911 10.5581C3.60758 10.3355 3.62071 10.0068 3.82817 9.79928C4.03564 9.59186 4.36441 9.5787 4.58696 9.76022L4.62895 9.79928L8.00005 13.1704L11.3711 9.79928ZM7.64263 1.58932C7.86517 1.40791 8.19301 1.42101 8.40044 1.62839L12.1719 5.39987L12.211 5.44284C12.3923 5.66539 12.3793 5.99327 12.1719 6.20065C11.9645 6.40812 11.6357 6.42125 11.4131 6.23971L11.3711 6.20065L8.00005 2.82956L4.62895 6.20065C4.40764 6.42175 4.0494 6.42188 3.82817 6.20065C3.607 5.97942 3.60709 5.62116 3.82817 5.39987L7.59966 1.62839L7.64263 1.58932Z" fill="currentColor"/>
+</svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.9999 17.1499C8.53046 17.1499 8.1499 17.5305 8.1499 17.9999C8.1499 18.4693 8.53046 18.8499 8.9999 18.8499H14.9999C15.4693 18.8499 15.8499 18.4693 15.8499 17.9999C15.8499 17.5305 15.4693 17.1499 14.9999 17.1499H8.9999Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M14.0597 2.1499H9.94009C8.81254 2.14987 7.88104 2.14985 7.14347 2.24901C6.36843 2.35322 5.68147 2.58073 5.1311 3.1311C4.58073 3.68147 4.35322 4.36843 4.24901 5.14347C4.14985 5.88104 4.14987 6.8125 4.1499 7.94006V17.0597C4.14987 18.1873 4.14985 19.1188 4.24901 19.8563C4.35322 20.6314 4.58073 21.3183 5.1311 21.8687C5.68147 22.4191 6.36843 22.6466 7.14347 22.7508C7.88105 22.85 8.81251 22.8499 9.94007 22.8499H14.0597C15.1873 22.8499 16.1188 22.85 16.8563 22.7508C17.6314 22.6466 18.3183 22.4191 18.8687 21.8687C19.4191 21.3183 19.6466 20.6314 19.7508 19.8563C19.85 19.1188 19.8499 18.1873 19.8499 17.0597V7.94012C19.8499 6.81256 19.85 5.88105 19.7508 5.14347C19.6466 4.36843 19.4191 3.68147 18.8687 3.1311C18.3183 2.58073 17.6314 2.35322 16.8563 2.24901C16.1188 2.14985 15.1873 2.14987 14.0597 2.1499ZM6.33318 4.33318C6.51504 4.15132 6.78346 4.01271 7.36999 3.93386C7.98097 3.85171 8.79737 3.84991 9.99991 3.84991H13.9999C15.2024 3.84991 16.0188 3.85171 16.6298 3.93386C17.2164 4.01271 17.4848 4.15132 17.6666 4.33318C17.8485 4.51504 17.9871 4.78346 18.066 5.36999C18.1481 5.98097 18.1499 6.79737 18.1499 7.99991V16.9999C18.1499 18.2024 18.1481 19.0188 18.066 19.6298C17.9871 20.2164 17.8485 20.4848 17.6666 20.6666C17.4848 20.8485 17.2164 20.9871 16.6298 21.066C16.0188 21.1481 15.2024 21.1499 13.9999 21.1499H9.99991C8.79737 21.1499 7.98097 21.1481 7.36999 21.066C6.78346 20.9871 6.51504 20.8485 6.33318 20.6666C6.15132 20.4848 6.01271 20.2164 5.93386 19.6298C5.85171 19.0188 5.84991 18.2024 5.84991 16.9999V7.99991C5.84991 6.79737 5.85171 5.98097 5.93386 5.36999C6.01271 4.78346 6.15132 4.51504 6.33318 4.33318Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">通过手机号</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">需要验证</div>
+                            <div class="icon-expand">
+                                <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3711 9.79928C11.5924 9.5783 11.9507 9.57814 12.1719 9.79928C12.3931 10.0205 12.3929 10.3787 12.1719 10.6001L8.40044 14.3715L8.35747 14.4106C8.1349 14.5921 7.80711 14.579 7.59966 14.3715L3.82817 10.6001L3.78911 10.5581C3.60758 10.3355 3.62071 10.0068 3.82817 9.79928C4.03564 9.59186 4.36441 9.5787 4.58696 9.76022L4.62895 9.79928L8.00005 13.1704L11.3711 9.79928ZM7.64263 1.58932C7.86517 1.40791 8.19301 1.42101 8.40044 1.62839L12.1719 5.39987L12.211 5.44284C12.3923 5.66539 12.3793 5.99327 12.1719 6.20065C11.9645 6.40812 11.6357 6.42125 11.4131 6.23971L11.3711 6.20065L8.00005 2.82956L4.62895 6.20065C4.40764 6.42175 4.0494 6.42188 3.82817 6.20065C3.607 5.97942 3.60709 5.62116 3.82817 5.39987L7.59966 1.62839L7.64263 1.58932Z" fill="currentColor"/>
+</svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.7237 18.7347C15.7151 18.826 15.698 18.9147 15.6731 19C15.5857 19.2995 15.4026 19.557 15.16 19.7357C14.9342 19.902 14.6568 20 14.357 20H3.373C2.61471 20 2 19.3732 2 18.6C2 15.8962 3.87926 13.6399 6.37859 13.1151C6.73814 13.0397 7.11052 13 7.49199 13H10.238C10.6194 13 10.9918 13.0397 11.3514 13.1151C11.7902 13.2073 12.2099 13.3528 12.6037 13.5447C12.8603 13.6698 13.1058 13.8146 13.3385 13.9771C13.4467 14.0527 13.5521 14.1321 13.6545 14.2152C13.9084 14.0456 14.182 13.9042 14.4711 13.7952C14.9117 13.629 15.388 13.5383 15.8852 13.5383H17.9237C18.4208 13.5383 18.8972 13.629 19.3378 13.7952C19.3846 13.8128 19.431 13.8313 19.477 13.8507C19.7416 13.9619 19.9922 14.1008 20.2254 14.2637C20.6327 14.5483 20.9868 14.9063 21.2693 15.319C21.3565 15.4464 21.4368 15.579 21.5098 15.7162C21.5709 15.831 21.6267 15.949 21.6772 16.0699C21.7364 16.2119 21.7881 16.3581 21.8318 16.5077C21.9417 16.884 22.0007 17.2827 22.0007 17.6954C22.0007 17.7986 21.9859 17.8983 21.9584 17.9924C21.8629 18.3197 21.6135 18.5795 21.2957 18.6844C21.1967 18.7171 21.0911 18.7347 20.9814 18.7347H15.7237ZM15.5025 17C15.4222 16.7246 15.3215 16.458 15.2025 16.2021C15.1923 16.1803 15.182 16.1585 15.1715 16.1367C15.0657 15.9169 14.9462 15.7051 14.8141 15.5026C15.1387 15.333 15.5037 15.2383 15.8852 15.2383H17.9237C18.9929 15.2383 19.9324 15.9821 20.2145 17.0347H15.5126C15.5093 17.0231 15.5059 17.0116 15.5025 17ZM10.238 14.7C12.2058 14.7 13.8694 16.2598 14.019 18.3H3.71095C3.86059 16.2598 5.52419 14.7 7.49199 14.7H10.238Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.49199 11.7482C7.21492 11.6426 6.95271 11.506 6.70939 11.3425C5.64476 10.6272 4.94214 9.39728 4.94214 8C4.94214 5.79086 6.69845 4 8.86498 4C11.0315 4 12.7878 5.79086 12.7878 8C12.7878 9.39728 12.0852 10.6272 11.0206 11.3425C10.7773 11.506 10.515 11.6426 10.238 11.7482C9.81065 11.911 9.34801 12 8.86498 12C8.38196 12 7.91932 11.911 7.49199 11.7482ZM11.0878 8C11.0878 9.30162 10.0616 10.3 8.86498 10.3C7.6684 10.3 6.64214 9.30162 6.64214 8C6.64214 6.69838 7.6684 5.7 8.86498 5.7C10.0616 5.7 11.0878 6.69838 11.0878 8Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M14.8504 11.9315C15.1415 12.2268 15.4933 12.4597 15.8852 12.609C16.2024 12.7299 16.5459 12.796 16.9044 12.796C17.263 12.796 17.6065 12.7299 17.9237 12.609C18.3155 12.4597 18.6674 12.2268 18.9584 11.9315C19.4885 11.3938 19.8166 10.6492 19.8166 9.82657C19.8166 8.18662 18.5128 6.85718 16.9044 6.85718C15.2961 6.85718 13.9923 8.18662 13.9923 9.82657C13.9923 10.6492 14.3204 11.3938 14.8504 11.9315ZM16.9044 11.096C17.5428 11.096 18.1166 10.559 18.1166 9.82657C18.1166 9.09414 17.5428 8.55718 16.9044 8.55718C16.2661 8.55718 15.6923 9.09414 15.6923 9.82657C15.6923 10.559 16.2661 11.096 16.9044 11.096Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">通过群聊</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">允许</div>
+                            <div class="icon-expand">
+                                <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3711 9.79928C11.5924 9.5783 11.9507 9.57814 12.1719 9.79928C12.3931 10.0205 12.3929 10.3787 12.1719 10.6001L8.40044 14.3715L8.35747 14.4106C8.1349 14.5921 7.80711 14.579 7.59966 14.3715L3.82817 10.6001L3.78911 10.5581C3.60758 10.3355 3.62071 10.0068 3.82817 9.79928C4.03564 9.59186 4.36441 9.5787 4.58696 9.76022L4.62895 9.79928L8.00005 13.1704L11.3711 9.79928ZM7.64263 1.58932C7.86517 1.40791 8.19301 1.42101 8.40044 1.62839L12.1719 5.39987L12.211 5.44284C12.3923 5.66539 12.3793 5.99327 12.1719 6.20065C11.9645 6.40812 11.6357 6.42125 11.4131 6.23971L11.3711 6.20065L8.00005 2.82956L4.62895 6.20065C4.40764 6.42175 4.0494 6.42188 3.82817 6.20065C3.607 5.97942 3.60709 5.62116 3.82817 5.39987L7.59966 1.62839L7.64263 1.58932Z" fill="currentColor"/>
+</svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.4833 9.80435C15.3928 11.5882 13.9624 13.0185 12.1786 13.109L11.9989 13.1129C10.1323 13.1129 8.60805 11.6477 8.51455 9.80435L8.51065 9.62466C8.51082 7.69805 10.0721 6.13638 11.9989 6.13638L12.1786 6.14028C14.0219 6.23382 15.487 7.7583 15.4872 9.62466L15.4833 9.80435ZM13.7782 9.44204C13.6927 8.59998 13.0235 7.93077 12.1815 7.84536L11.9989 7.8356C11.0728 7.8356 10.3112 8.53989 10.2196 9.44204L10.2099 9.62466C10.2099 10.6126 11.011 11.4137 11.9989 11.4137L12.1815 11.404C13.0837 11.3125 13.788 10.5509 13.788 9.62466L13.7782 9.44204Z" fill="currentColor"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.1974 3.3999C8.58691 3.39989 7.30594 3.39988 6.28828 3.5149C5.24238 3.63311 4.36967 3.88181 3.62743 4.45339C3.28086 4.72027 2.97027 5.03086 2.70339 5.37743C2.13181 6.11967 1.88311 6.99238 1.7649 8.03828C1.64988 9.05594 1.64989 10.3369 1.6499 11.9474V12.0524C1.64989 13.6629 1.64988 14.9439 1.7649 15.9615C1.88311 17.0074 2.13181 17.8801 2.70339 18.6224C2.97027 18.9689 3.28086 19.2795 3.62743 19.5464C4.36967 20.118 5.24238 20.3667 6.28828 20.4849C7.30593 20.5999 8.5869 20.5999 10.1974 20.5999H13.8024C15.4129 20.5999 16.6939 20.5999 17.7115 20.4849C18.7574 20.3667 19.6301 20.118 20.3724 19.5464C20.7189 19.2795 21.0295 18.9689 21.2964 18.6224C21.868 17.8801 22.1167 17.0074 22.2349 15.9615C22.3499 14.9439 22.3499 13.6629 22.3499 12.0524V11.9475C22.3499 10.3369 22.3499 9.05593 22.2349 8.03828C22.1167 6.99238 21.868 6.11967 21.2964 5.37743C21.0295 5.03086 20.7189 4.72027 20.3724 4.45339C19.6301 3.88181 18.7574 3.63311 17.7115 3.5149C16.6939 3.39988 15.4129 3.39989 13.8024 3.3999H10.1974ZM4.66464 5.8003C5.06118 5.49494 5.58538 5.30517 6.4792 5.20414C7.39024 5.10117 8.57505 5.0999 10.2499 5.0999H13.7499C15.4248 5.0999 16.6096 5.10117 17.5206 5.20414C18.4144 5.30517 18.9386 5.49494 19.3352 5.8003C19.5656 5.97774 19.7721 6.18423 19.9495 6.41464C20.2549 6.81118 20.4446 7.33538 20.5457 8.2292C20.6486 9.14024 20.6499 10.3251 20.6499 11.9999C20.6499 13.6748 20.6486 14.8596 20.5457 15.7706C20.4446 16.6644 20.2549 17.1886 19.9495 17.5852C19.7721 17.8156 19.5656 18.0221 19.3352 18.1995C18.9386 18.5049 18.4144 18.6946 17.5206 18.7957C17.3775 18.8118 17.2277 18.8255 17.0702 18.837V17.8405C17.0701 15.7431 15.4236 14.0308 13.3524 13.9254L13.1503 13.9206H10.8466C8.68162 13.9208 6.92675 15.6753 6.92666 17.8405V18.8368C6.77029 18.8253 6.62141 18.8117 6.4792 18.7957C5.58538 18.6946 5.06118 18.5049 4.66464 18.1995C4.43423 18.0221 4.22774 17.8156 4.0503 17.5852C3.74494 17.1886 3.55517 16.6644 3.45414 15.7706C3.35117 14.8596 3.3499 13.6748 3.3499 11.9999C3.3499 10.3251 3.35117 9.14024 3.45414 8.2292C3.55517 7.33538 3.74494 6.81118 4.0503 6.41464C4.22774 6.18423 4.43423 5.97774 4.66464 5.8003ZM8.62588 18.8948C9.11076 18.8997 9.64877 18.8999 10.2499 18.8999H13.7499C14.3498 18.8999 14.8869 18.8997 15.371 18.8948V17.8405L15.3593 17.6139C15.2533 16.5686 14.4223 15.7375 13.3769 15.6315L13.1503 15.6198H10.8466C9.69674 15.62 8.75114 16.4942 8.6376 17.6139L8.62588 17.8405V18.8948Z" fill="currentColor"/>
+</svg>
+                            </div>
+                            <div class="text-group"><div class="title">通过名片</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">允许</div>
+                            <div class="icon-expand">
+                                <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3711 9.79928C11.5924 9.5783 11.9507 9.57814 12.1719 9.79928C12.3931 10.0205 12.3929 10.3787 12.1719 10.6001L8.40044 14.3715L8.35747 14.4106C8.1349 14.5921 7.80711 14.579 7.59966 14.3715L3.82817 10.6001L3.78911 10.5581C3.60758 10.3355 3.62071 10.0068 3.82817 9.79928C4.03564 9.59186 4.36441 9.5787 4.58696 9.76022L4.62895 9.79928L8.00005 13.1704L11.3711 9.79928ZM7.64263 1.58932C7.86517 1.40791 8.19301 1.42101 8.40044 1.62839L12.1719 5.39987L12.211 5.44284C12.3923 5.66539 12.3793 5.99327 12.1719 6.20065C11.9645 6.40812 11.6357 6.42125 11.4131 6.23971L11.3711 6.20065L8.00005 2.82956L4.62895 6.20065C4.40764 6.42175 4.0494 6.42188 3.82817 6.20065C3.607 5.97942 3.60709 5.62116 3.82817 5.39987L7.59966 1.62839L7.64263 1.58932Z" fill="currentColor"/>
+</svg>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group-footer">关闭后，陌生人将无法通过任何方式添加您。</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 3：互斥关系 · R5 右侧勾选互斥 · 主题外观                -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-3">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.6013 2.39886C15.9332 2.73081 15.9332 3.269 15.6013 3.60094L7.73265 11.4696C7.52472 11.6775 7.40539 11.7978 7.32481 11.8927C7.29186 11.9315 7.27547 11.9548 7.26844 11.9656C7.26312 11.9881 7.26312 12.0117 7.26844 12.0343C7.27547 12.045 7.29186 12.0683 7.32481 12.1071C7.4054 12.202 7.52473 12.3223 7.73265 12.5302L15.6013 20.3989C15.9332 20.7308 15.9332 21.269 15.6013 21.6009C15.2693 21.9329 14.7311 21.9329 14.3992 21.6009L6.51032 13.7121C6.32975 13.5315 6.15991 13.3617 6.02883 13.2073C5.88642 13.0396 5.74058 12.835 5.655 12.5716C5.53427 12.2 5.53427 11.7998 5.655 11.4282C5.74058 11.1648 5.88642 10.9602 6.02883 10.7925C6.15991 10.6381 6.32976 10.4683 6.51033 10.2877L14.3992 2.39886C14.7311 2.06692 15.2693 2.06692 15.6013 2.39886Z" fill="currentColor"/>
+</svg>
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">主题外观</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 · 外观（L1 + R5 单选互斥） -->
+        <div class="form-group">
+            <div class="form-group-header">外观模式</div>
+            <div class="form-group-content" data-exclusive-group="appearance">
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">跟随系统</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">浅色模式</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox data-checked></div></div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">深色模式</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片 · 聊天气泡颜色（L3 + R5 单选互斥） -->
+        <div class="form-group">
+            <div class="form-group-header">聊天气泡颜色</div>
+            <div class="form-group-content" data-exclusive-group="bubble">
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--brand-standard)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">经典蓝</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox data-checked></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--accent-red)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">珊瑚红</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--accent-green)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">薄荷绿</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--text-primary)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">深邃黑</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 4：互斥关系 · 左侧 tick 互斥 · 字体大小                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-4">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.6013 2.39886C15.9332 2.73081 15.9332 3.269 15.6013 3.60094L7.73265 11.4696C7.52472 11.6775 7.40539 11.7978 7.32481 11.8927C7.29186 11.9315 7.27547 11.9548 7.26844 11.9656C7.26312 11.9881 7.26312 12.0117 7.26844 12.0343C7.27547 12.045 7.29186 12.0683 7.32481 12.1071C7.4054 12.202 7.52473 12.3223 7.73265 12.5302L15.6013 20.3989C15.9332 20.7308 15.9332 21.269 15.6013 21.6009C15.2693 21.9329 14.7311 21.9329 14.3992 21.6009L6.51032 13.7121C6.32975 13.5315 6.15991 13.3617 6.02883 13.2073C5.88642 13.0396 5.74058 12.835 5.655 12.5716C5.53427 12.2 5.53427 11.7998 5.655 11.4282C5.74058 11.1648 5.88642 10.9602 6.02883 10.7925C6.15991 10.6381 6.32976 10.4683 6.51033 10.2877L14.3992 2.39886C14.7311 2.06692 15.2693 2.06692 15.6013 2.39886Z" fill="currentColor"/>
+</svg>
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">字体</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 A · 字号（L8/L9 互斥 + R0） -->
+        <div class="form-group">
+            <div class="form-group-header">字号</div>
+            <div class="form-group-content" data-tick-group="size">
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-left" data-tick>
+                            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.416 4.28227C20.7793 3.98593 21.3156 4.00709 21.6543 4.34574C21.993 4.6844 22.0141 5.22071 21.7178 5.58403L21.6543 5.65434L10.7852 16.5225C10.598 16.7097 10.4189 16.89 10.2559 17.0284C10.1274 17.1374 9.97566 17.2512 9.79102 17.3389L9.59473 17.417C9.25663 17.5268 8.89557 17.5404 8.55176 17.458L8.40527 17.417C8.12872 17.3272 7.91544 17.1738 7.74414 17.0284C7.66263 16.9592 7.57686 16.8797 7.48828 16.794L7.21484 16.5225L2.3457 11.6543L2.28223 11.584C1.9859 11.2207 2.00705 10.6844 2.3457 10.3457C2.68436 10.0071 3.22067 9.98594 3.58399 10.2823L3.6543 10.3457L8.52246 15.2149L8.77539 15.4659C8.84244 15.5309 8.89538 15.5791 8.94141 15.6182C8.96391 15.6373 8.98109 15.6491 8.99219 15.6573C8.99761 15.6579 9.00239 15.6579 9.00781 15.6573C9.01891 15.6491 9.03608 15.6373 9.05859 15.6182C9.15064 15.5401 9.26876 15.4237 9.47754 15.2149L20.3457 4.34574L20.416 4.28227Z" fill="#0099FF"/>
+</svg>
+                        </div>
+                        <div class="text-group"><div class="title">标准</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 17</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 19</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">特大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 21</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">超大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 23</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片 B · 字体（L10/L11 互斥 + R1） -->
+        <div class="form-group">
+            <div class="form-group-header">字体</div>
+            <div class="form-group-content" data-tick-group="font">
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-left" data-tick>
+                            <svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.416 4.28227C20.7793 3.98593 21.3156 4.00709 21.6543 4.34574C21.993 4.6844 22.0141 5.22071 21.7178 5.58403L21.6543 5.65434L10.7852 16.5225C10.598 16.7097 10.4189 16.89 10.2559 17.0284C10.1274 17.1374 9.97566 17.2512 9.79102 17.3389L9.59473 17.417C9.25663 17.5268 8.89557 17.5404 8.55176 17.458L8.40527 17.417C8.12872 17.3272 7.91544 17.1738 7.74414 17.0284C7.66263 16.9592 7.57686 16.8797 7.48828 16.794L7.21484 16.5225L2.3457 11.6543L2.28223 11.584C1.9859 11.2207 2.00705 10.6844 2.3457 10.3457C2.68436 10.0071 3.22067 9.98594 3.58399 10.2823L3.6543 10.3457L8.52246 15.2149L8.77539 15.4659C8.84244 15.5309 8.89538 15.5791 8.94141 15.6182C8.96391 15.6373 8.98109 15.6491 8.99219 15.6573C8.99761 15.6579 9.00239 15.6579 9.00781 15.6573C9.01891 15.6491 9.03608 15.6373 9.05859 15.6182C9.15064 15.5401 9.26876 15.4237 9.47754 15.2149L20.3457 4.34574L20.416 4.28227Z" fill="#0099FF"/>
+</svg>
+                        </div>
+                        <div class="text-group">
+                            <div class="title">系统字体</div>
+                            <div class="subtitle">PingFang SC 默认</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group">
+                            <div class="title">思源黑体</div>
+                            <div class="subtitle">Source Han Sans</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group">
+                            <div class="title">霞鹜文楷</div>
+                            <div class="subtitle">LXGW WenKai</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-footer">调整后立即生效。</div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 5：卡片式列表 + 输入框 A/B/C 组合 · 编辑资料            -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-5">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M15.6013 2.39886C15.9332 2.73081 15.9332 3.269 15.6013 3.60094L7.73265 11.4696C7.52472 11.6775 7.40539 11.7978 7.32481 11.8927C7.29186 11.9315 7.27547 11.9548 7.26844 11.9656C7.26312 11.9881 7.26312 12.0117 7.26844 12.0343C7.27547 12.045 7.29186 12.0683 7.32481 12.1071C7.4054 12.202 7.52473 12.3223 7.73265 12.5302L15.6013 20.3989C15.9332 20.7308 15.9332 21.269 15.6013 21.6009C15.2693 21.9329 14.7311 21.9329 14.3992 21.6009L6.51032 13.7121C6.32975 13.5315 6.15991 13.3617 6.02883 13.2073C5.88642 13.0396 5.74058 12.835 5.655 12.5716C5.53427 12.2 5.53427 11.7998 5.655 11.4282C5.74058 11.1648 5.88642 10.9602 6.02883 10.7925C6.15991 10.6381 6.32976 10.4683 6.51033 10.2877L14.3992 2.39886C14.7311 2.06692 15.2693 2.06692 15.6013 2.39886Z" fill="currentColor"/>
+</svg>
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">编辑资料</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 顶部卡片 · 基础信息（嵌入 B / B / C 输入框） -->
+        <div class="form-group">
+            <div class="form-group-header">基础信息</div>
+            <div class="form-group-content">
+                <!-- B 类：昵称（完成态，已填） -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">昵称</div>
+                    <input class="tf-input" type="text" placeholder="请输入昵称" value="小张同学" maxlength="20">
+                    <div class="tf-clear">
+                        <svg class="icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.99902 1.66602C14.6013 1.66602 18.3328 5.3968 18.333 9.99902C18.333 14.6014 14.6014 18.333 9.99902 18.333C5.3968 18.3328 1.66602 14.6013 1.66602 9.99902C1.66619 5.39691 5.39691 1.66619 9.99902 1.66602ZM13.5654 6.43457C13.2531 6.12223 12.747 6.1224 12.4346 6.43457L9.99902 8.86914L7.56543 6.43457C7.25309 6.12223 6.74701 6.1224 6.43457 6.43457C6.12223 6.74691 6.12142 7.25299 6.43359 7.56543L8.86816 10L6.43457 12.4346C6.12215 12.747 6.12215 13.253 6.43457 13.5654C6.74701 13.8776 7.25309 13.8778 7.56543 13.5654L9.99902 11.1309L12.4336 13.5654C12.7459 13.8778 13.252 13.8776 13.5645 13.5654C13.8769 13.253 13.8769 12.747 13.5645 12.4346L11.1299 10L13.5654 7.56543C13.8775 7.25307 13.8775 6.74693 13.5654 6.43457Z" fill="#929296"/>
+</svg>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <!-- B 类：QQ 号（已填完成态，可交互） -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">QQ 号</div>
+                    <input class="tf-input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="请输入 QQ 号" value="88888888" maxlength="11">
+                    <div class="tf-clear">
+                        <svg class="icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.99902 1.66602C14.6013 1.66602 18.3328 5.3968 18.333 9.99902C18.333 14.6014 14.6014 18.333 9.99902 18.333C5.3968 18.3328 1.66602 14.6013 1.66602 9.99902C1.66619 5.39691 5.39691 1.66619 9.99902 1.66602ZM13.5654 6.43457C13.2531 6.12223 12.747 6.1224 12.4346 6.43457L9.99902 8.86914L7.56543 6.43457C7.25309 6.12223 6.74701 6.1224 6.43457 6.43457C6.12223 6.74691 6.12142 7.25299 6.43359 7.56543L8.86816 10L6.43457 12.4346C6.12215 12.747 6.12215 13.253 6.43457 13.5654C6.74701 13.8776 7.25309 13.8778 7.56543 13.5654L9.99902 11.1309L12.4336 13.5654C12.7459 13.8778 13.252 13.8776 13.5645 13.5654C13.8769 13.253 13.8769 12.747 13.5645 12.4346L11.1299 10L13.5654 7.56543C13.8775 7.25307 13.8775 6.74693 13.5654 6.43457Z" fill="#929296"/>
+</svg>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <!-- C 类：手机号 -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">手机号</div>
+                    <input class="tf-input" type="tel" placeholder="请输入手机号" maxlength="11">
+                    <div class="tf-clear">
+                        <svg class="icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.99902 1.66602C14.6013 1.66602 18.3328 5.3968 18.333 9.99902C18.333 14.6014 14.6014 18.333 9.99902 18.333C5.3968 18.3328 1.66602 14.6013 1.66602 9.99902C1.66619 5.39691 5.39691 1.66619 9.99902 1.66602ZM13.5654 6.43457C13.2531 6.12223 12.747 6.1224 12.4346 6.43457L9.99902 8.86914L7.56543 6.43457C7.25309 6.12223 6.74701 6.1224 6.43457 6.43457C6.12223 6.74691 6.12142 7.25299 6.43359 7.56543L8.86816 10L6.43457 12.4346C6.12215 12.747 6.12215 13.253 6.43457 13.5654C6.74701 13.8776 7.25309 13.8778 7.56543 13.5654L9.99902 11.1309L12.4336 13.5654C12.7459 13.8778 13.252 13.8776 13.5645 13.5654C13.8769 13.253 13.8769 12.747 13.5645 12.4346L11.1299 10L13.5654 7.56543C13.8775 7.25307 13.8775 6.74693 13.5654 6.43457Z" fill="#929296"/>
+</svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中部卡片 · 更多资料（L1+R1 / L1+R2 Grouped List 行） -->
+        <div class="form-group">
+            <div class="form-group-header">更多资料</div>
+            <div class="form-group-content">
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">地区</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">广东 深圳</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">生日</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">2000-01-01</div>
+                        <div class="icon-arrow">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.93281 1.59932C4.71151 1.82062 4.71151 2.17941 4.93281 2.40071L10.1786 7.64646C10.3172 7.78508 10.3967 7.86526 10.4505 7.92854C10.4724 7.95442 10.4833 7.96992 10.488 7.97712C10.4916 7.99218 10.4916 8.00786 10.488 8.02292C10.4833 8.03011 10.4724 8.04561 10.4505 8.07149C10.3967 8.13478 10.3172 8.21495 10.1786 8.35357L4.93281 13.5993C4.71151 13.8206 4.71151 14.1794 4.93281 14.4007C5.1541 14.622 5.5129 14.622 5.73419 14.4007L10.9934 9.14146C11.1138 9.0211 11.2271 8.90789 11.3144 8.80496C11.4094 8.69312 11.5066 8.55673 11.5637 8.38114C11.6441 8.13343 11.6441 7.8666 11.5637 7.6189C11.5066 7.44331 11.4094 7.30691 11.3144 7.19508C11.2271 7.09214 11.1138 6.97892 10.9934 6.85856L5.73419 1.59932C5.5129 1.37803 5.1541 1.37803 4.93281 1.59932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">性别</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">保密</div>
+                        <div class="icon-expand">
+                            <svg class="icon-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M11.3711 9.79928C11.5924 9.5783 11.9507 9.57814 12.1719 9.79928C12.3931 10.0205 12.3929 10.3787 12.1719 10.6001L8.40044 14.3715L8.35747 14.4106C8.1349 14.5921 7.80711 14.579 7.59966 14.3715L3.82817 10.6001L3.78911 10.5581C3.60758 10.3355 3.62071 10.0068 3.82817 9.79928C4.03564 9.59186 4.36441 9.5787 4.58696 9.76022L4.62895 9.79928L8.00005 13.1704L11.3711 9.79928ZM7.64263 1.58932C7.86517 1.40791 8.19301 1.42101 8.40044 1.62839L12.1719 5.39987L12.211 5.44284C12.3923 5.66539 12.3793 5.99327 12.1719 6.20065C11.9645 6.40812 11.6357 6.42125 11.4131 6.23971L11.3711 6.20065L8.00005 2.82956L4.62895 6.20065C4.40764 6.42175 4.0494 6.42188 3.82817 6.20065C3.607 5.97942 3.60709 5.62116 3.82817 5.39987L7.59966 1.62839L7.64263 1.58932Z" fill="currentColor"/>
+</svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部卡片 · 签名（A 类单行无标题，带字数统计） -->
+        <div class="form-group">
+            <div class="form-group-header">个性签名</div>
+            <div class="form-group-content">
+                <div class="tf-row" data-tf-row data-tf-count="p5-sig">
+                    <input class="tf-input" type="text" placeholder="写点什么…" maxlength="40" data-tf-input="p5-sig">
+                    <div class="tf-clear">
+                        <svg class="icon-svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M9.99902 1.66602C14.6013 1.66602 18.3328 5.3968 18.333 9.99902C18.333 14.6014 14.6014 18.333 9.99902 18.333C5.3968 18.3328 1.66602 14.6013 1.66602 9.99902C1.66619 5.39691 5.39691 1.66619 9.99902 1.66602ZM13.5654 6.43457C13.2531 6.12223 12.747 6.1224 12.4346 6.43457L9.99902 8.86914L7.56543 6.43457C7.25309 6.12223 6.74701 6.1224 6.43457 6.43457C6.12223 6.74691 6.12142 7.25299 6.43359 7.56543L8.86816 10L6.43457 12.4346C6.12215 12.747 6.12215 13.253 6.43457 13.5654C6.74701 13.8776 7.25309 13.8778 7.56543 13.5654L9.99902 11.1309L12.4336 13.5654C12.7459 13.8778 13.252 13.8776 13.5645 13.5654C13.8769 13.253 13.8769 12.747 13.5645 12.4346L11.1299 10L13.5654 7.56543C13.8775 7.25307 13.8775 6.74693 13.5654 6.43457Z" fill="#929296"/>
+</svg>
+                    </div>
+                </div>
+            </div>
+            <div class="tf-footer">
+                <span>资料将在 24 小时内对好友可见</span>
+                <span class="count" data-tf-counter="p5-sig">20字</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+</div><!-- /.stage -->
+
+<script>
+// =========================================================
+// 1. Switch 开关切换 + 父子联动
+// =========================================================
+document.addEventListener('click', function(e) {
+    const sw = e.target.closest('.form-switch');
+    if (sw) {
+        e.stopPropagation();
+        sw.classList.toggle('off');
+        // 父子联动
+        const parentKey = sw.dataset.switch;
+        if (parentKey) {
+            const childWrap = document.querySelector(`.child-wrap[data-child-of="${parentKey}"]`);
+            if (childWrap) {
+                const isOff = sw.classList.contains('off');
+                // 确保存在 .child-inner 包裹（内层 transform/opacity 动画容器）
+                let inner = childWrap.querySelector(':scope > .child-inner');
+                if (!inner) {
+                    inner = document.createElement('div');
+                    inner.className = 'child-inner';
+                    while (childWrap.firstChild) inner.appendChild(childWrap.firstChild);
+                    childWrap.appendChild(inner);
+                }
+                animateChild(childWrap, inner, isOff);
+                // 同步父行 chevron 旋转（如需）
+                const parentRow = sw.closest('[data-parent-icon-rotate]');
+                if (parentRow) parentRow.classList.toggle('is-collapsed', isOff);
+            }
+        }
+        return;
+    }
+});
+
+// 精确高度动画：读入 scrollHeight → 写入 --h → 双帧 rAF 后切 class，避免浏览器合帧导致跳动
+function animateChild(wrap, inner, collapse) {
+    // 清理上一次未完成的动画监听
+    if (wrap._endHandler) wrap.removeEventListener('transitionend', wrap._endHandler);
+
+    const targetH = inner.scrollHeight + 'px';
+    if (collapse) {
+        // 收起：先将 height 从 auto 固定为当前真实值，再下一帧切 collapsed
+        wrap.style.setProperty('--h', targetH);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            wrap.classList.add('collapsed');
+        }));
+    } else {
+        // 展开：从 0 过渡到真实高度，动画结束后恢复 auto允许后续内容自适应
+        wrap.style.setProperty('--h', targetH);
+        wrap.classList.remove('collapsed');
+        const onEnd = (ev) => {
+            if (ev.propertyName !== 'height') return;
+            wrap.style.setProperty('--h', 'auto');
+            wrap.removeEventListener('transitionend', onEnd);
+            wrap._endHandler = null;
+        };
+        wrap._endHandler = onEnd;
+        wrap.addEventListener('transitionend', onEnd);
+    }
+}
+
+// =========================================================
+// 2. R5 右侧勾选互斥（checkbox）
+// =========================================================
+document.addEventListener('click', function(e) {
+    const row = e.target.closest('[data-r5-row]');
+    if (!row) return;
+    const group = row.closest('[data-exclusive-group]');
+    if (!group) return;
+    // 清除同组所有勾选
+    group.querySelectorAll('[data-checkbox]').forEach(cb => {
+        cb.removeAttribute('data-checked');
+    });
+    // 当前行勾选
+    const cb = row.querySelector('[data-checkbox]');
+    if (cb) cb.setAttribute('data-checked', '');
+});
+
+// 渲染 R5 选中态：统一使用 tick.svg（iOS 风格单选勾）。
+// 未选中时不显示图标，仅保留 22px 占位
+ function renderCheckbox(cb) {
+    const checked = cb.hasAttribute('data-checked');
+    if (checked) {
+        cb.innerHTML = `<svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.416 4.28227C20.7793 3.98593 21.3156 4.00709 21.6543 4.34574C21.993 4.6844 22.0141 5.22071 21.7178 5.58403L21.6543 5.65434L10.7852 16.5225C10.598 16.7097 10.4189 16.89 10.2559 17.0284C10.1274 17.1374 9.97566 17.2512 9.79102 17.3389L9.59473 17.417C9.25663 17.5268 8.89557 17.5404 8.55176 17.458L8.40527 17.417C8.12872 17.3272 7.91544 17.1738 7.74414 17.0284C7.66263 16.9592 7.57686 16.8797 7.48828 16.794L7.21484 16.5225L2.3457 11.6543L2.28223 11.584C1.9859 11.2207 2.00705 10.6844 2.3457 10.3457C2.68436 10.0071 3.22067 9.98594 3.58399 10.2823L3.6543 10.3457L8.52246 15.2149L8.77539 15.4659C8.84244 15.5309 8.89538 15.5791 8.94141 15.6182C8.96391 15.6373 8.98109 15.6491 8.99219 15.6573C8.99761 15.6579 9.00239 15.6579 9.00781 15.6573C9.01891 15.6491 9.03608 15.6373 9.05859 15.6182C9.15064 15.5401 9.26876 15.4237 9.47754 15.2149L20.3457 4.34574L20.416 4.28227Z" fill="#0099FF"/>
+</svg>`;
+    } else {
+        cb.innerHTML = '';
+    }
+}
+document.querySelectorAll('[data-checkbox]').forEach(renderCheckbox);
+// 监听属性变化重绘
+const cbObserver = new MutationObserver(muts => {
+    muts.forEach(m => {
+        if (m.attributeName === 'data-checked') renderCheckbox(m.target);
+    });
+});
+document.querySelectorAll('[data-checkbox]').forEach(cb => {
+    cbObserver.observe(cb, { attributes: true });
+});
+
+// =========================================================
+// 3. 左侧 tick 互斥（L8/L9、L10/L11）
+// =========================================================
+const TICK_IMG = `<svg class="icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M20.416 4.28227C20.7793 3.98593 21.3156 4.00709 21.6543 4.34574C21.993 4.6844 22.0141 5.22071 21.7178 5.58403L21.6543 5.65434L10.7852 16.5225C10.598 16.7097 10.4189 16.89 10.2559 17.0284C10.1274 17.1374 9.97566 17.2512 9.79102 17.3389L9.59473 17.417C9.25663 17.5268 8.89557 17.5404 8.55176 17.458L8.40527 17.417C8.12872 17.3272 7.91544 17.1738 7.74414 17.0284C7.66263 16.9592 7.57686 16.8797 7.48828 16.794L7.21484 16.5225L2.3457 11.6543L2.28223 11.584C1.9859 11.2207 2.00705 10.6844 2.3457 10.3457C2.68436 10.0071 3.22067 9.98594 3.58399 10.2823L3.6543 10.3457L8.52246 15.2149L8.77539 15.4659C8.84244 15.5309 8.89538 15.5791 8.94141 15.6182C8.96391 15.6373 8.98109 15.6491 8.99219 15.6573C8.99761 15.6579 9.00239 15.6579 9.00781 15.6573C9.01891 15.6491 9.03608 15.6373 9.05859 15.6182C9.15064 15.5401 9.26876 15.4237 9.47754 15.2149L20.3457 4.34574L20.416 4.28227Z" fill="#0099FF"/>
+</svg>`;
+
+document.addEventListener('click', function(e) {
+    const row = e.target.closest('[data-tick-row]');
+    if (!row) return;
+    const group = row.closest('[data-tick-group]');
+    if (!group) return;
+    // 切换所有行的 tick 状态
+    group.querySelectorAll('[data-tick-row]').forEach(r => {
+        const tickEl = r.querySelector('[data-tick]');
+        if (!tickEl) return;
+        if (r === row) {
+            tickEl.classList.remove('tick-placeholder');
+            tickEl.classList.add('tick-left');
+            tickEl.innerHTML = TICK_IMG;
+        } else {
+            tickEl.classList.remove('tick-left');
+            tickEl.classList.add('tick-placeholder');
+            tickEl.innerHTML = '';
+        }
+    });
+});
+
+// =========================================================
+// 4. Textfield A/B/C 5 态交互
+// =========================================================
+document.querySelectorAll('[data-tf-row]').forEach(row => {
+    const input = row.querySelector('.tf-input');
+    const clear = row.querySelector('.tf-clear');
+    if (!input) return;
+
+    function updateState() {
+        const hasValue = input.value.length > 0;
+        row.classList.toggle('tf-typing', hasValue && document.activeElement === input);
+        // 字数统计
+        const counterId = row.dataset.tfCount;
+        if (counterId) {
+            const counter = document.querySelector(`[data-tf-counter="${counterId}"]`);
+            if (counter) {
+                const max = parseInt(input.getAttribute('maxlength')) || 40;
+                const len = input.value.length;
+                if (hasValue || document.activeElement === input) {
+                    counter.textContent = `${len}/${max}字`;
+                } else {
+                    counter.textContent = `${max}字`;
+                }
+                counter.classList.toggle('error', len > 20);
+            }
+        }
+    }
+
+    input.addEventListener('focus', updateState);
+    input.addEventListener('blur', () => {
+        row.classList.remove('tf-typing');
+        updateState();
+    });
+    input.addEventListener('input', updateState);
+
+    if (clear) {
+        clear.addEventListener('mousedown', e => e.preventDefault());
+        clear.addEventListener('click', () => {
+            input.value = '';
+            input.focus();
+            updateState();
+        });
+    }
+    updateState();
+});
+</script>
+
+</body>
+</html>

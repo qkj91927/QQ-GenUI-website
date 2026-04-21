@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="qq-light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设置页模板 · QUI Basic 1.0</title>
+<link rel="stylesheet" href="Basic 1.0/css/Qdesign Tokens.css">
+<link rel="stylesheet" href="Basic 1.0/css/Qdesign Color Tokens.css">
+<style>
+/* =========================================================
+   全局基础
+   ========================================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+    font-family: var(--font-family);
+    background: var(--bg-top);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+body {
+    padding: var(--spacing-xl);
+    min-height: 100vh;
+}
+
+/* 外层横向滚动容器（支持横向滚动，但隐藏滚动条） */
+.stage {
+    display: flex;
+    gap: 48px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: var(--spacing-m) 0 var(--spacing-l);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;      /* IE 10+ */
+}
+.stage::-webkit-scrollbar { display: none; } /* Chrome / Safari / Edge */
+
+/* 每个设备屏（iPhone 15/16 mockup，外框圆角参考 Apple iOS 设备实际弧度 55px） */
+.device {
+    flex-shrink: 0;
+    width: 428px;
+    height: 926px;
+    background: var(--bg-select);
+    border-radius: 55px;
+    overflow: hidden;
+    position: relative;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+}
+.device-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   StatusBar (54px)
+   ========================================================= */
+.status-bar {
+    width: 428px;
+    height: 54px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-xl);
+    background: transparent;
+    position: relative;
+    z-index: 5;
+}
+.status-bar .time {
+    font-family: -apple-system, "SF Pro", "Helvetica Neue", sans-serif;
+    font-size: var(--typo-body-l);
+    font-weight: 600;
+    color: var(--text-primary);
+    width: 80px;
+    text-align: center;
+    padding-top: 14px;
+}
+.status-bar .dynamic-island {
+    position: absolute;
+    left: 50%;
+    top: 11px;
+    transform: translateX(-50%);
+    width: 126px;
+    height: 37px;
+    background: var(--text-primary);
+    border-radius: var(--radius-full);
+}
+.status-bar .sys-icons {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding-top: 14px;
+}
+.status-bar .sys-icons .sig,
+.status-bar .sys-icons .wifi,
+.status-bar .sys-icons .bat {
+    width: 18px; height: 12px;
+    display: inline-block;
+    color: var(--icon-primary);
+}
+/* 用简单 SVG 内联渲染三图标（占位，符合满格视觉） */
+.status-bar .sys-icons svg { display: block; }
+
+/* =========================================================
+   NavBar (44px)
+   ========================================================= */
+.navbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--spacing-l);
+    width: 428px;
+    height: 44px;
+    flex-shrink: 0;
+    background: transparent;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.navbar-row .left-area,
+.navbar-row .right-area {
+    min-width: 60px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+.navbar-row .right-area { justify-content: flex-end; }
+.navbar-row .middle-area {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    width: 280px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    pointer-events: none;
+}
+.navbar-row .middle-area > * { pointer-events: auto; }
+.navbar-row .title {
+    font-size: var(--typo-title-2xs);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.navbar-row .icon-back {
+    width: 24px; height: 24px;
+    color: var(--icon-primary);
+    cursor: pointer;
+}
+.navbar-row .icon-back img { width: 24px; height: 24px; display: block; }
+
+/* =========================================================
+   页面内容滚动区
+   ========================================================= */
+.content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 50px; /* Home Bar 避让 */
+}
+.content::-webkit-scrollbar { display: none; }
+
+/* =========================================================
+   Home Bar (34px)
+   ========================================================= */
+.home-bar {
+    width: 428px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    pointer-events: none;
+}
+.home-bar-indicator {
+    width: 144px;
+    height: 5px;
+    background: var(--text-primary);
+    border-radius: 2.5px;
+}
+
+/* =========================================================
+   Grouped List (卡片式列表)
+   ========================================================= */
+.form-group {
+    width: 428px;
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--spacing-m);
+}
+.form-group-header {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    color: var(--text-secondary);
+    font-size: var(--typo-body-m);
+    font-weight: 500;
+    line-height: 22px;
+}
+.form-group-content {
+    background: var(--bg-bottom);
+    margin: 0 var(--spacing-l);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    width: 396px;
+}
+.form-group-footer {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--typo-body-s);
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* 单独卡片（无分组头尾） */
+.form-standalone {
+    width: 396px;
+    margin: var(--spacing-m) var(--spacing-l) 0;
+    background: var(--bg-bottom);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+}
+
+/* 行 */
+.form-row {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-l);
+    width: 100%;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+    transition: background var(--anim-press-in-duration) var(--anim-press-in-easing);
+}
+.form-row.single-line { height: 56px; }
+.form-row.double-line { height: 72px; }
+.form-row:active { background: var(--feedback-press); }
+
+/* 左侧区域 */
+.form-row .left-area {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    overflow: hidden;
+}
+.form-row .icon-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--icon-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-row .icon-left img { width: 24px; height: 24px; display: block; }
+.form-row .icon-secondary-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--icon-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* secondary.svg 官方图标使用 filter 实现 --icon-secondary 颜色 */
+.form-row .icon-secondary-left img {
+    width: 24px;
+    height: 24px;
+    display: block;
+    filter: opacity(0.6);
+}
+.form-row .tick-left {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--brand-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* tick.svg 自带品牌色，无需 filter */
+.form-row .tick-left img { width: 24px; height: 24px; display: block; }
+.form-row .tick-placeholder {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.form-row .avatar-left {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: var(--radius-full);
+    background: var(--fill-tertiary);
+}
+.form-row .text-group {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.form-row .title {
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.form-row .subtitle {
+    font-size: var(--typo-body-s);
+    color: var(--text-secondary);
+    line-height: 1.2;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 右侧区域 */
+.form-row .right-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-shrink: 0;
+    margin-left: var(--spacing-m);
+}
+.form-row .helper-text {
+    font-size: var(--typo-body-s);
+    line-height: 20px;
+    color: var(--text-secondary);
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.form-row .icon-arrow,
+.form-row .icon-expand {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: var(--icon-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* chevron_right.svg / expand_list.svg 官方图标：16×16，颜色对应 --icon-tertiary */
+.form-row .icon-arrow img,
+.form-row .icon-expand img {
+    width: 16px;
+    height: 16px;
+    display: block;
+    filter: opacity(0.3);
+}
+.form-row .checkbox {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--brand-standard);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* R5 选中态：显示 tick.svg（iOS 风格）；未选中态：空 */
+.form-row .checkbox img { width: 22px; height: 22px; display: block; }
+
+/* Switch */
+.form-switch {
+    width: 44px;
+    height: 26px;
+    background: var(--brand-standard);
+    border-radius: var(--radius-full);
+    position: relative;
+    cursor: pointer;
+    transition: background var(--anim-switch-duration) var(--anim-switch-easing);
+    flex-shrink: 0;
+}
+.form-switch.off { background: var(--fill-secondary); }
+.form-switch::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 22px;
+    height: 22px;
+    background: var(--bg-bottom);
+    border-radius: var(--radius-full);
+    transition: right var(--anim-switch-duration) var(--anim-switch-easing),
+                left var(--anim-switch-duration) var(--anim-switch-easing);
+    box-shadow: 0 2px 4px var(--border-weak);
+}
+.form-switch.off::after { right: auto; left: 2px; }
+
+/* 分割线 */
+.form-separator {
+    height: 0.5px;
+    background: var(--border-weak);
+    margin-left: var(--spacing-l);
+    margin-right: var(--spacing-l);
+}
+.form-separator.inset-icon { margin-left: 52px; }
+.form-separator.inset-avatar { margin-left: 68px; }
+
+/* =========================================================
+   父子折叠容器（iOS 17 丝滑展开/收起动画）
+   • 高度：JS 测量真实高度并写入 --h，transition height 至精确目标
+   • 曲线：展开/收起统一 cubic-bezier(0.32, 0.72, 0, 1)
+     —— Apple Design Resources “Standard”缓动，等价 SwiftUI .smooth / UIKit spring
+   • 内层：transform + opacity 走 GPU 合成层（will-change / translateZ）
+   • 方向：translateY +4→0，符合“从父行下方展开 / 收回父行下方”的直觉
+   ========================================================= */
+.child-wrap {
+    height: var(--h, auto);
+    overflow: hidden;
+    will-change: height;
+    transition: height var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap.collapsed {
+    height: 0;
+    transition: height var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap > .child-inner {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    will-change: transform, opacity;
+    transition: transform var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1),
+                opacity   var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+.child-wrap.collapsed > .child-inner {
+    transform: translate3d(0, 4px, 0);
+    opacity: 0;
+    transition: transform var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1),
+                opacity   var(--anim-collapse-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* 父行右侧 chevron 同步旋转（只在标记 data-parent-icon-rotate 的行上生效） */
+[data-parent-icon-rotate] .icon-expand img {
+    transition: transform var(--anim-expand-duration) cubic-bezier(0.32, 0.72, 0, 1);
+}
+[data-parent-icon-rotate].is-collapsed .icon-expand img {
+    transform: rotate(-90deg);
+}
+
+/* =========================================================
+   Textfield
+   ========================================================= */
+/* A/B/C 嵌入在 Grouped List 的行内 */
+.tf-row {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-l);
+    width: 100%;
+    height: 56px;
+    background: transparent;
+    cursor: text;
+}
+.tf-row .tf-title {
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    width: 90px;
+    flex-shrink: 0;
+    padding-right: var(--spacing-xl);
+}
+.tf-row .tf-prefix {
+    font-size: var(--typo-body-l);
+    color: var(--text-link);
+    flex-shrink: 0;
+    margin-right: var(--spacing-s);
+}
+.tf-row .tf-input {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--typo-body-l);
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    outline: none;
+    height: 100%;
+    font-family: var(--font-family);
+    caret-color: var(--brand-standard);
+}
+.tf-row .tf-input::placeholder { color: var(--text-quaternary); }
+.tf-row .tf-input:disabled {
+    color: var(--text-primary);
+    opacity: 0.3;
+}
+.tf-row .tf-clear {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    margin-left: var(--spacing-s);
+    color: var(--icon-secondary);
+    cursor: pointer;
+    display: none;
+}
+.tf-row .tf-clear img { width: 20px; height: 20px; display: block; }
+.tf-row.tf-typing .tf-clear { display: block; }
+
+/* 底部附加说明行（含字数统计）—— 视觉对齐 .form-group-footer */
+.tf-footer {
+    width: 428px;
+    padding: var(--spacing-s) var(--spacing-xxl);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-m);
+    color: var(--text-secondary);
+    font-size: var(--typo-body-s);
+    line-height: 1.4;
+}
+.tf-footer .count {
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+}
+.tf-footer .count.error { color: var(--accent-red); }
+
+/* =========================================================
+   通用 SVG 图标样式
+   ========================================================= */
+.icon-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+<!-- ========================================================= -->
+<!-- 页面 1：父子关系 · 子列表 < 3 个 · 通知设置                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-1">
+
+    <!-- StatusBar -->
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <!-- NavBar L1+C1+R0 -->
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <img src="Basic 1.0/icons/chevron_left.svg" alt="back">
+            </div>
+        </div>
+        <div class="middle-area">
+            <div class="title">消息与通知</div>
+        </div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 A · 消息提醒（父子 < 3，同卡片嵌套） -->
+        <div class="form-group">
+            <div class="form-group-header">消息提醒</div>
+            <div class="form-group-content">
+
+                <!-- 父行 L3+R4：新消息通知（加 remind.svg 图标，使分割线与子行 52px 一致） -->
+                <div class="form-row single-line" data-parent="p1-msg">
+                    <div class="left-area">
+                        <div class="icon-left">
+                            <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/remind.svg" alt="">
+                        </div>
+                        <div class="text-group"><div class="title">新消息通知</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p1-msg"></div>
+                    </div>
+                </div>
+
+                <!-- 子行容器（父 ON 时显示） -->
+                <div class="child-wrap" data-child-of="p1-msg">
+                    <div class="form-separator inset-icon"></div>
+                    <!-- 子行 L5+R1：通知铃声 -->
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/secondary.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">通知铃声</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">叮咚</div>
+                            <div class="icon-arrow">
+                                <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+                    <!-- 子行 L5+R4：震动 -->
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/secondary.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">震动</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="form-switch"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 卡片 B · 群消息（独立卡片，另一组父子） -->
+        <div class="form-group">
+            <div class="form-group-header">群消息</div>
+            <div class="form-group-content">
+                <div class="form-row single-line" data-parent="p1-grp">
+                    <div class="left-area">
+                        <div class="icon-left">
+                            <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/group.svg" alt="">
+                        </div>
+                        <div class="text-group"><div class="title">群消息提醒</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p1-grp"></div>
+                    </div>
+                </div>
+                <div class="child-wrap" data-child-of="p1-grp">
+                    <div class="form-separator inset-icon"></div>
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-secondary-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/secondary.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">@我时提醒</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="form-switch"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-footer">关闭总开关后，将不再接收任何消息通知。</div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 2：父子关系 · 子列表 ≥ 3 个 · 好友权限                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-2">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <img src="Basic 1.0/icons/chevron_left.svg" alt="back">
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">好友权限</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 父卡片 -->
+        <div class="form-group">
+            <div class="form-group-header">添加好友</div>
+            <div class="form-group-content">
+                <div class="form-row single-line" data-parent="p2-friend">
+                    <div class="left-area">
+                        <div class="text-group"><div class="title">允许陌生人添加我为好友</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="form-switch" data-switch="p2-friend"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 子卡片（≥3 行，独立成卡） -->
+        <div class="child-wrap" data-child-of="p2-friend">
+            <div class="form-group">
+                <div class="form-group-header">添加方式</div>
+                <div class="form-group-content">
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/search.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">通过搜索 QQ 号</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">需要验证</div>
+                            <div class="icon-expand">
+                                <img class="icon-svg" src="Basic 1.0/icons/expand_list.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/mobile_phone.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">通过手机号</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">需要验证</div>
+                            <div class="icon-expand">
+                                <img class="icon-svg" src="Basic 1.0/icons/expand_list.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/group.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">通过群聊</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">允许</div>
+                            <div class="icon-expand">
+                                <img class="icon-svg" src="Basic 1.0/icons/expand_list.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-separator inset-icon"></div>
+
+                    <div class="form-row single-line">
+                        <div class="left-area">
+                            <div class="icon-left">
+                                <img class="icon-svg" src="Basic 1.0/icons/QUI_24_icons/name_card.svg" alt="">
+                            </div>
+                            <div class="text-group"><div class="title">通过名片</div></div>
+                        </div>
+                        <div class="right-area">
+                            <div class="helper-text">允许</div>
+                            <div class="icon-expand">
+                                <img class="icon-svg" src="Basic 1.0/icons/expand_list.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="form-group-footer">关闭后，陌生人将无法通过任何方式添加您。</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 3：互斥关系 · R5 右侧勾选互斥 · 主题外观                -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-3">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <img src="Basic 1.0/icons/chevron_left.svg" alt="back">
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">主题外观</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 · 外观（L1 + R5 单选互斥） -->
+        <div class="form-group">
+            <div class="form-group-header">外观模式</div>
+            <div class="form-group-content" data-exclusive-group="appearance">
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">跟随系统</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">浅色模式</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox data-checked></div></div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area"><div class="text-group"><div class="title">深色模式</div></div></div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片 · 聊天气泡颜色（L3 + R5 单选互斥） -->
+        <div class="form-group">
+            <div class="form-group-header">聊天气泡颜色</div>
+            <div class="form-group-content" data-exclusive-group="bubble">
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--brand-standard)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">经典蓝</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox data-checked></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--accent-red)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">珊瑚红</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--accent-green)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">薄荷绿</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-r5-row>
+                    <div class="left-area">
+                        <div class="icon-left" style="color: var(--text-primary)">
+                            <svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>
+                        </div>
+                        <div class="text-group"><div class="title">深邃黑</div></div>
+                    </div>
+                    <div class="right-area"><div class="checkbox" data-checkbox></div></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 4：互斥关系 · 左侧 tick 互斥 · 字体大小                 -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-4">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <img src="Basic 1.0/icons/chevron_left.svg" alt="back">
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">字体</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 卡片 A · 字号（L8/L9 互斥 + R0） -->
+        <div class="form-group">
+            <div class="form-group-header">字号</div>
+            <div class="form-group-content" data-tick-group="size">
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-left" data-tick>
+                            <img class="icon-svg" src="Basic 1.0/icons/tick.svg" alt="">
+                        </div>
+                        <div class="text-group"><div class="title">标准</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 17</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 19</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">特大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 21</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row single-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group"><div class="title">超大号</div></div>
+                    </div>
+                    <div class="right-area">
+                        <div class="helper-text">Aa 23</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 卡片 B · 字体（L10/L11 互斥 + R1） -->
+        <div class="form-group">
+            <div class="form-group-header">字体</div>
+            <div class="form-group-content" data-tick-group="font">
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-left" data-tick>
+                            <img class="icon-svg" src="Basic 1.0/icons/tick.svg" alt="">
+                        </div>
+                        <div class="text-group">
+                            <div class="title">系统字体</div>
+                            <div class="subtitle">PingFang SC 默认</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group">
+                            <div class="title">思源黑体</div>
+                            <div class="subtitle">Source Han Sans</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator inset-icon"></div>
+                <div class="form-row double-line" data-tick-row>
+                    <div class="left-area">
+                        <div class="tick-placeholder" data-tick></div>
+                        <div class="text-group">
+                            <div class="title">霞鹜文楷</div>
+                            <div class="subtitle">LXGW WenKai</div>
+                        </div>
+                    </div>
+                    <div class="right-area">
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group-footer">调整后立即生效。</div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+<!-- ========================================================= -->
+<!-- 页面 5：卡片式列表 + 输入框 A/B/C 组合 · 编辑资料            -->
+<!-- ========================================================= -->
+<div class="device-wrapper">
+<div class="device" id="page-5">
+
+    <div class="status-bar">
+        <div class="time">9:41</div>
+        <div class="dynamic-island"></div>
+        <div class="sys-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm-5-3.2c1.4-1.4 3.2-2.2 5-2.2s3.6.8 5 2.2l-1.4 1.4c-1-1-2.3-1.5-3.6-1.5s-2.6.5-3.6 1.5L3 7.3zM0 4.2C2.3 1.9 5.1.7 8 .7s5.7 1.2 8 3.5l-1.4 1.4C12.7 3.8 10.4 2.8 8 2.8S3.3 3.8 1.4 5.6L0 4.2z"/></svg>
+            <svg width="26" height="12" viewBox="0 0 26 12" fill="currentColor"><rect x="0.5" y="0.5" width="22" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="19" height="8" rx="1.2"/><rect x="23" y="4" width="1.5" height="4" rx="0.5"/></svg>
+        </div>
+    </div>
+
+    <div class="navbar-row">
+        <div class="left-area">
+            <div class="icon-back">
+                <img src="Basic 1.0/icons/chevron_left.svg" alt="back">
+            </div>
+        </div>
+        <div class="middle-area"><div class="title">编辑资料</div></div>
+        <div class="right-area"></div>
+    </div>
+
+    <div class="content">
+
+        <!-- 顶部卡片 · 基础信息（嵌入 B / B / C 输入框） -->
+        <div class="form-group">
+            <div class="form-group-header">基础信息</div>
+            <div class="form-group-content">
+                <!-- B 类：昵称（完成态，已填） -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">昵称</div>
+                    <input class="tf-input" type="text" placeholder="请输入昵称" value="小张同学" maxlength="20">
+                    <div class="tf-clear">
+                        <img class="icon-svg" src="Basic 1.0/icons/close_input.svg" alt="">
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <!-- B 类：QQ 号（已填完成态，可交互） -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">QQ 号</div>
+                    <input class="tf-input" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="请输入 QQ 号" value="88888888" maxlength="11">
+                    <div class="tf-clear">
+                        <img class="icon-svg" src="Basic 1.0/icons/close_input.svg" alt="">
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <!-- C 类：手机号 -->
+                <div class="tf-row" data-tf-row>
+                    <div class="tf-title">手机号</div>
+                    <input class="tf-input" type="tel" placeholder="请输入手机号" maxlength="11">
+                    <div class="tf-clear">
+                        <img class="icon-svg" src="Basic 1.0/icons/close_input.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 中部卡片 · 更多资料（L1+R1 / L1+R2 Grouped List 行） -->
+        <div class="form-group">
+            <div class="form-group-header">更多资料</div>
+            <div class="form-group-content">
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">地区</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">广东 深圳</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">生日</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">2000-01-01</div>
+                        <div class="icon-arrow">
+                            <img class="icon-svg" src="Basic 1.0/icons/chevron_right.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-separator"></div>
+                <div class="form-row single-line">
+                    <div class="left-area"><div class="text-group"><div class="title">性别</div></div></div>
+                    <div class="right-area">
+                        <div class="helper-text">保密</div>
+                        <div class="icon-expand">
+                            <img class="icon-svg" src="Basic 1.0/icons/expand_list.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部卡片 · 签名（A 类单行无标题，带字数统计） -->
+        <div class="form-group">
+            <div class="form-group-header">个性签名</div>
+            <div class="form-group-content">
+                <div class="tf-row" data-tf-row data-tf-count="p5-sig">
+                    <input class="tf-input" type="text" placeholder="写点什么…" maxlength="40" data-tf-input="p5-sig">
+                    <div class="tf-clear">
+                        <img class="icon-svg" src="Basic 1.0/icons/close_input.svg" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="tf-footer">
+                <span>资料将在 24 小时内对好友可见</span>
+                <span class="count" data-tf-counter="p5-sig">20字</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="home-bar"><div class="home-bar-indicator"></div></div>
+</div>
+</div>
+
+</div><!-- /.stage -->
+
+<script>
+// =========================================================
+// 1. Switch 开关切换 + 父子联动
+// =========================================================
+document.addEventListener('click', function(e) {
+    const sw = e.target.closest('.form-switch');
+    if (sw) {
+        e.stopPropagation();
+        sw.classList.toggle('off');
+        // 父子联动
+        const parentKey = sw.dataset.switch;
+        if (parentKey) {
+            const childWrap = document.querySelector(`.child-wrap[data-child-of="${parentKey}"]`);
+            if (childWrap) {
+                const isOff = sw.classList.contains('off');
+                // 确保存在 .child-inner 包裹（内层 transform/opacity 动画容器）
+                let inner = childWrap.querySelector(':scope > .child-inner');
+                if (!inner) {
+                    inner = document.createElement('div');
+                    inner.className = 'child-inner';
+                    while (childWrap.firstChild) inner.appendChild(childWrap.firstChild);
+                    childWrap.appendChild(inner);
+                }
+                animateChild(childWrap, inner, isOff);
+                // 同步父行 chevron 旋转（如需）
+                const parentRow = sw.closest('[data-parent-icon-rotate]');
+                if (parentRow) parentRow.classList.toggle('is-collapsed', isOff);
+            }
+        }
+        return;
+    }
+});
+
+// 精确高度动画：读入 scrollHeight → 写入 --h → 双帧 rAF 后切 class，避免浏览器合帧导致跳动
+function animateChild(wrap, inner, collapse) {
+    // 清理上一次未完成的动画监听
+    if (wrap._endHandler) wrap.removeEventListener('transitionend', wrap._endHandler);
+
+    const targetH = inner.scrollHeight + 'px';
+    if (collapse) {
+        // 收起：先将 height 从 auto 固定为当前真实值，再下一帧切 collapsed
+        wrap.style.setProperty('--h', targetH);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            wrap.classList.add('collapsed');
+        }));
+    } else {
+        // 展开：从 0 过渡到真实高度，动画结束后恢复 auto允许后续内容自适应
+        wrap.style.setProperty('--h', targetH);
+        wrap.classList.remove('collapsed');
+        const onEnd = (ev) => {
+            if (ev.propertyName !== 'height') return;
+            wrap.style.setProperty('--h', 'auto');
+            wrap.removeEventListener('transitionend', onEnd);
+            wrap._endHandler = null;
+        };
+        wrap._endHandler = onEnd;
+        wrap.addEventListener('transitionend', onEnd);
+    }
+}
+
+// =========================================================
+// 2. R5 右侧勾选互斥（checkbox）
+// =========================================================
+document.addEventListener('click', function(e) {
+    const row = e.target.closest('[data-r5-row]');
+    if (!row) return;
+    const group = row.closest('[data-exclusive-group]');
+    if (!group) return;
+    // 清除同组所有勾选
+    group.querySelectorAll('[data-checkbox]').forEach(cb => {
+        cb.removeAttribute('data-checked');
+    });
+    // 当前行勾选
+    const cb = row.querySelector('[data-checkbox]');
+    if (cb) cb.setAttribute('data-checked', '');
+});
+
+// 渲染 R5 选中态：统一使用 tick.svg（iOS 风格单选勾）。
+// 未选中时不显示图标，仅保留 22px 占位
+ function renderCheckbox(cb) {
+    const checked = cb.hasAttribute('data-checked');
+    if (checked) {
+        cb.innerHTML = `<img class="icon-svg" src="Basic 1.0/icons/tick.svg" alt="">`;
+    } else {
+        cb.innerHTML = '';
+    }
+}
+document.querySelectorAll('[data-checkbox]').forEach(renderCheckbox);
+// 监听属性变化重绘
+const cbObserver = new MutationObserver(muts => {
+    muts.forEach(m => {
+        if (m.attributeName === 'data-checked') renderCheckbox(m.target);
+    });
+});
+document.querySelectorAll('[data-checkbox]').forEach(cb => {
+    cbObserver.observe(cb, { attributes: true });
+});
+
+// =========================================================
+// 3. 左侧 tick 互斥（L8/L9、L10/L11）
+// =========================================================
+const TICK_IMG = `<img class="icon-svg" src="Basic 1.0/icons/tick.svg" alt="">`;
+
+document.addEventListener('click', function(e) {
+    const row = e.target.closest('[data-tick-row]');
+    if (!row) return;
+    const group = row.closest('[data-tick-group]');
+    if (!group) return;
+    // 切换所有行的 tick 状态
+    group.querySelectorAll('[data-tick-row]').forEach(r => {
+        const tickEl = r.querySelector('[data-tick]');
+        if (!tickEl) return;
+        if (r === row) {
+            tickEl.classList.remove('tick-placeholder');
+            tickEl.classList.add('tick-left');
+            tickEl.innerHTML = TICK_IMG;
+        } else {
+            tickEl.classList.remove('tick-left');
+            tickEl.classList.add('tick-placeholder');
+            tickEl.innerHTML = '';
+        }
+    });
+});
+
+// =========================================================
+// 4. Textfield A/B/C 5 态交互
+// =========================================================
+document.querySelectorAll('[data-tf-row]').forEach(row => {
+    const input = row.querySelector('.tf-input');
+    const clear = row.querySelector('.tf-clear');
+    if (!input) return;
+
+    function updateState() {
+        const hasValue = input.value.length > 0;
+        row.classList.toggle('tf-typing', hasValue && document.activeElement === input);
+        // 字数统计
+        const counterId = row.dataset.tfCount;
+        if (counterId) {
+            const counter = document.querySelector(`[data-tf-counter="${counterId}"]`);
+            if (counter) {
+                const max = parseInt(input.getAttribute('maxlength')) || 40;
+                const len = input.value.length;
+                if (hasValue || document.activeElement === input) {
+                    counter.textContent = `${len}/${max}字`;
+                } else {
+                    counter.textContent = `${max}字`;
+                }
+                counter.classList.toggle('error', len > 20);
+            }
+        }
+    }
+
+    input.addEventListener('focus', updateState);
+    input.addEventListener('blur', () => {
+        row.classList.remove('tf-typing');
+        updateState();
+    });
+    input.addEventListener('input', updateState);
+
+    if (clear) {
+        clear.addEventListener('mousedown', e => e.preventDefault());
+        clear.addEventListener('click', () => {
+            input.value = '';
+            input.focus();
+            updateState();
+        });
+    }
+    updateState();
+});
+</script>
+
+</body>
+</html>
