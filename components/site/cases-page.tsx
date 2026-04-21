@@ -44,7 +44,7 @@ function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; t
     <div>
       {mode === "demo" ? (
         isWide ? (
-          <div ref={containerRef} className="overflow-x-auto overflow-y-hidden bg-[var(--background)]" style={{ height: h * scale }}>
+          <div ref={containerRef} className="overflow-x-auto overflow-y-hidden bg-[#1a1d24]" style={{ height: h * scale }}>
             <div style={{ width: w * scale, height: h * scale }}>
               <iframe
                 src={url}
@@ -57,7 +57,7 @@ function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; t
             </div>
           </div>
         ) : (
-          <div ref={containerRef} className="flex justify-center overflow-hidden bg-[var(--background)]" style={{ height: h * scale }}>
+          <div ref={containerRef} className="flex justify-center overflow-hidden bg-[#1a1d24]" style={{ height: h * scale }}>
             <iframe
               src={url}
               title={title}
@@ -148,8 +148,8 @@ const cases: CaseItem[] = [
     id: "settings",
     title: "设置",
     titleEn: "Settings",
-    desc: "通过 QQ GenUI 生成移动端设置页界面，根据需求添加设置组件，组件自带完整交互逻辑。",
-    descEn: "Generate a mobile settings page with QQ GenUI. Add setting components as needed — each comes with complete interaction logic.",
+    desc: "通过 Qdesign 生成移动端设置页界面，根据需求添加设置组件，组件自带完整交互逻辑。",
+    descEn: "Generate a mobile settings page with Qdesign. Add setting components as needed — each comes with complete interaction logic.",
     video: "/videos/settings-demo.mp4",
     demoUrl: "/demos/setting-standalone.html",
     explainImage: "/case-explains/settings.png",
@@ -171,8 +171,8 @@ const cases: CaseItem[] = [
     id: "batch-produce",
     title: "批量生产界面",
     titleEn: "Batch Production",
-    desc: "通过 QQ GenUI 一次生成应用的多个关键界面或流程界面。",
-    descEn: "Generate multiple key screens or flow screens for an application in one go with QQ GenUI.",
+    desc: "通过 Qdesign 一次生成应用的多个关键界面或流程界面。",
+    descEn: "Generate multiple key screens or flow screens for an application in one go with Qdesign.",
     video: "/videos/batch-produce.mp4",
     demoUrl: "/demos/settings-templates-standalone.html",
     iframeWidth: 2380,
@@ -233,7 +233,7 @@ function CaseCompare({ beforeLabel, afterLabel }: { beforeLabel: string; afterLa
       ref={containerRef}
       onMouseMove={(e) => handleMove(e.clientX)}
       onTouchMove={(e) => { if (e.touches[0]) handleMove(e.touches[0].clientX); }}
-      className="relative cursor-col-resize select-none overflow-hidden bg-[#fafbfc]"
+      className="relative cursor-col-resize select-none overflow-hidden bg-[#1a1d24]"
       style={{ minHeight: 320 }}
     >
       <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(#edf6ff_1px,transparent_1px),linear-gradient(90deg,#edf6ff_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -318,7 +318,7 @@ function SideBySideCompare({
   const gap = 48 * scale;
 
   return (
-    <div ref={containerRef} className="bg-[#eef0f4]">
+    <div ref={containerRef} className="bg-[#1a1d24]">
       <div className="flex justify-center" style={{ padding: `${20 * scale}px ${16 * scale}px`, gap }}>
         <div className="flex flex-col items-center" style={{ width: phoneW }}>
           <div className="overflow-hidden rounded-[12px] border border-[#e4e7ec] shadow-[0_8px_32px_-12px_rgba(0,0,0,0.12)]" style={{ width: phoneW, height: phoneH }}>
@@ -386,7 +386,7 @@ function TripleSideBySideCompare({
   const gap = 24 * scale;
 
   return (
-    <div ref={containerRef} className="bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#1a1d24]">
       <div className="flex justify-center" style={{ padding: `${20 * scale}px 32px`, gap }}>
         {urls.map((url, i) => (
           <div key={url} className="flex flex-col items-center" style={{ width: phoneW }}>
@@ -472,7 +472,7 @@ function IframeCompare({
   const scaledW = 428 * scale;
 
   return (
-    <div ref={containerRef} className="bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#1a1d24]">
       <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
         <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
           {/* Before layer — full width */}
@@ -599,7 +599,7 @@ function TripleIframeCompare({
   const scaledW = 428 * scale;
 
   return (
-    <div ref={containerRef} className="bg-[#fafbfc]">
+    <div ref={containerRef} className="bg-[#1a1d24]">
       <div className="relative mx-auto" style={{ height: scaledH, width: scaledW }}>
         <div className="absolute left-0 top-0" style={{ width: 428, height: 926, transform: `scale(${scale})`, transformOrigin: "top left" }}>
           {/* Layer 1 (left) — full background */}
@@ -725,7 +725,7 @@ export function CasesPage() {
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
-            QQ{"\u00a0"}GenUI
+            Qdesign
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -779,8 +779,8 @@ export function CasesPage() {
         </h1>
         <p className="mt-5 max-w-[680px] text-[clamp(1.04rem,1.35vw,1.22rem)] leading-[1.72] text-[#505764]">
           {isZh
-            ? "通过真实场景了解 QQ GenUI 的能力。每个案例包含完整的操作步骤、生成效果对比和手机端体验入口。"
-            : "Explore QQ GenUI capabilities through real-world scenarios. Each case includes step-by-step instructions, before/after comparisons, and mobile preview access."}
+            ? "通过真实场景了解 Qdesign 的能力。每个案例包含完整的操作步骤、生成效果对比和手机端体验入口。"
+            : "Explore Qdesign capabilities through real-world scenarios. Each case includes step-by-step instructions, before/after comparisons, and mobile preview access."}
         </p>
 
         {/* ── Collapse/Expand all ── */}
@@ -990,7 +990,7 @@ export function CasesPage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-[rgba(16,20,30,.08)] py-12">
-        <p className="text-center text-[0.88rem] text-[#9ea3ac]">© 2026 QQ GenUI</p>
+        <p className="text-center text-[0.88rem] text-[#9ea3ac]">© 2026 Qdesign</p>
       </footer>
     </div>
   );

@@ -1,4 +1,4 @@
-## QQ GenUI 高还原实现
+## Qdesign 高还原实现
 
 基于 `Next.js 16 + TypeScript + TailwindCSS + Framer Motion` 的双页面高还原项目。
 
