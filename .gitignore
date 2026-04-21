@@ -48,3 +48,18 @@ next-env.d.ts
 Dockerfile
 .dockerignore
 video/
+
+# workspace scratch (raw designer assets, kept only in public/ under renamed paths)
+/Basic 1.0/
+/Frame*.png
+/AIgroupfinding-standalone.html
+/settings-templates-standalone.html
+/settings-templates.html
+/*.mov
+/批量.png
+/批量生成*.mp4
+/设置.png
+/设置案例.png
+/demo转化.png
+/风格评测.png
+/multiinterface.mov
