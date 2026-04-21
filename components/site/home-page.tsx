@@ -90,12 +90,12 @@ const actionGroups = [
     items: [
       {
         cmd: "/critique",
-        desc: "Check whether the current design meets the half-screen component spec based on screenshots and other materials. Designers can leverage Qdesign for precise, ready-to-use component recommendations.",
+        desc: "Check whether the current design meets the half-screen component spec based on screenshots and other materials. Designers can leverage QQ GenUI for precise, ready-to-use component recommendations.",
         spec: "Full half-screen spec",
       },
       {
         cmd: "/audit",
-        desc: "Fix incorrect designs in mockups according to form component specifications. With Qdesign, you can correct component usage, component interactions, layout, and token usage issues.",
+        desc: "Fix incorrect designs in mockups according to form component specifications. With QQ GenUI, you can correct component usage, component interactions, layout, and token usage issues.",
         spec: "Full settings spec",
       },
     ],
@@ -150,7 +150,7 @@ const actionGroups = [
     items: [
       {
         cmd: "/check-code",
-        desc: "Review generated component code and design tokens for spec compliance. Quickly scan for errors and fix them with Qdesign.",
+        desc: "Review generated component code and design tokens for spec compliance. Quickly scan for errors and fix them with QQ GenUI.",
         spec: "",
       },
     ],
@@ -163,12 +163,12 @@ const actionGroupsZh = [
     items: [
       {
         cmd: "/评估",
-        desc: "根据截图等资料，检查现有设计是否符合半屏组件规范。设计师可借助\u00a0Qdesign\u00a0获取精准且可直接使用的组件建议。",
+        desc: "根据截图等资料，检查现有设计是否符合半屏组件规范。设计师可借助\u00a0QQ GenUI\u00a0获取精准且可直接使用的组件建议。",
         spec: "完整半屏规范",
       },
       {
         cmd: "/修正",
-        desc: "根据表单组件规范，修复设计稿中的错误设计。借助\u00a0Qdesign，可修正组件使用、组件交互、布局、token 使用等问题。",
+        desc: "根据表单组件规范，修复设计稿中的错误设计。借助\u00a0QQ GenUI，可修正组件使用、组件交互、布局、token 使用等问题。",
         spec: "完整设置规范",
       },
     ],
@@ -223,7 +223,7 @@ const actionGroupsZh = [
     items: [
       {
         cmd: "/检查代码",
-        desc: "查看生成的内容的组件代码和 design token 是否规范，通过\u00a0Qdesign\u00a0快速扫描错误并修复。",
+        desc: "查看生成的内容的组件代码和 design token 是否规范，通过\u00a0QQ GenUI\u00a0快速扫描错误并修复。",
         spec: "",
       },
     ],
@@ -240,7 +240,7 @@ const navItemsZh = [
 
 const faqItemsZh = [
   {
-    question: "我刚接触 Qdesign，从哪里开始？",
+    question: "我刚接触 QQ GenUI，从哪里开始？",
     answer: "先看 Cheatsheet 页面，了解各命令的用途，然后从 /评估 开始尝试，几分钟就能熟悉流程。",
   },
   {
@@ -316,7 +316,7 @@ function BeforeAfterCompare({ isZh }: { isZh: boolean }) {
           >
             {isBefore
               ? (isZh ? "生成" : "Generate")
-              : (isZh ? "使用 Qdesign 生成" : "Generate with Qdesign")}
+              : (isZh ? "使用 QQ GenUI 生成" : "Generate with QQ GenUI")}
           </button>
         </div>
 
@@ -685,7 +685,7 @@ export function HomePage() {
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
-          <span className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">Qdesign</span>
+          <span className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">QQ GenUI</span>
 
           <nav className="hidden items-center gap-1 md:flex">
             {localizedNavItems.map((item, idx) => {
@@ -784,7 +784,7 @@ export function HomePage() {
             className="space-y-10 lg:max-w-[600px]"
           >
             <div className="space-y-5">
-              <h1 className="font-serif text-[clamp(3.2rem,6vw,5rem)] italic leading-[0.9] tracking-[-0.03em] text-[#0b0d13]">Qdesign</h1>
+              <h1 className="font-serif text-[clamp(3.2rem,6vw,5rem)] italic leading-[0.9] tracking-[-0.03em] text-[#0b0d13]">QQ GenUI</h1>
               <p className="max-w-[470px] font-serif text-[clamp(1.45rem,2.5vw,2.1rem)] italic leading-[1.1] text-[#141821]">
                 {isZh ? "AI harnesses 提升设计质量" : "AI harnesses that elevate design quality"}
               </p>
@@ -792,8 +792,8 @@ export function HomePage() {
 
             <p className={`max-w-[590px] ${isZh ? "text-[clamp(0.92rem,1.05vw,1.08rem)] leading-[1.82]" : "text-[clamp(0.92rem,1.02vw,1.1rem)] leading-[1.72]"} text-[#1d232f]`}>
               {isZh
-                ? <>在实际业务中，好的设计输出要求稳定生成，符合产品设计语言。你不能要求AI为你生成{"\u201c"}符合QQ规范的界面{"\u201d"}而不提供任何设计上下文和约束。Qdesign为你提供了完整的AI友好的QQ设计规范，开箱即用，对使用者的提示词水平和使用的开发工具无要求。</>
-                : "In real-world product work, high-quality design output must be consistently generated and aligned with the product design language. You cannot ask AI to generate a \"QQ-compliant interface\" without providing any design context or constraints. Qdesign gives you a complete, AI-friendly QQ design specification out of the box, with no requirements on users' prompt-writing skills or development tools."}
+                ? <>在实际业务中，好的设计输出要求稳定生成，符合产品设计语言。你不能要求AI为你生成{"\u201c"}符合QQ规范的界面{"\u201d"}而不提供任何设计上下文和约束。QQ GenUI为你提供了完整的AI友好的QQ设计规范，开箱即用，对使用者的提示词水平和使用的开发工具无要求。</>
+                : "In real-world product work, high-quality design output must be consistently generated and aligned with the product design language. You cannot ask AI to generate a \"QQ-compliant interface\" without providing any design context or constraints. QQ GenUI gives you a complete, AI-friendly QQ design specification out of the box, with no requirements on users' prompt-writing skills or development tools."}
             </p>
 
             <div className="max-w-[560px] border border-[#e5e8ee] bg-white px-5 py-3">
@@ -842,7 +842,7 @@ export function HomePage() {
                 <span className="size-2.5 rounded-full bg-[#d6dae0]" /> {isZh ? "通用 AI 输出" : "General AI Output"}
               </span>
               <span className="inline-flex items-center gap-2.5">
-                <span className="size-2.5 rounded-full bg-[#0099ff]" /> {isZh ? "使用 Qdesign" : "With Qdesign"}
+                <span className="size-2.5 rounded-full bg-[#0099ff]" /> {isZh ? "使用 QQ GenUI" : "With QQ GenUI"}
               </span>
             </div>
           </motion.div>
@@ -1269,7 +1269,7 @@ export function HomePage() {
             {isZh ? "开始使用" : "Get Started"}
           </h2>
           <p className="mt-4 text-[clamp(1.02rem,1.5vw,1.5rem)] leading-[1.36] text-[#1f2532]">
-            {isZh ? "一步开始 Qdesign 设计。" : "One step to Qdesign."}
+            {isZh ? "一步开始 QQ GenUI 设计。" : "One step to QQ GenUI."}
           </p>
 
           <div className="mx-auto mt-10 w-full max-w-[830px] space-y-9">

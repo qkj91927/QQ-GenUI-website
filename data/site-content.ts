@@ -86,7 +86,7 @@ export const changelogEntries: ChangelogEntry[] = [
 
 export const faqItems: FaqItem[] = [
   {
-    question: "I'm new to Qdesign. Where do I start?",
+    question: "I'm new to QQ GenUI. Where do I start?",
     answer: "Start with the Cheatsheet page to understand each command, then try /critique first. You'll get familiar with the workflow in minutes.",
   },
   {

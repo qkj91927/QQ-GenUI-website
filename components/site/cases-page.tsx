@@ -148,8 +148,8 @@ const cases: CaseItem[] = [
     id: "settings",
     title: "设置",
     titleEn: "Settings",
-    desc: "通过 Qdesign 生成移动端设置页界面，根据需求添加设置组件，组件自带完整交互逻辑。",
-    descEn: "Generate a mobile settings page with Qdesign. Add setting components as needed — each comes with complete interaction logic.",
+    desc: "通过 QQ GenUI 生成移动端设置页界面，根据需求添加设置组件，组件自带完整交互逻辑。",
+    descEn: "Generate a mobile settings page with QQ GenUI. Add setting components as needed — each comes with complete interaction logic.",
     video: "/videos/settings-demo.mp4",
     demoUrl: "/demos/setting-standalone.html",
     explainImage: "/case-explains/settings.png",
@@ -171,8 +171,8 @@ const cases: CaseItem[] = [
     id: "batch-produce",
     title: "批量生产界面",
     titleEn: "Batch Production",
-    desc: "通过 Qdesign 一次生成应用的多个关键界面或流程界面。",
-    descEn: "Generate multiple key screens or flow screens for an application in one go with Qdesign.",
+    desc: "通过 QQ GenUI 一次生成应用的多个关键界面或流程界面。",
+    descEn: "Generate multiple key screens or flow screens for an application in one go with QQ GenUI.",
     video: "/videos/batch-produce.mp4",
     demoUrl: "/demos/settings-templates-standalone.html",
     iframeWidth: 2380,
@@ -725,7 +725,7 @@ export function CasesPage() {
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
-            Qdesign
+            QQ GenUI
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -779,8 +779,8 @@ export function CasesPage() {
         </h1>
         <p className="mt-5 max-w-[680px] text-[clamp(1.04rem,1.35vw,1.22rem)] leading-[1.72] text-[#505764]">
           {isZh
-            ? "通过真实场景了解 Qdesign 的能力。每个案例包含完整的操作步骤、生成效果对比和手机端体验入口。"
-            : "Explore Qdesign capabilities through real-world scenarios. Each case includes step-by-step instructions, before/after comparisons, and mobile preview access."}
+            ? "通过真实场景了解 QQ GenUI 的能力。每个案例包含完整的操作步骤、生成效果对比和手机端体验入口。"
+            : "Explore QQ GenUI capabilities through real-world scenarios. Each case includes step-by-step instructions, before/after comparisons, and mobile preview access."}
         </p>
 
         {/* ── Collapse/Expand all ── */}
@@ -990,7 +990,7 @@ export function CasesPage() {
 
       {/* ── Footer ── */}
       <footer className="border-t border-[rgba(16,20,30,.08)] py-12">
-        <p className="text-center text-[0.88rem] text-[#9ea3ac]">© 2026 Qdesign</p>
+        <p className="text-center text-[0.88rem] text-[#9ea3ac]">© 2026 QQ GenUI</p>
       </footer>
     </div>
   );

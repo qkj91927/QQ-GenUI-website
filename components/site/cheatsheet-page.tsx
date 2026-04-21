@@ -127,7 +127,7 @@ export function CheatsheetPage() {
       <header className="border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)]">
         <div className="mx-auto flex h-18 w-full max-w-[1140px] items-center justify-between px-4 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.85rem,2.6vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
-            Qdesign
+            QQ GenUI
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -280,8 +280,8 @@ export function CheatsheetPage() {
 
       <footer className="border-t border-[rgba(16,20,30,.08)]">
         <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
-          <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">Qdesign</p>
-          <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 Qdesign</p>
+          <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">QQ GenUI</p>
+          <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 QQ GenUI</p>
         </div>
       </footer>
     </div>

@@ -45,11 +45,11 @@ const skills: Skill[] = [
     name: "QQ-GENUI-basic1.0",
     nameZh: "QQ-GENUI-basic1.0",
     version: "1.0",
-    author: "Qdesign",
+    author: "QQ GenUI",
     tag: "Core",
     tagZh: "核心",
-    desc: "The foundational skill that converts Qdesign design system specs into production mobile pages. Enforces a strict 11-stage Gate workflow with Knot MCP auto spec retrieval, icon localization, background color constraints, and up to 3 rounds of regression testing across 5 audit dimensions.",
-    descZh: "核心基础 skill，将 Qdesign 设计系统规范转化为生产级移动端页面。强制执行 11 阶段 Gate 流程，通过 Knot MCP 按需检索组件规范，图标本地化，背景色强约束，最多 3 轮 5 维度回归测试。",
+    desc: "The foundational skill that converts QQ GenUI design system specs into production mobile pages. Enforces a strict 11-stage Gate workflow with Knot MCP auto spec retrieval, icon localization, background color constraints, and up to 3 rounds of regression testing across 5 audit dimensions.",
+    descZh: "核心基础 skill，将 QQ GenUI 设计系统规范转化为生产级移动端页面。强制执行 11 阶段 Gate 流程，通过 Knot MCP 按需检索组件规范，图标本地化，背景色强约束，最多 3 轮 5 维度回归测试。",
     highlights: [
       "11-stage Gate workflow (Gate -1 → Gate 10)",
       "Auto component spec retrieval via Knot MCP",
@@ -71,7 +71,7 @@ const skills: Skill[] = [
     name: "live-spec",
     nameZh: "live-spec",
     version: "1.0",
-    author: "Qdesign",
+    author: "QQ GenUI",
     tag: "Spec",
     tagZh: "规范",
     desc: "Turn static design specs into a live, interactive workbench. Generates both a pure page HTML and an Inspector workbench HTML with left canvas + right Inspector panel, supporting click-to-select components, real-time token editing, and postMessage communication.",
@@ -97,7 +97,7 @@ const skills: Skill[] = [
     name: "switch-style",
     nameZh: "switch-style",
     version: "1.0",
-    author: "Qdesign",
+    author: "QQ GenUI",
     tag: "Style",
     tagZh: "风格",
     desc: "Transform any existing UI into a target brand's visual style while preserving structure and content. Reads brand DESIGN.md for precise token mapping across 6 dimensions. Supports 58 brand design systems including Apple, Stripe, Tesla, Figma, and more.",
@@ -123,7 +123,7 @@ const skills: Skill[] = [
     name: "demo-to-phone",
     nameZh: "demo-to-phone",
     version: "1.0",
-    author: "Qdesign",
+    author: "QQ GenUI",
     tag: "Tool",
     tagZh: "工具",
     desc: "Publish local HTML files online and generate QR code pages with QQ WebView parameters. Includes mobile adaptation preprocessing (disable zoom, hide status bar, responsive scaling) before upload. Scan with QQ to preview demos on your phone instantly.",
@@ -149,7 +149,7 @@ const skills: Skill[] = [
     name: "skill-creator",
     nameZh: "skill-creator",
     version: "1.0",
-    author: "Qdesign",
+    author: "QQ GenUI",
     tag: "Dev",
     tagZh: "开发",
     desc: "Create new skills, modify and improve existing skills, and measure skill performance. Features an iterative development cycle with blind A/B eval testing, benchmark variance analysis, and description optimization for better triggering accuracy.",
@@ -224,7 +224,7 @@ export function SkillsPage() {
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[rgba(255,255,255,0.94)] backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-[1140px] items-center justify-between px-4 sm:h-18 sm:px-7 lg:px-10">
           <Link href={isZh ? "/" : "/?lang=en"} className="font-serif text-[clamp(1.5rem,2.4vw,3rem)] italic leading-none tracking-[-0.02em] text-[#0f1012]">
-            Qdesign
+            QQ GenUI
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
@@ -429,8 +429,8 @@ export function SkillsPage() {
       {/* ── Footer ── */}
       <footer className="border-t border-[rgba(16,20,30,.08)]">
         <div className="mx-auto flex w-full max-w-[1140px] items-center justify-between px-4 py-10 sm:px-7 lg:px-10">
-          <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">Qdesign</p>
-          <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 Qdesign</p>
+          <p className="font-serif text-[1.1rem] italic leading-none tracking-[-0.02em] text-[#b4b8c2]">QQ GenUI</p>
+          <p className="text-[0.84rem] text-[#9ea3ac]">© 2026 QQ GenUI</p>
         </div>
       </footer>
 

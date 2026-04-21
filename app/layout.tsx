@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Qdesign - AI harnesses that elevate design quality",
+  title: "QQ GenUI - AI harnesses that elevate design quality",
   description: "A complete, AI-friendly QQ design specification. Component specs, design tokens, QUI icon library, and workflow skills — all out of the box.",
 };
 
