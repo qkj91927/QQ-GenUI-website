@@ -6572,10 +6572,15 @@
             // 非 Token / 非 Overview / 非 mother_demo 的所有组件
             // 顺序以侧边栏 DOM 为权威来源，保证与左侧菜单一致
             // 注：mother_demo 为"总览"分组下的演示入口，不属于组件族，Components 卡墙不展示
+            // 注：被 hidden 的侧边栏项同样排除，保持总览卡墙与左侧菜单一致
             const EXCLUDED_KEYS = new Set(['overview', 'mother_demo']);
+            Array.from(document.querySelectorAll('.sidebar-nav-item'))
+                .filter(el => el.hidden)
+                .forEach(el => { if (el.dataset.value) EXCLUDED_KEYS.add(el.dataset.value); });
             const sidebarOrder = Array.from(
                 document.querySelectorAll('.sidebar-nav-item')
             )
+                .filter(el => !el.hidden)
                 .map(el => el.dataset.value)
                 .filter(k => k && !EXCLUDED_KEYS.has(k) && !k.startsWith('token_') && COMPONENTS[k]);
             const fallbackKeys = Object.keys(COMPONENTS).filter(k =>
@@ -6832,7 +6837,15 @@
 
             // 统计所有变体总数（通过遍历 COMPONENTS tooltip 的近似值）
             // mother_demo 为演示入口而非组件族，组件计数中也需排除
-            const componentCount = Object.keys(COMPONENTS).filter(k => k !== 'overview' && k !== 'mother_demo' && !k.startsWith('token_')).length;
+            // 同时排除已在侧边栏 hidden 的组件，保持 Hero 数字与下方卡墙一致
+            const HIDDEN_KEYS = new Set(
+                Array.from(document.querySelectorAll('.sidebar-nav-item'))
+                    .filter(el => el.hidden && el.dataset.value)
+                    .map(el => el.dataset.value)
+            );
+            const componentCount = Object.keys(COMPONENTS).filter(k =>
+                k !== 'overview' && k !== 'mother_demo' && !k.startsWith('token_') && !HIDDEN_KEYS.has(k)
+            ).length;
 
             const wrap = document.createElement('div');
             wrap.className = 'overview-wrap';
