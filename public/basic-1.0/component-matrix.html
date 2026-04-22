@@ -6569,7 +6569,7 @@
             section.innerHTML = `
                 <div class="ov-section-header">
                     <span class="name">Components</span>
-                    <span class="meta">点击跳转全部组件库</span>
+                    <span class="meta" data-action="show-all-components">点击跳转全部组件库</span>
                 </div>
             `;
             const grid = document.createElement('div');
@@ -6876,7 +6876,10 @@
             wrap.appendChild(buildOverviewTokenSection());
 
             // Components 分区（会依次 render 每个组件获取精准变体数）
+            // 注：按需求隐藏 Components 名片墙，但保留构建以便统计 Variants 总数
             const compSection = buildOverviewComponentSection();
+            compSection.hidden = true;
+            compSection.style.display = 'none';
             wrap.appendChild(compSection);
 
             // 把精准总数写入 hero 的 Variants
