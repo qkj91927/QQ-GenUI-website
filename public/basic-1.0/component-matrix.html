@@ -180,6 +180,12 @@
             color: var(--brand-blue, #0099FF);
             font-weight: 500;
         }
+        /* HTML [hidden] 属性默认 display:none，但上方的 display:flex 优先级更高会覆盖，
+           这里显式强制 [hidden] 元素不渲染，用于动态隐藏侧边栏入口/分组。 */
+        .sidebar-nav-item[hidden],
+        .sidebar-group-label[hidden] {
+            display: none !important;
+        }
 
         .header-title {
             display: flex;
