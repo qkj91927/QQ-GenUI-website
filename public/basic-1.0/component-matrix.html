@@ -113,6 +113,17 @@
             flex-direction: column;
             overflow: hidden;
         }
+
+        /* ========== 隐藏左侧资产库侧边栏（含总览/Token 等全部入口） ==========
+           - 整个 .sidebar 不渲染，不占空间；
+           - body 左侧 padding 归零，主内容从左边界开始铺展；
+           - 覆盖桌面默认值、mother-demo-mode 以及 ≤1550 窗口断点；
+           - 同时隐藏移动端抽屉开关按钮与遮罩。 */
+        .sidebar { display: none !important; }
+        body { padding-left: 0 !important; }
+        body.mother-demo-mode { padding-left: 0 !important; }
+        #sidebarToggle { display: none !important; }
+        #sidebarBackdrop { display: none !important; }
         .sidebar-brand {
             height: 64px;
             box-sizing: border-box;
