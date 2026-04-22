@@ -211,6 +211,10 @@ const cases: CaseItem[] = [
   },
 ];
 
+/* 需要在页面中隐藏的案例 id（保留数据以便日后恢复，仅从渲染与交互中剔除） */
+const HIDDEN_CASE_IDS = new Set<string>(["style-eval"]);
+const visibleCases = cases.filter((c) => !HIDDEN_CASE_IDS.has(c.id));
+
 /* ─── Small before/after compare for cases ─── */
 function CaseCompare({ beforeLabel, afterLabel }: { beforeLabel: string; afterLabel: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -693,7 +697,7 @@ export function CasesPage() {
     router.replace(`${window.location.pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
   };
 
-  const [expandedCases, setExpandedCases] = useState<Set<string>>(new Set(cases.map((c) => c.id)));
+  const [expandedCases, setExpandedCases] = useState<Set<string>>(new Set(visibleCases.map((c) => c.id)));
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
   const [mobileNav, setMobileNav] = useState(false);
   const [demoModes, setDemoModes] = useState<Record<string, "demo" | "code">>({});
@@ -795,7 +799,7 @@ export function CasesPage() {
 
         {/* ── Case list ── */}
         <div className="mt-14 border-y border-[rgba(16,20,30,.08)]">
-          {cases.map((c, caseIdx) => {
+          {visibleCases.map((c, caseIdx) => {
             const isOpen = expandedCases.has(c.id);
             const stepsOpen = expandedSteps.has(c.id);
 
