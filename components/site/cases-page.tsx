@@ -785,7 +785,7 @@ export function CasesPage() {
 
         {/* ── Collapse/Expand all ── */}
         <div className="mt-10 flex gap-3">
-          <button type="button" onClick={() => setExpandedCases(new Set(cases.map((c) => c.id)))} className="rounded-full border border-[#e2e5ea] bg-white px-5 py-2 text-[0.88rem] font-medium text-[#505764] transition hover:bg-[#f7f8fa]">
+          <button type="button" onClick={() => setExpandedCases(new Set(visibleCases.map((c) => c.id)))} className="rounded-full border border-[#e2e5ea] bg-white px-5 py-2 text-[0.88rem] font-medium text-[#505764] transition hover:bg-[#f7f8fa]">
             {isZh ? "全部展开" : "Expand all"}
           </button>
           <button type="button" onClick={() => setExpandedCases(new Set())} className="rounded-full border border-[#e2e5ea] bg-white px-5 py-2 text-[0.88rem] font-medium text-[#505764] transition hover:bg-[#f7f8fa]">
