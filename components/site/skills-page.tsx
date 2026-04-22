@@ -9,14 +9,12 @@ import { useCallback, useState } from "react";
 const navEn = [
   { label: "Home", href: "/" },
   { label: "Cases", href: "/cases" },
-  { label: "Assets", href: "/assets" },
   { label: "Skills", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];
 const navZh = [
   { label: "首页", href: "/" },
   { label: "实战案例", href: "/cases" },
-  { label: "资产库", href: "/assets" },
   { label: "skill 库", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];

@@ -28,7 +28,6 @@ export type CheatsheetGroup = {
 export const navItems = [
   { label: "Home", href: "/" },
   { label: "Cases", href: "/cases" },
-  { label: "Assets", href: "/assets" },
   { label: "Skills", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];

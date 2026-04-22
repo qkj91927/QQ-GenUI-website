@@ -233,7 +233,6 @@ const actionGroupsZh = [
 const navItemsZh = [
   { label: "首页", href: "/" },
   { label: "实战案例", href: "/cases" },
-  { label: "资产库", href: "/assets" },
   { label: "skill 库", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];

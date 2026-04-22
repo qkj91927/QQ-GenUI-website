@@ -81,14 +81,12 @@ function DemoPreview({ url, title, iframeWidth, iframeHeight }: { url: string; t
 const navItems = [
   { label: "Home", href: "/" },
   { label: "Cases", href: "/cases" },
-  { label: "Assets", href: "/assets" },
   { label: "Skills", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];
 const navItemsZh = [
   { label: "首页", href: "/" },
   { label: "实战案例", href: "/cases" },
-  { label: "资产库", href: "/assets" },
   { label: "skill 库", href: "/skills" },
   { label: "Cheatsheet", href: "/cheatsheet" },
 ];
@@ -162,9 +160,6 @@ const cases: CaseItem[] = [
     beforeLabelEn: "Settings without spec",
     afterLabel: "符合规范的设置页",
     afterLabelEn: "Spec-compliant settings",
-    specLink: "/assets",
-    specLabel: "查看设置组件规范",
-    specLabelEn: "View settings component spec",
     chromeTitle: "群管理.html",
   },
   {
