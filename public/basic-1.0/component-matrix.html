@@ -9388,10 +9388,17 @@
         }
 
         // Initialize — 优先 localStorage，其次 hash，最后默认 overview 总览
+        // 注：若 hash / localStorage 指向已被侧边栏 hidden 的组件，统一回退为 overview
+        const INIT_HIDDEN_KEYS = new Set(
+            Array.from(document.querySelectorAll('.sidebar-nav-item'))
+                .filter(el => el.hidden && el.dataset.value)
+                .map(el => el.dataset.value)
+        );
         const hashType = window.location.hash.replace('#', '');
         const savedType = localStorage.getItem('matrix_component');
-        const initType = (hashType && COMPONENTS[hashType]) ? hashType
-                       : (savedType && COMPONENTS[savedType]) ? savedType
+        const isUsable = (k) => !!k && !!COMPONENTS[k] && !INIT_HIDDEN_KEYS.has(k);
+        const initType = isUsable(hashType) ? hashType
+                       : isUsable(savedType) ? savedType
                        : 'overview';
 
         // 应用上次保存的颜色主题（Light / Dark）
